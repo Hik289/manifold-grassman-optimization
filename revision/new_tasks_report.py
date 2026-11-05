@@ -170,7 +170,7 @@ def generate():
         (FIG/'newtasks_selected_table.tex').write_text('\n'.join(lines)+'\n')
         plot(selected,rows,'fig_newtask_losses_selected')
         (FIG/'newtasks_selected_fig.tex').write_text(r'''\begin{figure}[htbp]\centering
-\includegraphics[width=\linewidth]{figures/fig_newtask_losses_selected.pdf}
+\includegraphics[width=\linewidth]{figures/fig_newtask_losses_selected.png}
 \caption{Full 1000-epoch training trajectories for the explicitly selected evidence in Table~\ref{tab:newtasks-selected}. All six selected optimizer endpoints are retained within each task. Faint lines show raw objectives and solid lines are 25-epoch trailing means. Selection is by the declared test-metric/state reporting rule, not minimum training loss; the full suite appears in Figure~\ref{fig:newtasks-all}.}
 \label{fig:newtasks-selected}
 \end{figure}
@@ -192,7 +192,7 @@ def generate():
         (FIG/'newtasks_selected_table.tex').write_text('\n'.join(lines)+'\n')
         plot_sms_validation(rows)
         (FIG/'newtasks_selected_fig.tex').write_text(r'''\begin{figure}[htbp]\centering
-\includegraphics[width=\linewidth]{figures/fig_newtask_losses_selected.pdf}
+\includegraphics[width=\linewidth]{figures/fig_newtask_losses_selected.png}
 \caption{SMS memory--quality operating point, with all six validation-selected methods. Left: the full 1000-epoch training objectives (raw losses faint, 25-epoch trailing means solid). Right: all saved validation cross-entropies. Hyperparameters were selected by final validation macro-F1; secondary cross-entropy did not replace that criterion. The full primary-metric matrix and every classifier endpoint remain in Tables~\ref{tab:newtasks-full} and~\ref{tab:newtasks-secondary}.}
 \label{fig:newtasks-selected}
 \end{figure}

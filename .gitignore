@@ -24,6 +24,7 @@ __pycache__/
 *.fls
 *.fdb_latexmk
 *.synctex.gz
+*.[pP][dD][fF]
 .latex-build/
 data/*
 !data/.gitkeep

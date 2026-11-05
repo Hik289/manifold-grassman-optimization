@@ -3,10 +3,8 @@
 <p align="center"><strong>Online Gradient Routing on the Grassmann Manifold</strong></p>
 
 <p align="center">
-  <a href="paper/main.pdf"><img alt="Paper PDF" src="https://img.shields.io/badge/Paper-PDF-b31b1b.svg" /></a>
-  <a href="#method-at-a-glance"><img alt="PyTorch optimizer" src="https://img.shields.io/badge/PyTorch-Optimizer-ee4c2c.svg" /></a>
-  <a href="#reproducing-experiments"><img alt="Experiment code" src="https://img.shields.io/badge/Experiments-Code-168b88.svg" /></a>
-  <a href="assets/grassroute_intuition.png"><img alt="Method figure PNG" src="https://img.shields.io/badge/Figure-PNG-8655b6.svg" /></a>
+  <a href="#license"><img alt="License unspecified" src="https://img.shields.io/badge/License-Unspecified-lightgrey.svg" /></a>
+  <a href="requirements.txt"><img alt="Python 3" src="https://img.shields.io/badge/Python-3-3776AB.svg" /></a>
 </p>
 
 <p align="center">
@@ -17,7 +15,7 @@
 
 For a matrix gradient $G_t$ and a learned orthonormal routing basis $U_t$, GrassRoute computes $Z_t=G_tU_t$ and $G_t^{\perp}=G_t-Z_tU_t^\top$. An Adam-style update acts in the small $m\times r$ coordinate space; a scaled residual update preserves the orthogonal gradient without full-size optimizer moments. A Grassmann tangent step, QR retraction, and Procrustes alignment update the routing basis and its stored state.
 
-The complete update, implementation choices, and conditional theory are in the [paper](paper/main.pdf).
+The complete update, implementation choices, and conditional theory are in the [paper source](paper/main.tex). Compile it locally with pdfLaTeX and BibTeX.
 
 ## Quick start
 
@@ -67,7 +65,7 @@ experiments/       original optimizer, baselines, model families, training and a
 revision/          validation-selected suites, follow-ups, recovery, analysis and plotting
 eda/               early gradient-spectrum and task-family probes
 archive/           distinct historical optimizer/source versions and legacy figure code
-paper/             LaTeX source, bibliography, figure PDFs and compiled manuscript
+paper/             LaTeX source, bibliography and figure PNGs
 assets/            README intuition PNG and reproducible drawing script
 examples/          minimal optimizer invocation
 scripts/           external baseline setup
@@ -87,3 +85,7 @@ The code in `archive/` documents earlier experimental versions; current formal f
 ```
 
 The repository contains a working draft. The included LaTeX source currently uses the bundled `icml2026` style while the manuscript is prepared for a future submission.
+
+## License
+
+A license has not yet been selected for this repository.
