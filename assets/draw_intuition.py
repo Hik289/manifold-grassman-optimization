@@ -5,6 +5,7 @@ shaded matrix glyphs, saturated outlines, and the outer state-feedback path.
 Arial Narrow is used when installed; DejaVu Sans is the portable fallback.
 """
 from pathlib import Path
+import argparse
 
 import matplotlib
 matplotlib.use('Agg')
@@ -25,12 +26,12 @@ DARKRED='#970c00'
 DARKPURPLE='#5700c8'
 
 
-def draw():
+def draw(preview=None):
     available={f.name for f in font_manager.fontManager.ttflist}
     heading_font='Arial Narrow' if 'Arial Narrow' in available else 'DejaVu Sans'
     with plt.rc_context({'font.family':heading_font, 'mathtext.fontset':'stix',
-                         'font.size':14, 'savefig.facecolor':'white'}):
-        fig=plt.figure(figsize=(19.33001,8.13001),dpi=200)
+                         'font.size':14, 'svg.fonttype':'path', 'savefig.facecolor':'white'}):
+        fig=plt.figure(figsize=(19.33001,8.13001),dpi=300)
         ax=fig.add_axes([0,0,1,1])
         ax.set_xlim(0,1933);ax.set_ylim(813,0);ax.axis('off')
         fitted=[]
@@ -79,7 +80,7 @@ def draw():
             for i in range(nr+1):ax.plot([x,x+w],[y+i*cell]*2,color=border,lw=.8,zorder=4)
             ax.add_patch(Rectangle((x,y),w,h,fill=False,edgecolor=border,lw=1,zorder=4))
             if name:label(x+w/2,y-21,name,27,width=w+80)
-            if dim:label(x+w/2,y+h+21,dim,24,width=w+90)
+            if dim:label(x+w/2,y+h+21,dim,26,width=w+90)
 
         def arrow(points,color=BLUE,lw=3.3,scale=17):
             if len(points)>2:
@@ -102,37 +103,37 @@ def draw():
         matrix(183,100,5,3,'#f7a345',r'$G_t$',r'$m\times d$',19)
         matrix(306,100,5,3,'#229cff',r'$U_t$',r'$d\times r$',19)
         inset(46,246,328,86,BLUE)
-        label(210,269,r'$G_t=\nabla_W\ell_t$',28)
-        label(210,307,r'$U_t^{\mathsf{T}}U_t=I_r$',28)
+        label(210,269,r'$G_t=\nabla_W\ell_t$',32)
+        label(210,307,r'$U_t^{\mathsf{T}}U_t=I_r$',32)
 
         matrix(457,100,5,3,'#f7a345',r'$G_t$',r'$m\times d$',19)
         matrix(582,100,5,3,'#229cff',r'$U_t$',r'$d\times r$',19)
         matrix(714,100,5,3,'#68b57c',r'$Z_t$',r'$m\times r$',19)
         label(549,150,r'$\times$',30);label(679,150,r'$=$',30)
         inset(437,246,358,86,ORANGE)
-        label(615,268,r'$Z_t=G_tU_t,\quad G_t^{\parallel}=Z_tU_t^{\mathsf{T}}$',25,width=338)
-        label(615,307,r'$G_t^{\perp}=G_t-G_t^{\parallel}$',27,width=338)
+        label(615,268,r'$Z_t=G_tU_t$',32,width=338)
+        label(615,307,r'$G_t^{\perp}=G_t-Z_tU_t^{\mathsf{T}}$',32,width=338)
 
-        matrix(869,100,4,3,'#68b57c',r'$M_t$',r'$m\times r$',18)
-        matrix(988,100,4,3,'#68b57c',r'$V_t$',r'$m\times r$',18)
-        matrix(1110,100,4,3,'#229cff',r'$D_t^{\parallel}$',r'$m\times r$',18)
-        inset(851,219,340,113,BLUE)
-        label(1021,239,r'$M_t=\beta_1 M_{t-1}+(1-\beta_1)Z_t$',24,width=322)
-        label(1021,275,r'$V_t=\beta_2 V_{t-1}+(1-\beta_2)Z_t^{\odot2}$',24,width=322)
-        label(1021,311,r'$D_t^{\parallel}=\widehat M_t\oslash(\sqrt{\widehat V_t}+\epsilon_a)$',24,width=322)
+        matrix(878,96,4,3,'#68b57c',r'$M_t$',r'$m\times r$',12)
+        matrix(997,96,4,3,'#68b57c',r'$V_t$',r'$m\times r$',12)
+        matrix(1119,96,4,3,'#229cff',r'$D_t^{\parallel}$',r'$m\times r$',12)
+        inset(851,184,340,150,BLUE)
+        label(1021,202,r'$M_t=\beta_1 M_{t-1}+(1-\beta_1)Z_t$',30,width=322)
+        label(1021,238,r'$V_t=\beta_2 V_{t-1}+(1-\beta_2)Z_t^{\odot2}$',30,width=322)
+        label(1021,293,r'$D_t^{\parallel}=\dfrac{\widehat{M}_t}{\sqrt{\widehat{V}_t}+\epsilon_a}$',28,width=322)
 
-        matrix(1259,104,3,4,'#229cff',r'$D_t^{\parallel}U_t^{\mathsf{T}}$',r'$m\times d$',19)
-        matrix(1450,104,3,4,'#68b57c',r'$s_tG_t^{\perp}$',r'$m\times d$',19)
-        label(1392,132,r'$+$',31)
-        inset(1245,207,307,125,GREEN)
-        label(1398,230,r'$s_t=\mathrm{clip}\!\left(\frac{\|G_t\|_F}{\|G_t^{\perp}\|_F+\epsilon_r}\right)$',25,width=285)
-        label(1398,278,r'$W_{t+1}=W_t-\eta_{\parallel}D_t^{\parallel}U_t^{\mathsf{T}}$',24,width=283)
-        label(1398,309,r'$-\eta_{\perp}s_tG_t^{\perp}$',24,width=283)
+        matrix(1265,100,3,4,'#229cff',r'$D_t^{\parallel}U_t^{\mathsf{T}}$',r'$m\times d$',16)
+        matrix(1456,100,3,4,'#68b57c',r'$s_tG_t^{\perp}$',r'$m\times d$',16)
+        label(1392,124,r'$+$',31)
+        inset(1245,185,307,148,GREEN)
+        label(1398,221,r'$s_t=\mathrm{clip}\!\left(\dfrac{\Vert G_t\Vert_F}{\Vert G_t^{\perp}\Vert_F+\epsilon_r}\right)$',28,width=285)
+        label(1398,281,r'$W_{t+1}=W_t-\eta_{\parallel}D_t^{\parallel}U_t^{\mathsf{T}}$',30,width=283)
+        label(1398,315,r'$-\eta_{\perp}s_tG_t^{\perp}$',30,width=283)
 
         matrix(1625,100,5,3,'#ac75dd',r'$W_{t+1}$',r'$m\times d$',19)
         matrix(1808,100,5,3,'#229cff',r'$U_{t+1}$',r'$d\times r$',19)
         inset(1608,244,285,88,PURPLE)
-        label(1750,270,r'$U_{t+1}^{\mathsf{T}}U_{t+1}=I_r$',27,width=265)
+        label(1750,270,r'$U_{t+1}^{\mathsf{T}}U_{t+1}=I_r$',32,width=265)
         label(1750,308,'Save the aligned moments',21,DARKPURPLE,width=260)
 
         for start,end in [(400,420),(818,835),(1213,1230),(1573,1590)]:
@@ -147,10 +148,10 @@ def draw():
         matrix(204,459,3,3,'#68b57c',r'$Z_t$',r'$m\times r$',18)
         matrix(342,459,3,3,'#68b57c',r'$A_t$',r'$d\times r$',18)
         label(163,486,r'$\times$',29);label(302,486,r'$=$',29)
-        inset(55,552,372,76,GREEN)
-        label(241,589,r'$Q_t=\frac{(I-U_tU_t^{\mathsf{T}})G_t^{\mathsf{T}}Z_t}{\|G_t\|_F^2+\epsilon_c}$',31,width=347)
-        inset(55,641,372,46,GREEN)
-        label(241,664,r'$U_t^{\mathsf{T}}Q_t=0$',26)
+        inset(55,547,372,94,GREEN)
+        label(241,594,r'$Q_t=\dfrac{(I-U_tU_t^{\mathsf{T}})G_t^{\mathsf{T}}Z_t}{\Vert G_t\Vert_F^2+\epsilon_c}$',32,width=347)
+        inset(55,652,372,42,GREEN)
+        label(241,673,r'$U_t^{\mathsf{T}}Q_t=0$',30)
         label(241,711,r'Implicit product: no $d\times d$ covariance',21,DARKGREEN,width=380)
 
         # QR visual occupies the left half; the exact recursion sits on the right.
@@ -163,19 +164,21 @@ def draw():
         label(724,646,'Continuous online subspace update',23,DARKGREEN,width=365)
         label(724,680,'Orthonormal routing frame',21,DARKBLUE,width=365)
         inset(932,447,363,245,GREEN)
-        label(1113,475,r'$\Pi_U(A)=(I-UU^{\mathsf{T}})A$',27,width=340)
-        label(1113,539,r'$H_t=\Pi_{U_t}\!\left[\mu H_{t-1}+(1-\mu)Q_t\right]$',26,width=337)
-        label(1113,608,r'$U_{t+1}=\mathrm{qf}(U_t+\rho H_t)$',27,width=339)
-        label(1113,660,r'$U_{t+1}^{\mathsf{T}}U_{t+1}=I_r$',25,width=337)
+        label(1113,475,r'$\Pi_U(A)=(I-UU^{\mathsf{T}})A$',32,width=340)
+        label(1113,523,r'$H_t=\Pi_{U_t}[\,\mu H_{t-1}$',32,width=337)
+        label(1113,560,r'$+(1-\mu)Q_t\,]$',32,width=337)
+        label(1113,610,r'$U_{t+1}=\mathrm{qf}(U_t+\rho H_t)$',32,width=339)
+        label(1113,662,r'$U_{t+1}^{\mathsf{T}}U_{t+1}=I_r$',30,width=337)
 
         inset(1380,440,497,58,GREEN)
-        label(1628,469,r'$R_t=\mathrm{Polar}(U_{t+1}^{\mathsf{T}}U_t)$',29,width=473)
+        label(1628,469,r'$R_t=\mathrm{Polar}(U_{t+1}^{\mathsf{T}}U_t)$',34,width=473)
         matrix(1402,539,3,3,'#68b57c',r'$R_t$',r'$r\times r$',19)
         matrix(1576,539,3,3,'#68b57c',r'$M_t$',r'$m\times r$',19)
         matrix(1747,539,3,3,'#68b57c',r'$V_t$',r'$m\times r$',19)
-        inset(1380,640,497,55,GREEN)
-        label(1628,667,r'$M_t\leftarrow M_tR_t^{\mathsf{T}},\qquad V_t\leftarrow V_t(R_t^{\mathsf{T}})^{\odot2}$',27,width=471)
-        label(1628,713,'Diagonal covariance approximation',22,DARKGREEN,width=470)
+        inset(1380,630,497,78,GREEN)
+        label(1628,648,r'$M_t\leftarrow M_tR_t^{\mathsf{T}}$',32,width=471)
+        label(1628,686,r'$V_t\leftarrow V_t(R_t^{\mathsf{T}})^{\odot2}$',32,width=471)
+        label(1628,719,'Diagonal covariance approximation',19,DARKGREEN,width=470)
 
         # The lower path tracks the basis from the same G and Z used above.
         arrow([(619,351),(619,367),(241,367),(241,383)],GREEN,4,19)
@@ -205,10 +208,15 @@ def draw():
             if actual>width*scale:
                 artist.set_fontsize(artist.get_fontsize()*width*scale/actual)
         output=Path(__file__).with_name('grassroute_intuition.png')
-        fig.savefig(output,dpi=200,facecolor='white')
+        fig.savefig(output,dpi=300,facecolor='white')
+        fig.savefig(output.with_suffix('.svg'),facecolor='white')
+        if preview:
+            fig.savefig(preview,dpi=60,facecolor='white')
         plt.close(fig)
         print(output)
 
 
 if __name__=='__main__':
-    draw()
+    parser=argparse.ArgumentParser()
+    parser.add_argument('--preview',type=Path,help='Optional PNG preview at README viewing size')
+    draw(parser.parse_args().preview)

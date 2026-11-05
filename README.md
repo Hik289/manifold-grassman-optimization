@@ -1,7 +1,6 @@
 <h1 align="center">GrassRoute</h1>
 
-<p align="center"><strong>Online Gradient Routing on the Grassmann Manifold</strong><br />
-Research code for memory-efficient, geometry-aware optimization.</p>
+<p align="center"><strong>Online Gradient Routing on the Grassmann Manifold</strong></p>
 
 <p align="center">
   <a href="paper/main.pdf"><img alt="Paper PDF" src="https://img.shields.io/badge/Paper-PDF-b31b1b.svg" /></a>
@@ -11,10 +10,8 @@ Research code for memory-efficient, geometry-aware optimization.</p>
 </p>
 
 <p align="center">
-  <img src="assets/grassroute_intuition.png" alt="Detailed GrassRoute update schematic: orthogonal gradient routing, low-rank adaptive coordinates, residual weight update, Grassmann tracking, and Procrustes state alignment." width="96%" />
+  <a href="assets/grassroute_intuition.png"><img src="assets/grassroute_intuition.png" alt="Detailed GrassRoute update schematic: orthogonal gradient routing, low-rank adaptive coordinates, residual weight update, Grassmann tracking, and Procrustes state alignment." width="100%" /></a>
 </p>
-
-<div align="center"><sub>The diagram is a PNG; its drawing code is in <a href="assets/draw_intuition.py">assets/draw_intuition.py</a>.</sub></div>
 
 ## Method at a glance
 
