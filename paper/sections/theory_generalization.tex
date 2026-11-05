@@ -1,0 +1,416 @@
+\subsection{Generalization through the full optimizer state}
+\label{app:generalization}
+
+Generalization requires a sampling model beyond smooth optimization. In this
+subsection $S=(z_1,\ldots,z_n)$ is an i.i.d. training set, $S^{(i)}$ replaces
+one observation independently, $L(W)=\mathbb E_z\ell(W,z)$, and
+$\widehat L_S(W)=n^{-1}\sum_i\ell(W,z_i)$. These assumptions do not
+directly describe transductive node classification on a single dependent
+graph or nonstationary continual-learning evaluation. Applying the bounds
+to such settings requires a separate statistical model.
+
+The augmented stored state is
+\begin{equation}
+ X_t=(W_t,U_t,M_t,A_t,H_t),\qquad A_t=\sqrt{V_t}.
+ \label{eq:augmented-state}
+\end{equation}
+We retain the \emph{basis} $U_t$ with the algorithm's QR gauge, rather than
+identifying all bases on the quotient. Lemma~\ref{lem:moments} shows that
+coordinatewise Adam does not define a gauge-invariant state transition on
+the quotient alone. Distances below compare stored frames in a common
+regular chart. For fixed positive weights $\omega_j$, let
+\begin{equation}
+ d_\omega(X,X')=\|W-W'\|+\omega_U\|U-U'\|
+ +\omega_M\|M-M'\|+\omega_A\|A-A'\|+\omega_H\|H-H'\|.
+\end{equation}
+Multiple routed layers are handled by adding their terms. The metric must
+include all persistent fallback states as well; omitting a full Adam
+fallback from the sensitivity calculation would analyze a different method.
+
+\begin{assumption}[Regular full-state update maps]
+\label{ass:stability}
+For every possible training example and every pair of reachable states,
+the one-example update $\Psi_t$ satisfies
+\begin{align}
+ d_\omega(\Psi_t(X,z),\Psi_t(X',z))&\le L_t d_\omega(X,X'),\label{eq:same-sample}\\
+ d_\omega(\Psi_t(X,z),\Psi_t(X,z'))&\le b_t.\label{eq:changed-sample}
+\end{align}
+The constants $L_t,b_t$ are deterministic and uniform over the data sets
+under comparison, and initialization is data independent and coupled.
+The loss is $L_\ell$-Lipschitz in $W$ on the reachable parameter region.
+\end{assumption}
+
+This is a fixed-configuration analysis. If hyperparameters are chosen by
+validation, the entire selection procedure becomes part of the learning
+algorithm. A neighboring observation can change its discrete choice;
+fixed-configuration stability does not automatically establish stability
+of that selection pipeline. A separate selection argument or uniform
+control of its branches is needed for that stronger conclusion.
+
+\begin{theorem}[Full-state stability and expected generalization]
+\label{thm:generalization}
+Under Assumption~\ref{ass:stability}, couple the sampling indices of the
+two runs so that the replaced observation is used with marginal probability
+$1/n$ at each step. Then
+\begin{align}
+ \mathbb E d_\omega(X_T,X_T^{(i)})
+ &\le\frac1n\sum_{t<T}b_t\prod_{j=t+1}^{T-1}L_j,\label{eq:stability-product}\\
+ \left|\mathbb E_{S,\Omega}\{L(W_T)-\widehat L_S(W_T)\}\right|
+ &\le\beta_T:=\frac{L_\ell}{n}
+                    \sum_{t<T}b_t\prod_{j=t+1}^{T-1}L_j.
+ \label{eq:expected-generalization}
+\end{align}
+Here $\Omega$ denotes the algorithm's randomness. If the loss belongs to
+$[0,M_\ell]$, with probability at least $1-\delta$ over $S$,
+\begin{equation}
+ \left|\mathbb E_\Omega[L(W_T)-\widehat L_S(W_T)]\right|
+ \le\beta_T+(2n\beta_T+M_\ell)
+                    \sqrt{\frac{\log(2/\delta)}{2n}}.
+ \label{eq:stability-highprob}
+\end{equation}
+The high-probability statement concerns the randomness-averaged output;
+it is not automatically a guarantee for one realized seed.
+\end{theorem}
+
+\begin{proof}
+Use the same sampled index and all other random choices in both runs.
+The triangle inequality, \eqref{eq:same-sample}, and
+\eqref{eq:changed-sample} imply pathwise
+\begin{equation}
+ d_\omega(X_{t+1},X_{t+1}^{(i)})
+ \le L_t d_\omega(X_t,X_t^{(i)})
+           +b_t\mathbf1\{I_t=i\}.
+\end{equation}
+Taking expectation and using the marginal sampling probability gives the
+recursion with additive term $b_t/n$. Uniformity of $L_t,b_t$ is what
+allows this unconditional step; it does not require independence between
+the past state and the indicator. Starting from zero distance and iterating
+proves \eqref{eq:stability-product}. Lipschitzness in $W$ gives a loss
+stability bound $\beta_T$ for every evaluation example.
+
+For completeness, introduce an independent ghost observation $z_i'$ and
+the replacement set $S^{(i)}$. Exchangeability gives
+\begin{align}
+ \mathbb E\{L(W_T(S))-\widehat L_S(W_T(S))\}
+ =\frac1n\sum_i\mathbb E\{
+ \ell(W_T(S),z_i')-\ell(W_T(S^{(i)}),z_i')\}.
+\end{align}
+Each summand has absolute value at most $\beta_T$, proving the expected
+bound. This is the standard replacement argument of algorithmic stability
+\cite{bousquet2002stability,hardt2016stability}.
+
+Let $F(S)=\mathbb E_\Omega[L(W_T)-\widehat L_S(W_T)]$.
+Replacing one example changes its population term by at most $\beta_T$.
+Its empirical term changes by at most $\beta_T+M_\ell/n$: unchanged
+examples contribute stability, and the replaced loss is bounded in an
+interval of length $M_\ell$. Thus each bounded difference is at most
+$2\beta_T+M_\ell/n$. McDiarmid's inequality applied to $F(S)$, together
+with $|\mathbb EF(S)|\le\beta_T$, proves
+\eqref{eq:stability-highprob}.
+\end{proof}
+
+For a mini-batch of $B$ sampled indices the probability of touching the
+replaced observation is at most $B/n$. The corresponding update difference
+must be computed for one changed member of the averaged batch. It cannot
+be assumed to equal $b_t/B$ after nonlinear Adam normalization. The same
+proof applies with that batch-specific injection constant. Likewise,
+random reshuffling has a uniform marginal index but does not give the
+conditional unbiased-gradient assumption of
+Theorem~\ref{thm:convergence} without further analysis. The two theorems
+have deliberately different sampling requirements.
+
+\subsection{Checking the stability constants for the implemented primitives}
+
+Assumption~\ref{ass:stability} is meaningful only if its constants are
+connected to the algorithm. The following bounds provide that connection
+and make the sources of potentially vacuous constants explicit.
+
+\begin{lemma}[Lipschitz building blocks]
+\label{lem:building-blocks}
+Suppose single-example gradients are $L_g$-Lipschitz and bounded by
+$G_0$, stored moments are bounded, $\varepsilon_c,\varepsilon>0$, and
+all compared QR/polar operations stay in a fixed regular region.
+The normalized covariance map obeys
+\begin{equation}
+ \left\|\frac{G^\top G}{\|G\|^2+\varepsilon_c}
+       -\frac{G'^\top G'}{\|G'\|^2+\varepsilon_c}\right\|
+ \le\frac{2}{\sqrt{\varepsilon_c}}\|G-G'\|.\label{eq:cov-lip}
+\end{equation}
+For orthonormal $U,U'$ and bounded $C,C'$,
+\begin{equation}
+ \|\Pi_U(CU)-\Pi_{U'}(C'U')\|
+ \le4C_0\|U-U'\|+\|C-C'\|.\label{eq:tangent-lip}
+\end{equation}
+The elementwise root-EMA map is jointly Lipschitz:
+\begin{equation}
+ \|\sqrt{\beta A^{\odot2}+(1-\beta)Z^{\odot2}}
+       -\sqrt{\beta A'^{\odot2}+(1-\beta)Z'^{\odot2}}\|
+ \le\sqrt\beta\|A-A'\|+\sqrt{1-\beta}\|Z-Z'\|.
+ \label{eq:root-ema}
+\end{equation}
+For a fixed orthogonal $Q$, diagonal covariance transport is nonexpansive
+in root amplitudes:
+\begin{equation}
+ \|\sqrt{A^{\odot2}Q^{\odot2}}-
+                 \sqrt{A'^{\odot2}Q^{\odot2}}\|\le\|A-A'\|.
+ \label{eq:root-transport}
+\end{equation}
+Together with \eqref{eq:adam-lipschitz}, these inequalities yield finite
+full-state constants on the stated region.
+\end{lemma}
+
+\begin{proof}
+Differentiating $G^\top G/(\|G\|^2+\varepsilon_c)$ in direction $E$
+bounds its derivative by
+\begin{equation}
+ \left\{\frac{2\|G\|}{\|G\|^2+\varepsilon_c}
+ +\frac{2\|G\|^3}{(\|G\|^2+\varepsilon_c)^2}\right\}\|E\|
+ \le\frac{2}{\sqrt{\varepsilon_c}}\|E\|.
+\end{equation}
+Integrating along the line segment proves \eqref{eq:cov-lip}.
+For \eqref{eq:tangent-lip}, expand $CU-UU^\top CU$ into differences
+of its factors and use
+$\|UU^\top-U'U'^\top\|_{\rm op}\le2\|U-U'\|_{\rm op}$.
+The $C$ difference has coefficient one after grouping
+$(I-P)(C-C')U$; the $U$ differences have total coefficient at most
+$4C_0$. To prove \eqref{eq:root-ema}, view each coordinate as the
+Euclidean norm of $(\sqrt\beta A_{ij},\sqrt{1-\beta}Z_{ij})$ and
+apply the reverse triangle inequality followed by Minkowski.
+Similarly, the transported amplitude in coordinate $j$ of a row is
+the norm of $(A_kQ_{kj})_k$. Squaring the reverse-triangle bound and
+summing over $j$ uses $\sum_jQ_{kj}^2=1$ and proves
+\eqref{eq:root-transport}.
+
+QR with a fixed positive-diagonal convention is smooth on full-column-rank
+matrices. The polar factor is smooth when its input singular values stay
+away from zero. Bounded derivatives on the stipulated compact regular
+region give their finite constants. Multiplication and projection are
+Lipschitz on bounded sets; the residual scale uses Lipschitz norms,
+a positive denominator offset, and nonexpansive scalar clipping. Finally,
+the Adam division bound is \eqref{eq:adam-lipschitz}.
+\end{proof}
+
+One can compose these bounds as a nonnegative sensitivity matrix $K_t$.
+Its entries bound the output block differences
+$(\delta W,\delta U,\delta M,\delta A,\delta H)$ in terms of their
+input differences. For example, the fresh routed-coordinate difference is
+at most $L_g\delta W+G_0\delta U$, the first-moment EMA contributes
+$\beta_1\delta M+(1-\beta_1)(L_g\delta W+G_0\delta U)$ before
+alignment, and the parameter update contributes
+$\delta W+\eta_t\delta D$. Projection transport adds
+$2H_0\delta U$ to the transported momentum comparison. QR and polar
+Lipschitz factors then propagate these differences through basis and
+moment alignment. If $D_\omega=\operatorname{Diag}(1,\omega_U,
+\omega_M,\omega_A,\omega_H)$, a sufficient choice is
+\begin{equation}
+ L_t=\|D_\omega K_tD_\omega^{-1}\|_1.
+ \label{eq:sensitivity-matrix}
+\end{equation}
+The changed-example constant is obtained by repeating this composition
+with zero initial state differences and gradient difference at most
+$2G_0$. This procedure includes the moment states rather than treating
+Adam as a memoryless gradient map.
+
+Very small denominator offsets can make these constants large. Moreover,
+if $L_t\le1+c(\eta_t+\rho_t)$ is established in a chosen weighted
+metric, the product bound is at most
+$\exp\{c\sum_t(\eta_t+\rho_t)\}$. A constant tracking step over a
+long horizon can therefore yield a vacuous bound. We report the product
+form within this scope; we do not infer a numerical certificate for the
+experiments without measuring valid constants. Identical deterministic
+QR, transport, and reset operations in coupled runs do not create an
+additive error independent of the sample change. Such a term would
+incorrectly predict different trajectories even when the two data sets
+and initializations are identical.
+This does not make a thresholded reset Lipschitz: crossing its threshold
+can create a discontinuity. Such a reset requires an additional branch
+analysis or a restriction that both coupled runs use the same branch.
+The corrected diagonal-transport update avoids that particular switch.
+
+\begin{proposition}[A nonvacuous contractive regime and the coupling condition]
+\label{prop:small-gain}
+Suppose, after including or validly eliminating contractive moment states,
+the coupled same-example distances obey
+\begin{equation}
+ \begin{pmatrix}w_+\\u_+\end{pmatrix}
+ \le\begin{pmatrix}1-\eta a&\eta b\\\rho c&1-\rho d\end{pmatrix}
+       \begin{pmatrix}w\\u\end{pmatrix},\qquad
+ a,d>0,\ b,c\ge0,\ ad>bc,\label{eq:two-block-stability}
+\end{equation}
+with nonnegative diagonal entries. For $b,c>0$ choose
+\begin{equation}
+ \frac{\eta b}{\rho d}<\omega<\frac{\eta a}{\rho c},\qquad
+ \kappa=\min\{\eta a-\omega\rho c,\ \rho d-\eta b/\omega\}>0.
+\end{equation}
+If replacing the sampled example adds at most $(\eta B_W,\rho B_U)$
+to these two blocks, then
+\begin{equation}
+ \beta_T\le\frac{L_\ell(\eta B_W+\omega\rho B_U)}{n\kappa}
+                \{1-(1-\kappa)^T\}.\label{eq:contractive-stability}
+\end{equation}
+The cases $b=0$ or $c=0$ follow by the corresponding one-sided choice
+of $\omega$ or by a limit.
+\end{proposition}
+\begin{proof}
+Multiplying the second row of \eqref{eq:two-block-stability} by $\omega$
+and adding the first gives
+$w_++\omega u_+\le(1-\kappa)(w+\omega u)$.
+The expected changed-example injection is
+$(\eta B_W+\omega\rho B_U)/n$.
+Summing the geometric recursion and applying the loss Lipschitz bound
+proves \eqref{eq:contractive-stability}.
+\end{proof}
+
+This proposition identifies a sufficient nonvacuous regime: each block
+must contract and their cross-coupling must satisfy $ad>bc$. A routing
+eigengap can improve $d$ in a genuinely locally convex neighborhood, but
+PL over the larger normal neighborhood is insufficient to assert
+\eqref{eq:two-block-stability}. Strong convexity of the parameter objective
+in the relevant metric is also an additional condition, seldom globally
+true in deep learning. For explicit moment blocks, the same argument uses
+a positive weight vector with weighted column sums of their full
+sensitivity matrix strictly below one. These statements give checkable
+sufficient conditions, rather than claiming all empirical runs satisfy them.
+
+\subsection{A complementary PAC-Bayes guarantee for data-dependent routing}
+\label{app:pacbayes}
+
+Stability is algorithm dependent and can become loose over long horizons.
+A second route uses a posterior over the final weights, with no
+contractivity assumption. It establishes a statistical guarantee for a
+randomized predictor and separates optimizer-state dimension from model
+capacity. We provide the elementary exponential-moment proof so that its
+statistical content and its assumptions are explicit.
+
+\begin{proposition}[PAC-Bayes bound and Grassmann-shaped perturbations]
+\label{prop:pacbayes}
+Let $0\le\ell(w,z)\le1$, let $\mathcal P$ be any data-independent
+prior on weights, and fix $\lambda>0$ before observing $S$. With
+probability at least $1-\delta$, simultaneously for every posterior
+$\mathcal Q$ absolutely continuous with respect to $\mathcal P$,
+\begin{equation}
+ L(\mathcal Q)\le\widehat L_S(\mathcal Q)
+ +\frac{\operatorname{KL}(\mathcal Q\|\mathcal P)+\log(1/\delta)}{\lambda}
+ +\frac{\lambda}{8n}.\label{eq:pac-bayes}
+\end{equation}
+For one matrix layer, use a data-independent center $W_0$ and
+\begin{align}
+ \mathcal P&=\mathcal N(\operatorname{vec}W_0,s_0^2I_{md}),\\
+ \mathcal Q_S&=\mathcal N(\operatorname{vec}W_T,
+                   I_m\otimes(s_\parallel^2P_T+s_\perp^2(I-P_T))),
+ \label{eq:routing-posterior}
+\end{align}
+where vectorization is rowwise and all variances are strictly positive.
+The final, data-dependent projector $P_T$ is allowed. Then
+\begin{align}
+ \operatorname{KL}(\mathcal Q_S\|\mathcal P)
+ &=\frac{\|W_T-W_0\|^2}{2s_0^2}\notag\\
+ &\quad+\frac m2\left[r\,k\!\left(\frac{s_\parallel^2}{s_0^2}\right)
+ +(d-r)\,k\!\left(\frac{s_\perp^2}{s_0^2}\right)\right],
+ \label{eq:gaussian-kl}\\
+ k(x)&=x-1-\log x.
+\end{align}
+\end{proposition}
+
+\begin{proof}
+For fixed $w$, Hoeffding's exponential-moment inequality for the independent
+bounded losses gives
+\begin{equation}
+ \mathbb E_S\exp\{\lambda(L(w)-\widehat L_S(w))\}
+ \le\exp(\lambda^2/(8n)).
+\end{equation}
+Integrating over the prior and applying Markov's inequality shows that,
+with probability $1-\delta$,
+\begin{equation}
+ \log\mathbb E_{w\sim\mathcal P}
+       e^{\lambda(L(w)-\widehat L_S(w))}
+ \le\lambda^2/(8n)+\log(1/\delta).
+\end{equation}
+For any posterior, Jensen applied after change of measure gives
+\begin{equation}
+ \lambda\mathbb E_{\mathcal Q}(L-\widehat L_S)
+ \le\operatorname{KL}(\mathcal Q\|\mathcal P)
+      +\log\mathbb E_{\mathcal P}e^{\lambda(L-\widehat L_S)}.
+\end{equation}
+Combining the last two displays proves \eqref{eq:pac-bayes}; the
+high-probability event is independent of the posterior, giving simultaneous
+validity. This is a standard PAC-Bayesian change-of-measure argument
+\cite{mcallester1999pac,seeger2002pacbayes}.
+
+For the Gaussian specialization, the covariance in each row has eigenvalue
+$s_\parallel^2$ with multiplicity $r$ and $s_\perp^2$ with multiplicity
+$d-r$. Insert its trace and determinant in the Gaussian KL identity
+\begin{equation}
+ \operatorname{KL}=\tfrac12\left[
+ \frac{\|W_T-W_0\|^2+\operatorname{tr}\Sigma_Q}{s_0^2}
+ -md+md\log s_0^2-\log\det\Sigma_Q\right].
+\end{equation}
+Collecting the two eigenvalue groups proves \eqref{eq:gaussian-kl}.
+For independent layerwise Gaussian factors, KL adds across layers.
+\end{proof}
+
+The displacement term can be related to the optimizer path without
+assuming the final parameter is low rank. Orthogonality of the two
+implemented branches gives
+\begin{align}
+ \|D_t\|^2&=\|D_t^\parallel\|^2+
+                  \gamma_t^2\|G_t(I-P_t)\|^2,\\
+ \|W_T-W_0\|&\le\sum_{t<T}\eta_t\|D_t\|.
+ \label{eq:displacement-path}
+\end{align}
+For adaptive branch-to-residual scaling, $\gamma_t$ here includes that
+actual scalar. Equations~\eqref{eq:tail-exact} and
+\eqref{eq:displacement-path} connect raw rank tails and routing quality
+to an upper bound on the path's squared length, under the requisite
+conditional measurability. They do not force a smaller path or smaller
+generalization gap than AdamW.
+
+Several qualifications prevent misleading rank-based interpretations.
+First, $k(x)\ge0$ and diverges as $x\downarrow0$; concentrating posterior
+variance in only a few directions can \emph{increase} the KL cost in the
+$m(d-r)$ residual coordinates. Second, reducing those variances may improve
+the empirical perturbation loss, producing a trade-off which must be
+measured. Third, the prior cannot be centered at a data-dependent fitted
+weight without an additional valid prior-selection argument. The isotropic
+prior above allows a data-dependent posterior orientation precisely because
+\eqref{eq:pac-bayes} holds for all posteriors; no assumption that $P_T$ is
+independent of the training set has been made.
+
+The empirical term is the loss of the Gaussian-perturbed predictor, not
+the unperturbed network's training loss. A certificate requires evaluating
+that expectation, with a separate Monte Carlo error allowance if sampled.
+Unbounded cross-entropy must be replaced by a specified bounded surrogate
+or analyzed with an appropriate unbounded-loss theorem. Also, optimizing
+$\lambda$ after observing the posterior is not justified by a bound proved
+for one fixed value. A finite grid of $J$ predeclared values is valid after
+replacing $\log(1/\delta)$ by $\log(J/\delta)$ and taking a union bound.
+Neither the stability bound nor PAC-Bayes is added to the other as a
+spurious improvement; they are alternative guarantees with distinct
+assumptions and output objects.
+
+\subsection{Implications that can be tested, and claims that do not follow}
+
+The analysis suggests four concrete measurements. First, estimate the full
+covariance spectrum and the distance to an \emph{independent} oracle
+subspace; $GU$ alone does not reveal $\lambda_{r+1}$, and consecutive
+bases do not reveal the oracle radius. Second, separate normalized and raw
+covariances when comparing tracking and residual energy. Third, log actual
+parameter-direction alignment or its comparison-metric defect before
+claiming the rate in Theorem~\ref{thm:convergence}. Fourth, estimate
+neighboring-data sensitivity with shared initialization and sampling,
+including moment states, before interpreting a train--test gap as a
+stability measurement. Small single-seed changes in accuracy cannot
+establish any of these theoretical hypotheses.
+
+The four main result families provide a conditional chain from spectral separation
+and angles to routing quality, from a controlled tracking process to an
+explicit perturbation budget, from that budget to stationarity, and from
+full-state sensitivity or posterior complexity to generalization. They
+do not imply universal optimizer superiority, a compulsory rank-tail error
+floor with a nonzero residual branch, full gauge invariance of Adam, or a
+nonvacuous numerical generalization certificate for the present deep
+networks. These boundaries are part of the mathematical conclusions.
+Theorem~\ref{thm:gap-collapse} additionally shows why the separated tracking
+and stationarity regimes need not hold simultaneously throughout training;
+Theorem~\ref{thm:tracking-PAC} supplies an explicit finite-window statistical
+connection with a valid independent prior.

@@ -1,0 +1,143 @@
+{
+  "hp": {
+    "lr": 0.003
+  },
+  "criterion": "final validation primary metric; fresh formal initialization; one final test evaluation",
+  "candidates": [
+    {
+      "hp": {
+        "lr": 0.0003
+      },
+      "status": "complete",
+      "validation": {
+        "accuracy": 0.9202898550724637,
+        "macro_f1": 0.9153300566028054,
+        "cross_entropy": 0.2511671781539917,
+        "n": 690,
+        "auroc": 0.960280045032367,
+        "score": 0.960280045032367
+      },
+      "error": null
+    },
+    {
+      "hp": {
+        "lr": 0.0005
+      },
+      "status": "complete",
+      "validation": {
+        "accuracy": 0.9304347826086956,
+        "macro_f1": 0.92658533125266,
+        "cross_entropy": 0.19739225506782532,
+        "n": 690,
+        "auroc": 0.9739040951308753,
+        "score": 0.9739040951308753
+      },
+      "error": null
+    },
+    {
+      "hp": {
+        "lr": 0.001
+      },
+      "status": "complete",
+      "validation": {
+        "accuracy": 0.9478260869565217,
+        "macro_f1": 0.9452380952380952,
+        "cross_entropy": 0.17565418779850006,
+        "n": 690,
+        "auroc": 0.9791197579510273,
+        "score": 0.9791197579510273
+      },
+      "error": null
+    },
+    {
+      "hp": {
+        "lr": 0.002
+      },
+      "status": "complete",
+      "validation": {
+        "accuracy": 0.9478260869565217,
+        "macro_f1": 0.9450908962297517,
+        "cross_entropy": 0.1886029690504074,
+        "n": 690,
+        "auroc": 0.9796826625386997,
+        "score": 0.9796826625386997
+      },
+      "error": null
+    },
+    {
+      "hp": {
+        "lr": 0.003
+      },
+      "status": "complete",
+      "validation": {
+        "accuracy": 0.946376811594203,
+        "macro_f1": 0.943603915253451,
+        "cross_entropy": 0.21117812395095825,
+        "n": 690,
+        "auroc": 0.9800080917534478,
+        "score": 0.9800080917534478
+      },
+      "error": null
+    },
+    {
+      "hp": {
+        "lr": 0.005
+      },
+      "status": "complete",
+      "validation": {
+        "accuracy": 0.9405797101449276,
+        "macro_f1": 0.9375070412267972,
+        "cross_entropy": 0.28869742155075073,
+        "n": 690,
+        "auroc": 0.9773782718829158,
+        "score": 0.9773782718829158
+      },
+      "error": null
+    },
+    {
+      "hp": {
+        "lr": 0.01
+      },
+      "status": "complete",
+      "validation": {
+        "accuracy": 0.9347826086956522,
+        "macro_f1": 0.9314101672001431,
+        "cross_entropy": 0.42714521288871765,
+        "n": 690,
+        "auroc": 0.9763184280889389,
+        "score": 0.9763184280889389
+      },
+      "error": null
+    },
+    {
+      "hp": {
+        "lr": 0.02
+      },
+      "status": "complete",
+      "validation": {
+        "accuracy": 0.9391304347826087,
+        "macro_f1": 0.9359393789347104,
+        "cross_entropy": 0.524009108543396,
+        "n": 690,
+        "auroc": 0.9751970166056854,
+        "score": 0.9751970166056854
+      },
+      "error": null
+    },
+    {
+      "hp": {
+        "lr": 0.03
+      },
+      "status": "complete",
+      "validation": {
+        "accuracy": 0.9405797101449276,
+        "macro_f1": 0.9374218879610684,
+        "cross_entropy": 0.6348916292190552,
+        "n": 690,
+        "auroc": 0.9735127005347594,
+        "score": 0.9735127005347594
+      },
+      "error": null
+    }
+  ]
+}

@@ -1,0 +1,8 @@
+% WWW table style: three rules, bold headers, reference green highlight.
+\begin{table*}[htbp]\centering\small
+\caption{Independent expanded-search PINN follow-up with a transport-corrected periodic comparator. Nine validation-screen candidates per method (100 epochs each), then a fresh 2000-epoch run of the selected configuration. Final held-out solution relative $L_2$ error; lower is better. -- denotes unfinished, not omitted, training.}
+\label{tab:pinn-strength}
+\reviewfit{\begin{tabular}{lrrrr}\toprule {\bfseries Task} & {\bfseries AdamW} & {\bfseries Fixed} & {\bfseries PeriodicDiag} & \cellcolor{oursbg}{\bfseries GrassRoute}\\\midrule
+Poisson / PINN  &  $9.52\!\times\!10^{-4}$  &  $1.97\!\times\!10^{-4}$  &  $\mathbf{4.90\!\times\!10^{-5}}$  &  \cellcolor{oursbg}$6.70\!\times\!10^{-5}$\\
+Forced Burgers / PINN  &  \textbf{0.00239}  &  0.0128  &  0.00582  &  \cellcolor{oursbg}0.00427\\
+\bottomrule\end{tabular}}\end{table*}

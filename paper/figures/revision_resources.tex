@@ -1,0 +1,125 @@
+% WWW table style: three rules, bold headers, reference green highlight.
+{\scriptsize\setlength{\tabcolsep}{3pt}
+\begin{longtable}{llrrrr}
+\caption{Completed-run resource and selection audit. Persistent state is in decimal MB. Wall time includes validation, diagnostics and checkpointing on a shared host; it is not an isolated speed benchmark.}\\
+\toprule {\bfseries Task} & {\bfseries Method} & {\bfseries LR} & {\bfseries State MB} & {\bfseries Seconds} & {\bfseries Epochs}\\ \midrule\endfirsthead
+\toprule {\bfseries Task} & {\bfseries Method} & {\bfseries LR} & {\bfseries State MB} & {\bfseries Seconds} & {\bfseries Epochs}\\ \midrule\endhead
+Matrix reg. / 128 & SGD-M & 0.3 & 0.016 & 30.1 & 2000 \\
+Matrix reg. / 128 & AdamW & 0.01 & 0.033 & 34.9 & 2000 \\
+Matrix reg. / 128 & Fixed & 0.01 & 0.020 & 50.2 & 2000 \\
+Matrix reg. / 128 & Periodic SVD & 0.01 & 0.020 & 40.6 & 2000 \\
+\rowcolor{oursbg}Matrix reg. / 128 & \textbf{GrassRoute} & 0.003 & 0.020 & 46.8 & 2000 \\
+Matrix reg. / 128 & SubTrack++ & 0.01 & 0.025 & 35.0 & 2000 \\
+Matrix reg. / 256 & SGD-M & 0.3 & 0.033 & 35.1 & 2000 \\
+Matrix reg. / 256 & AdamW & 0.01 & 0.066 & 34.8 & 2000 \\
+Matrix reg. / 256 & Fixed & 0.01 & 0.037 & 42.3 & 2000 \\
+Matrix reg. / 256 & Periodic SVD & 0.01 & 0.037 & 37.8 & 2000 \\
+\rowcolor{oursbg}Matrix reg. / 256 & \textbf{GrassRoute} & 0.01 & 0.037 & 42.6 & 2000 \\
+Matrix reg. / 256 & SubTrack++ & 0.01 & 0.041 & 36.7 & 2000 \\
+Matrix reg. / 512 & SGD-M & 0.3 & 0.066 & 46.0 & 2000 \\
+Matrix reg. / 512 & AdamW & 0.01 & 0.131 & 40.6 & 2000 \\
+Matrix reg. / 512 & Fixed & 0.01 & 0.070 & 63.9 & 2000 \\
+Matrix reg. / 512 & Periodic SVD & 0.01 & 0.070 & 52.2 & 2000 \\
+\rowcolor{oursbg}Matrix reg. / 512 & \textbf{GrassRoute} & 0.01 & 0.070 & 58.8 & 2000 \\
+Matrix reg. / 512 & SubTrack++ & 0.01 & 0.074 & 54.7 & 2000 \\
+Low-rank reg. / 128 & SGD-M & 0.3 & 0.016 & 29.6 & 2000 \\
+Low-rank reg. / 128 & AdamW & 0.01 & 0.033 & 30.9 & 2000 \\
+Low-rank reg. / 128 & Fixed & 0.01 & 0.020 & 43.2 & 2000 \\
+Low-rank reg. / 128 & Periodic SVD & 0.01 & 0.020 & 36.6 & 2000 \\
+\rowcolor{oursbg}Low-rank reg. / 128 & \textbf{GrassRoute} & 0.01 & 0.020 & 47.0 & 2000 \\
+Low-rank reg. / 128 & SubTrack++ & 0.01 & 0.025 & 33.5 & 2000 \\
+Low-rank reg. / 256 & SGD-M & 0.3 & 0.033 & 32.6 & 2000 \\
+Low-rank reg. / 256 & AdamW & 0.01 & 0.066 & 30.8 & 2000 \\
+Low-rank reg. / 256 & Fixed & 0.01 & 0.037 & 46.7 & 2000 \\
+Low-rank reg. / 256 & Periodic SVD & 0.01 & 0.037 & 36.8 & 2000 \\
+\rowcolor{oursbg}Low-rank reg. / 256 & \textbf{GrassRoute} & 0.003 & 0.037 & 44.4 & 2000 \\
+Low-rank reg. / 256 & SubTrack++ & 0.01 & 0.041 & 34.2 & 2000 \\
+Low-rank reg. / 512 & SGD-M & 0.3 & 0.066 & 32.2 & 2000 \\
+Low-rank reg. / 512 & AdamW & 0.01 & 0.131 & 32.7 & 2000 \\
+Low-rank reg. / 512 & Fixed & 0.01 & 0.070 & 47.2 & 2000 \\
+Low-rank reg. / 512 & Periodic SVD & 0.01 & 0.070 & 37.1 & 2000 \\
+\rowcolor{oursbg}Low-rank reg. / 512 & \textbf{GrassRoute} & 0.003 & 0.070 & 47.5 & 2000 \\
+Low-rank reg. / 512 & SubTrack++ & 0.01 & 0.074 & 34.9 & 2000 \\
+MNIST / MLP & SGD-M & 0.1 & 3.194 & 15153.4 & 2000 \\
+MNIST / MLP & AdamW & 0.003 & 6.388 & 11618.1 & 2000 \\
+MNIST / MLP & Fixed & 0.003 & 0.416 & 18554.2 & 2000 \\
+MNIST / MLP & Periodic SVD & 0.003 & 0.416 & 13858.7 & 2000 \\
+\rowcolor{oursbg}MNIST / MLP & \textbf{GrassRoute} & 0.003 & 0.416 & 26244.9 & 2000 \\
+MNIST / MLP & SubTrack++ & 0.0003 & 2.776 & 12787.8 & 2000 \\
+ResNet-18 / CIFAR-10 & SGD-M & 0.01 & 44.696 & 19073.2 & 1000 \\
+ResNet-18 / CIFAR-10 & AdamW & 0.001 & 89.392 & 16410.2 & 1000 \\
+ResNet-18 / CIFAR-10 & Fixed & 0.003 & 9.254 & 91476.8 & 1000 \\
+ResNet-18 / CIFAR-10 & Periodic SVD & 0.003 & 9.254 & 39569.7 & 1000 \\
+\rowcolor{oursbg}ResNet-18 / CIFAR-10 & \textbf{GrassRoute} & 0.003 & 9.254 & 63174.5 & 1000 \\
+ResNet-18 / CIFAR-10 & SubTrack++ & 0.001 & 15.169 & 28167.4 & 1000 \\
+ResNet-18 / CIFAR-100 & SGD-M & 0.01 & 44.881 & 18169.7 & 1000 \\
+ResNet-18 / CIFAR-100 & AdamW & 0.001 & 89.761 & 24274.0 & 1000 \\
+ResNet-18 / CIFAR-100 & Periodic SVD & 0.003 & 9.390 & 51469.9 & 1000 \\
+Cora / SAGE & SGD-M & 0.3 & 1.475 & 5.2 & 1000 \\
+Cora / SAGE & AdamW & 0.01 & 2.950 & 9.0 & 1000 \\
+Cora / SAGE & Fixed & 0.01 & 0.207 & 24.9 & 1000 \\
+Cora / SAGE & Periodic SVD & 0.01 & 0.207 & 19.4 & 1000 \\
+\rowcolor{oursbg}Cora / SAGE & \textbf{GrassRoute} & 0.01 & 0.207 & 25.3 & 1000 \\
+Cora / SAGE & SubTrack++ & 0.003 & 0.339 & 12.7 & 1000 \\
+CiteSeer / SAGE & SGD-M & 0.3 & 3.799 & 9.0 & 1000 \\
+CiteSeer / SAGE & AdamW & 0.003 & 7.597 & 9.1 & 1000 \\
+CiteSeer / SAGE & Fixed & 0.01 & 0.498 & 25.8 & 1000 \\
+CiteSeer / SAGE & Periodic SVD & 0.01 & 0.498 & 24.7 & 1000 \\
+\rowcolor{oursbg}CiteSeer / SAGE & \textbf{GrassRoute} & 0.003 & 0.498 & 26.3 & 1000 \\
+CiteSeer / SAGE & SubTrack++ & 0.003 & 0.629 & 12.6 & 1000 \\
+PubMed / SAGE & SGD-M & 0.3 & 0.516 & 9.0 & 1000 \\
+PubMed / SAGE & AdamW & 0.01 & 1.031 & 6.2 & 1000 \\
+PubMed / SAGE & Fixed & 0.001 & 0.088 & 30.0 & 1000 \\
+PubMed / SAGE & Periodic SVD & 0.01 & 0.088 & 10.3 & 1000 \\
+\rowcolor{oursbg}PubMed / SAGE & \textbf{GrassRoute} & 0.01 & 0.088 & 17.2 & 1000 \\
+PubMed / SAGE & SubTrack++ & 0.01 & 0.219 & 11.1 & 1000 \\
+ogbn-arxiv / SAGE & SGD-M & 0.3 & 0.173 & 17.7 & 1000 \\
+ogbn-arxiv / SAGE & AdamW & 0.01 & 0.345 & 22.3 & 1000 \\
+ogbn-arxiv / SAGE & Fixed & 0.01 & 0.056 & 38.7 & 1000 \\
+ogbn-arxiv / SAGE & Periodic SVD & 0.01 & 0.056 & 32.5 & 1000 \\
+\rowcolor{oursbg}ogbn-arxiv / SAGE & \textbf{GrassRoute} & 0.01 & 0.056 & 38.6 & 1000 \\
+ogbn-arxiv / SAGE & SubTrack++ & 0.01 & 0.200 & 26.6 & 1000 \\
+Poisson / PINN & SGD-M & 0.01 & 0.134 & 8.3 & 2000 \\
+Poisson / PINN & AdamW & 0.01 & 0.267 & 13.4 & 2000 \\
+Poisson / PINN & Fixed & 0.003 & 0.038 & 70.3 & 2000 \\
+Poisson / PINN & Periodic SVD & 0.01 & 0.038 & 10.7 & 2000 \\
+\rowcolor{oursbg}Poisson / PINN & \textbf{GrassRoute} & 0.01 & 0.038 & 22.1 & 2000 \\
+Poisson / PINN & SubTrack++ & 0.01 & 0.169 & 10.4 & 2000 \\
+Forced Burgers / PINN & SGD-M & 0.01 & 0.134 & 10.2 & 2000 \\
+Forced Burgers / PINN & AdamW & 0.01 & 0.268 & 14.7 & 2000 \\
+Forced Burgers / PINN & Fixed & 0.01 & 0.039 & 17.0 & 2000 \\
+Forced Burgers / PINN & Periodic SVD & 0.01 & 0.039 & 20.6 & 2000 \\
+\rowcolor{oursbg}Forced Burgers / PINN & \textbf{GrassRoute} & 0.01 & 0.039 & 17.1 & 2000 \\
+Forced Burgers / PINN & SubTrack++ & 0.003 & 0.170 & 22.0 & 2000 \\
+Darcy / DeepONet & SGD-M & 0.3 & 0.233 & 79.5 & 2000 \\
+Darcy / DeepONet & AdamW & 0.003 & 0.466 & 36.5 & 2000 \\
+Darcy / DeepONet & Fixed & 0.01 & 0.077 & 743.7 & 2000 \\
+Darcy / DeepONet & Periodic SVD & 0.01 & 0.077 & 70.4 & 2000 \\
+\rowcolor{oursbg}Darcy / DeepONet & \textbf{GrassRoute} & 0.003 & 0.077 & 494.1 & 2000 \\
+Darcy / DeepONet & SubTrack++ & 0.01 & 0.257 & 59.5 & 2000 \\
+Burgers operator / FNO & SGD-M & 0.3 & 0.419 & 68.9 & 2000 \\
+Burgers operator / FNO & AdamW & 0.01 & 0.838 & 85.2 & 2000 \\
+Burgers operator / FNO & Fixed & 0.01 & 0.230 & 488.0 & 2000 \\
+Burgers operator / FNO & Periodic SVD & 0.01 & 0.230 & 345.8 & 2000 \\
+\rowcolor{oursbg}Burgers operator / FNO & \textbf{GrassRoute} & 0.01 & 0.230 & 1458.0 & 2000 \\
+Burgers operator / FNO & SubTrack++ & 0.01 & 0.267 & 241.7 & 2000 \\
+MovieLens-1M / MF & SGD-M & 0.3 & 2.449 & 4301.9 & 1000 \\
+MovieLens-1M / MF & AdamW & 0.003 & 4.898 & 4039.9 & 1000 \\
+MovieLens-1M / MF & Fixed & 0.003 & 1.241 & 7321.2 & 1000 \\
+MovieLens-1M / MF & Periodic SVD & 0.003 & 1.241 & 5004.4 & 1000 \\
+\rowcolor{oursbg}MovieLens-1M / MF & \textbf{GrassRoute} & 0.003 & 1.241 & 6852.2 & 1000 \\
+MovieLens-1M / MF & SubTrack++ & 0.003 & 1.274 & 5245.6 & 1000 \\
+Amazon Books subset / MF & SGD-M & 0.01 & 12.350 & 584.0 & 1000 \\
+Amazon Books subset / MF & AdamW & 0.003 & 24.699 & 628.8 & 1000 \\
+Amazon Books subset / MF & Fixed & 0.003 & 6.191 & 932.0 & 1000 \\
+Amazon Books subset / MF & Periodic SVD & 0.003 & 6.191 & 734.0 & 1000 \\
+\rowcolor{oursbg}Amazon Books subset / MF & \textbf{GrassRoute} & 0.003 & 6.191 & 936.3 & 1000 \\
+Amazon Books subset / MF & SubTrack++ & 0.003 & 6.224 & 719.6 & 1000 \\
+Yelp subset / MF & SGD-M & 0.1 & 7.190 & 493.3 & 1000 \\
+Yelp subset / MF & AdamW & 0.003 & 14.379 & 520.9 & 1000 \\
+Yelp subset / MF & Fixed & 0.003 & 3.611 & 871.9 & 1000 \\
+Yelp subset / MF & Periodic SVD & 0.003 & 3.611 & 556.3 & 1000 \\
+\rowcolor{oursbg}Yelp subset / MF & \textbf{GrassRoute} & 0.003 & 3.611 & 832.9 & 1000 \\
+Yelp subset / MF & SubTrack++ & 0.003 & 3.644 & 614.2 & 1000 \\
+\bottomrule\end{longtable}
+}

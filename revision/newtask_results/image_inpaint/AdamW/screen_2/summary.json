@@ -1,0 +1,103 @@
+{
+  "task": "image_inpaint",
+  "method": "AdamW",
+  "hp": {
+    "lr": 0.001
+  },
+  "epochs": 200,
+  "seed": 42,
+  "formal": false,
+  "routed_layers": [
+    {
+      "name": "0.weight",
+      "shape": [
+        128,
+        128
+      ],
+      "rank": 8
+    },
+    {
+      "name": "2.weight",
+      "shape": [
+        32,
+        128
+      ],
+      "rank": 8
+    },
+    {
+      "name": "4.weight",
+      "shape": [
+        128,
+        32
+      ],
+      "rank": 8
+    },
+    {
+      "name": "6.weight",
+      "shape": [
+        64,
+        128
+      ],
+      "rank": 8
+    }
+  ],
+  "data": {
+    "family": "inverse_imaging",
+    "source": "https://archive.ics.uci.edu/dataset/80/optical+recognition+of+handwritten+digits",
+    "source_sha256": "0d7b054fea010270e9b3f06411c654c5e59547732ad626381980baffe0a23fb0",
+    "original_training": 3823,
+    "original_test": 1797,
+    "target": "clean 8x8 pixel values",
+    "corruption": "50% independent pixel masking; concatenate visibility mask",
+    "evaluation": "MSE on fixed independent validation/test corruptions",
+    "metric_definition": "missing-pixel MSE; observed pixels copied for full-image PSNR",
+    "corruption_training": "fresh corruption every full epoch",
+    "metric": "mse",
+    "higher": false,
+    "source_test_split": "official writer-disjoint split",
+    "pixel_normalization": "divide by 16",
+    "name": "image_inpaint",
+    "seed": 42,
+    "shape": [
+      [
+        3058,
+        64
+      ],
+      [
+        765,
+        64
+      ],
+      [
+        1797,
+        64
+      ]
+    ],
+    "preprocessing_fit_split": "training only",
+    "file_sha256": {
+      "x_train.npy": "0d24e88f58f49054fa72edb32584dadcf3b4ab938c1a509912db9e22e27ac1d9",
+      "y_train.npy": "0d24e88f58f49054fa72edb32584dadcf3b4ab938c1a509912db9e22e27ac1d9",
+      "x_val.npy": "750bc4cf413f62f6d34c3ce184948ade84e8ca5735d4d2bba686e93158c2bb9a",
+      "y_val.npy": "750bc4cf413f62f6d34c3ce184948ade84e8ca5735d4d2bba686e93158c2bb9a",
+      "x_test.npy": "b0d9a6a65c36bccf6bd5b34d26cf32ab7e9c7a624dfa0c11ada280e21a73125f",
+      "y_test.npy": "b0d9a6a65c36bccf6bd5b34d26cf32ab7e9c7a624dfa0c11ada280e21a73125f",
+      "indices_train.npy": "56dabcaa67b54a616540c47fa7be1f06eecc833a25671a183ec87aa661dbb18b",
+      "indices_val.npy": "6f5cd2ea27ab2bd1b90dbefc959c178dfcf1201e8cb77edc6828acc452f53959",
+      "indices_test.npy": "60bf04aeaf694803bf09013525094a2b82f1db2b70905348e75cbdbff9c9aaed"
+    },
+    "preparation_source_sha256": "3c91b1ef9023d7775d4a9d85bb8928dd7746dcda26526c32f8c5730c729f7309"
+  },
+  "protocol_sha256": "f79744557aae2f3e5a51fb9db8734d40728a460b9666edfe87151a3162dedddf",
+  "status": "complete",
+  "n_epochs": 200,
+  "validation": {
+    "score": 0.07419276237487793,
+    "mse": 0.07419276237487793,
+    "full_image_mse": 0.037013035267591476,
+    "psnr": 14.316452989655513,
+    "n": 765
+  },
+  "test": null,
+  "state_bytes": 264992,
+  "final_train_loss": 0.07340838015079498,
+  "wall_s": 1.9592385701835155
+}

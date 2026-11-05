@@ -1,0 +1,17 @@
+\begin{table*}[t]\centering\footnotesize
+\caption{\textbf{Exploratory drifting-regression controls.} A rank-four
+teacher in $\mathbb{R}^{16\times64}$ rotates at the stated radians per
+update; stationary is the negative control. Entries are mean independent
+test MSE over the last 20\% of 1500 fresh steps after four equal-budget
+validation candidates per method. All conditions and outcomes are retained.
+Seed 42; lower is better. State reduction compares persistent GrassRoute
+optimizer state with AdamW. This synthetic stream is distinct from
+public-data generalization.}
+\label{tab:focused-regression}
+\setlength{\tabcolsep}{6pt}
+\begin{tabular}{lrrrrrr}\toprule
+Drift & SGD-M & AdamW & Fixed & Periodic SVD & GrassRoute & State reduction \\ \midrule
+$0$ & $2.346\times10^{-5}$ & $9.139\times10^{-4}$ & $3.705\times10^{-5}$ & $3.425\times10^{-5}$ & \cellcolor{oursbg}$4.235\times10^{-5}$ & 68.8\% \\
+$0.005$ & $3.448\times10^{-4}$ & $4.767\times10^{-3}$ & $1.149\times10^{-3}$ & $6.947\times10^{-4}$ & \cellcolor{oursbg}$7.778\times10^{-4}$ & 68.8\% \\
+$0.020$ & $1.315\times10^{-3}$ & $1.002\times10^{-2}$ & $1.648\times10^{-2}$ & $1.694\times10^{-2}$ & \cellcolor{oursbg}$2.395\times10^{-1}$ & 68.8\% \\
+\bottomrule\end{tabular}\end{table*}

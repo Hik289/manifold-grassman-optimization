@@ -1,0 +1,107 @@
+% WWW table style: three rules, bold headers, reference green highlight.
+\subsection{Complete new public-data suite}
+\label{app:new-task-full}
+The six new tasks are retained as a complete evaluation set. The suite was
+motivated by the geometric hypothesis after examining the earlier archive;
+it is a follow-up study rather than an independent confirmation of universal
+optimizer superiority. A main-text subset is identified by the rule in
+Section~\ref{sec:new-public-tasks}; this appendix retains all six tasks and
+all methods regardless of their ranking. No unsuccessful run is deleted
+after observing its test result.
+
+\begin{table}[htbp]\centering\small
+\caption{New-task data and primary metrics. Preprocessing fits the training
+split only. Counts are actual prepared examples, not nominal dataset sizes.}
+\reviewfit{\begin{tabular}{lrrrl}\toprule {\bfseries Task} & {\bfseries Train} & {\bfseries Validation} & {\bfseries Test} & {\bfseries Primary metric}\\\midrule
+20 Newsgroups  &  9051  &  2263  &  7532  &  Macro-F1 $\uparrow$\\
+SMS Spam (deduplicated)  &  3612  &  774  &  774  &  Macro-F1 $\uparrow$\\
+Adult  &  26048  &  6513  &  16281  &  AUROC $\uparrow$\\
+Spambase  &  3220  &  690  &  691  &  AUROC $\uparrow$\\
+Optdigits denoising  &  3058  &  765  &  1797  &  Pixel MSE $\downarrow$\\
+Optdigits completion  &  3058  &  765  &  1797  &  Missing-pixel MSE $\downarrow$\\
+\bottomrule\end{tabular}}\end{table}
+
+\paragraph{Text.}
+20 Newsgroups uses the official by-date train/test split through the
+scikit-learn loader, with headers, footers and quotes removed
+\cite{sklearn20newsdata}. A stratified 20\% of the official training set is
+reserved for validation. TF-IDF uses a vocabulary of at most 2048 terms,
+minimum document frequency 2, maximum document frequency 0.95, sublinear
+term frequency and row normalization; its vocabulary and inverse document
+frequencies fit only the training documents. Official test documents,
+including empty texts and exact-text overlaps in the released corpus, are
+retained and those counts are recorded; exact-text independence is not
+asserted. SMS Spam \cite{uci2011sms} removes exact stripped-message duplicates
+and conflicting duplicate labels before a stratified 70/15/15 split. It uses
+the same TF-IDF parameters. Both text models use a 64-unit ReLU hidden layer,
+dropout 0.1, and a linear classifier. Sparse inputs remain sparse in the first
+matrix product. Macro-F1, rather than majority-class accuracy, is the primary
+selection metric; predictions use the fixed argmax rule.
+
+\paragraph{Structured data.}
+Adult \cite{uci1996adult} retains its official test set and reserves 20\% of
+its training rows for stratified validation. Continuous features are
+standardized with training statistics; categories are training-fitted one-hot
+features, unknown categories are ignored and missing categories are explicit.
+Spambase \cite{uci1999spambase} uses a stratified 70/15/15 split and training
+standardization. Both models have 128 and 64 ReLU units, dropout 0.1 after
+the first hidden layer, and two output logits. The primary metric is AUROC;
+accuracy, macro-F1 and cross-entropy are retained as secondary diagnostics.
+
+\paragraph{Inverse imaging.}
+The Optdigits corpus \cite{uci1998optdigits} preserves its official
+writer-disjoint test set, with 20\% of the original training set reserved
+for stratified validation. The 64 pixel features are divided by 16. The
+denoising task adds independent Gaussian noise with standard deviation 0.3
+and clips corrupted inputs to $[0,1]$. The completion task independently
+masks half the pixels and concatenates the visibility mask to the input.
+Training uses fresh corruptions on every full epoch; validation and testing
+use fixed independent corruptions. The encoder--decoder widths are
+128--32--128, with tanh hidden activations and sigmoid output. Denoising
+optimizes all-pixel MSE. Completion optimizes missing-pixel MSE; observed
+pixels are copied when computing full-image reconstruction MSE and PSNR.
+The two tasks do not constitute separate independent image datasets.
+
+\paragraph{Search and state accounting.}
+Ranks start at 8 and are capped below the input dimension and at half the
+output dimension. Small matrices and biases use full Adam fallback in routed
+methods. All weight decays are zero. AdamW searches learning rates
+$\{0.0003,0.0005,0.001,0.002,0.003,0.005,0.01,0.02,0.03\}$;
+SGD-M searches nine geometrically spaced rates from $0.001$ to 3, with
+momentum 0.9. Routed methods cross rates $\{0.001,0.003,0.01\}$ with
+residual-rate ratios $\{1,10,100\}$. GrassRoute tracking rates
+$\{0.3,1,3\}$ and periodic intervals $\{5,25,100\}$ are assigned in a
+balanced cyclic design across those nine cells, not exhaustively crossed.
+Official SubTrack++ crosses the same three parameter rates with initial
+subspace steps $\{0.1,1,3\}$ and uses the device-only CPU adapter described
+above. Adaptive moments use $\beta_1=0.9,\beta_2=0.999$; GrassRoute uses
+routing momentum 0.9 and diagonal transport. Fixed and periodic comparators
+retain no unused routing momentum. Thin SVD uses a double-precision retry
+only if its single-precision decomposition raises a linear algebra error.
+Persistent state is measured from allocated optimizer storage, including the
+official projector state. Shared-host CPU wall times are not isolated speed
+measurements.
+
+All screening runs use 200 complete epochs; final validation selects a
+configuration, which is retrained afresh for 1000 epochs before a single
+held-out test evaluation. Optimizer random initialization is isolated from
+dropout/corruption streams. Restartable checkpoints retain model, optimizer
+and random states. Every candidate, numerical failure, full trajectory,
+source hash and endpoint remains in the ledger. The frozen manifest is
+\path{revision/newtask_results/protocol.json}; the checked outcome ledger is
+\path{revision/newtask_status.json}. These new runs do not inflate the
+original 162-comparison completion count.
+
+\input{figures/newtasks_full_table}
+\input{figures/newtasks_secondary_table}
+\clearpage
+\begin{figure}[htbp]\centering
+\includegraphics[width=\linewidth]{figures/fig_newtask_losses_all.pdf}
+\caption{Complete new-task training-loss matrix, including every completed
+formal optimizer run. Missing curves indicate unfinished or failed formal
+training, never an omitted unfavorable endpoint. All full runs have 1000
+epochs. Faint lines are raw objectives and solid lines are 25-epoch trailing
+means. Task selection for the main-text illustration does not remove any
+curve from this complete matrix.}
+\label{fig:newtasks-all}
+\end{figure}

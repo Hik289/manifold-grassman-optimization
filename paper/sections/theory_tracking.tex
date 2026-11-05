@@ -1,0 +1,197 @@
+\subsection{Stochastic online tracking with an explicit perturbation budget}
+\label{app:tracking}
+
+The landscape result concerns a fixed covariance. During training both its
+eigenvectors and eigenvalues change, and the tracked basis is driven by noisy
+mini-batches. We first establish a finite-horizon bound on objective excess.
+This avoids silently replacing PL by a two-trajectory contraction property.
+
+\begin{assumption}[Bounded, separated tracking interval]
+\label{ass:tracking}
+On the interval considered, $C_t\succeq0$,
+$\|C_t\|_{\mathrm{op}}\le C_0$, and
+$\lambda_r(C_t)-\lambda_{r+1}(C_t)\ge\Delta_0>0$.
+Every update remains in the region
+$\theta_{\max}(U_t,U_t^\star)\le R_0<\pi/2$.
+Its descent representation is
+\begin{equation}
+ U_{t+1}=\operatorname{Retr}_{U_t}\{-\rho_t(g_t+\zeta_t+b_t)\},
+ \qquad g_t=\operatorname{grad}\Phi_t(U_t),\label{eq:tracking-update}
+\end{equation}
+where $\mathbb E_t\zeta_t=0$,
+$\mathbb E_t\|\zeta_t\|^2\le\sigma_t^2$, and
+$\mathbb E_t\|b_t\|^2\le B_t^2$.
+The retraction pullback satisfies
+\begin{equation}
+ \Phi_t(\operatorname{Retr}_U\xi)
+ \le\Phi_t(U)+\langle\operatorname{grad}\Phi_t(U),\xi\rangle
+                    +\frac{L_R}{2}\|\xi\|^2\label{eq:pullback-smooth}
+\end{equation}
+for all actual steps, and
+$\|C_{t+1}-C_t\|\le v_t$ almost surely, with deterministic $v_t$.
+\end{assumption}
+
+Proposition~\ref{prop:qr-calculus} verifies \eqref{eq:pullback-smooth}
+with the sharp, dimension-free choice
+$L_R=\sup_t[\lambda_1(C_t)-\lambda_d(C_t)]\le C_0$.
+No small-angle assumption is required for this pullback inequality itself;
+the principal-angle restriction is used only by the PL inequality.
+
+The bias $b_t$ records deviations from a fresh stochastic tangent-gradient
+step. It includes the Grassmann momentum lag, deterministic approximation
+errors, and any clipping bias. It is permitted to correlate with $\zeta_t$.
+This is useful for the implemented momentum, whose error cannot be treated
+as independent zero-mean noise.
+
+\begin{lemma}[Ky Fan completion of squares for moving objective excess]
+\label{lem:excess-drift}
+Let $C,C'$ be symmetric, let $C$ have rank-$r$ gap at least $\Delta_0>0$,
+and put $v=\|C'-C\|_F$. No gap assumption on $C'$ is needed. For every
+rank-$r$ projector $P$ and every $a>0$,
+\begin{equation}
+ h_{C'}(P)\le(1+a)h_C(P)+\frac{1+a^{-1}}{4\Delta_0}v^2.
+ \label{eq:excess-drift}
+\end{equation}
+For fixed $a$, the coefficient $(1+a^{-1})/4$ is optimal to second order.
+\end{lemma}
+\begin{proof}
+Let $P_\star,P_\star'$ maximize the respective Ky Fan traces
+\cite{fan1951maximum}, $E=C'-C$, and $D=P_\star'-P_\star$. Then
+\begin{align}
+ h_{C'}(P)-h_C(P)
+ &=\tfrac12\operatorname{tr}\{E(P_\star-P)\}
+                      +\tfrac12\operatorname{tr}(C'D),\\
+ \tfrac12\operatorname{tr}(C'D)
+ &=-h_C(P_\star')+\tfrac12\langle E,D\rangle\\
+ &\le-\tfrac14\Delta_0\|D\|_F^2+\tfrac12v\|D\|_F
+ \le\frac{v^2}{4\Delta_0}.
+\end{align}
+The last line completes a square, retaining the curvature term which a
+plain perturbation-norm estimate discards. Also,
+\begin{equation}
+ \tfrac12|\langle E,P_\star-P\rangle|
+ \le v\sqrt{h_C(P)/\Delta_0}
+ \le a h_C(P)+\frac{v^2}{4a\Delta_0}.
+\end{equation}
+For sharpness take $r=1,d=2$,
+$C=\gamma I+\operatorname{Diag}(\Delta_0,0)$, $\gamma>0$,
+$E_e=\left(\begin{smallmatrix}0&e\\e&0\end{smallmatrix}\right)$,
+and $P_e=u_eu_e^\top$ with $u_e=(\cos\theta_e,\sin\theta_e)$,
+$\theta_e=-e/(a\Delta_0)$. Direct diagonalization gives
+\begin{equation}
+ \lim_{e\to0}\frac{\Delta_0\{h_{C+E_e}(P_e)-(1+a)h_C(P_e)\}}
+                         {\|E_e\|_F^2}=\frac{1+a^{-1}}4.
+\end{equation}
+\end{proof}
+
+\begin{theorem}[Tracking with unrounded contraction and perturbation constants]
+\label{thm:tracking}
+Under Assumption~\ref{ass:tracking}, let
+$\mu=\Delta_0\cos^2R_0$, $\alpha_t=\rho_t\mu$,
+$L_R\rho_t\le1/4$, and $\alpha_t\le1/2$. Define
+\begin{align}
+ q_t&=(1+\alpha_t/2)(1-\alpha_t),\\
+ A_t&=2(1+\alpha_t/2)
+                 (L_R\rho_t^2\sigma_t^2+\rho_tB_t^2)
+                  +\left(\frac1{2\alpha_t}+\frac14\right)
+                                      \frac{v_t^2}{\Delta_0}.
+\end{align}
+For $h_t=h_{C_t}(U_t)$,
+\begin{align}
+ \mathbb E h_{t+1}&\le q_t\mathbb E h_t+A_t,
+ \label{eq:tracking-recursion}\\
+ \mathbb E h_T&\le h_0\prod_{j<T}q_j+
+                  \sum_{t<T}A_t\prod_{j=t+1}^{T-1}q_j.
+ \label{eq:tracking-unrolled}
+\end{align}
+For constant bounds and step $\rho$, with
+$\alpha=\rho\mu$ and $\chi_\alpha=(1+\alpha/2)/(1+\alpha)$,
+\begin{equation}
+ \limsup_T\mathbb E h_T\le\chi_\alpha\left[
+       \frac{4L_R\rho\sigma^2}{\mu}+\frac{4B^2}{\mu}
+                      +\frac{v^2}{\rho^2\mu^2\Delta_0}\right].
+ \label{eq:tracking-floor}
+\end{equation}
+Moreover $\mathbb E d_{\rm Gr}(U_T,U_T^\star)^2
+\le\pi^2\mathbb Eh_T/(2\Delta_0)$.
+\end{theorem}
+\begin{proof}
+For $h_t^+=h_{C_t}(U_{t+1})$, sharp QR pullback smoothness,
+$\mathbb E_t\zeta_t=0$, and Young's inequality give
+\begin{align}
+ \mathbb E_t h_t^+
+ &\le h_t-\rho_t\|g_t\|^2
+       -\rho_t\langle g_t,\mathbb E_tb_t\rangle
+       +\tfrac12L_R\rho_t^2\mathbb E_t\|g_t+\zeta_t+b_t\|^2\\
+ &\le h_t-\tfrac12\rho_t\|g_t\|^2
+                          +2L_R\rho_t^2\sigma_t^2+2\rho_tB_t^2\\
+ &\le(1-\alpha_t)h_t+2L_R\rho_t^2\sigma_t^2+2\rho_tB_t^2.
+ \label{eq:frozen-tracking}
+\end{align}
+Here $\rho_t|\langle g_t,\mathbb E_tb_t\rangle|
+\le\rho_t\|g_t\|^2/4+\rho_tB_t^2$ and
+$\mathbb E_t\|g_t+\zeta_t+b_t\|^2
+\le2\|g_t\|^2+4\sigma_t^2+4B_t^2$; the step condition gives the
+second line. Apply Lemma~\ref{lem:excess-drift} pathwise at $U_{t+1}$
+with $a=\alpha_t/2$ and keep its constants to obtain the stated recursion.
+Unroll it and use $1-q=\alpha(1+\alpha)/2$ for the steady bound.
+The angle bound follows from quadratic growth and
+$\sin\theta\ge2\theta/\pi$. Only the atomic smoothness and excess-drift
+constants are claimed sharp; the stochastic bias budget is sufficient.
+\end{proof}
+
+The noise term increases with $\rho$, whereas the drift term decreases
+with $\rho^2$. For the noise-and-drift terms, dropping
+$\chi_\alpha\le1$ gives the envelope $A\rho+D/\rho^2$, whose minimizer is $\rho=(2D/A)^{1/3}$, subject to the
+admissible-step restrictions. This is an explicit tracking trade-off, not a
+claim that larger drift always increases GrassRoute's advantage over SVD.
+If covariance changes are driven by the parameter update and
+$\|C(W')-C(W)\|\le L_C\|W'-W\|$, then
+\begin{equation}
+ v_t\le L_C\eta_t\|D_t\|.
+ \label{eq:coupling-drift}
+\end{equation}
+With bounded directions, a sufficient scaling for the drift contribution
+in \eqref{eq:tracking-floor} to be $O(T^{-1/2})$ is
+$\rho=O(T^{-1/2})$ and $v=O(T^{-3/4})$. The weaker assertion
+$v=o(T^{-1/2})$ only implies a vanishing drift floor, without that rate.
+Different schedules can trade parameter speed for tracking accuracy.
+
+\paragraph{Momentum and retraction have separate costs.}
+For the implemented update,
+$H_t=\mu_H\Pi_{U_t}H_{t-1}+(1-\mu_H)\widehat Q_t$.
+Writing $\widehat Q_t=Q_t+\epsilon_t$ and subtracting $Q_t$ gives
+\begin{equation}
+ H_t-Q_t=\mu_H\Pi_{U_t}(H_{t-1}-Q_{t-1})
+ +\mu_H(\Pi_{U_t}Q_{t-1}-Q_t)+(1-\mu_H)\epsilon_t.
+ \label{eq:momentum-lag}
+\end{equation}
+Minkowski's inequality and nonexpansiveness imply an $L_2$ lag bound
+$e_t\le\mu_He_{t-1}+\mu_HD_t+(1-\mu_H)\sigma_t$, where
+$D_t$ bounds the transported population-direction change. In a stationary
+region with $D_t\le D$, this gives
+$\limsup e_t\le\mu_HD/(1-\mu_H)+\sigma$.
+The familiar variance reduction factor $(1-\mu_H)/(1+\mu_H)$ holds for
+an EMA of independent noise at a \emph{frozen} basis; it cannot be assumed
+for moving, data-dependent bases. Equation~\eqref{eq:momentum-lag}
+states exactly which additional terms must be controlled.
+
+If QR is compared with an exponential step of the \emph{same} tangent
+direction, Lemma~\ref{lem:qr} gives a local $O(\rho_t^3\|H_t\|^3)$
+subspace difference. When QR is analyzed directly through
+\eqref{eq:pullback-smooth}, that error is already accounted for in the
+pullback constant; adding it again as independent noise would double count.
+Neither the curvature upper bound nor positive curvature alone supplies a
+universal signed correction to the tracking recursion.
+
+\paragraph{Continuous motion and jumps.}
+Davis--Kahan also gives
+$s(U_{t+1}^\star,U_t^\star)\le\sqrt2v_t/\Delta_0$.
+A small covariance increment therefore bounds target motion. The converse
+does not hold, since eigenvalues can change without rotating the target.
+Theorem~\ref{thm:tracking} uses $v_t$ as a conservative observable control.
+An abrupt change that violates the angle neighborhood invalidates the local
+guarantee; it need not cause divergence, and no deterministic ordering
+between online tracking and periodic recomputation follows. Boundary
+experiments should test the effect of jump size while holding the spectrum
+and gradient noise fixed.

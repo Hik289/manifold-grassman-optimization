@@ -1,0 +1,25 @@
+% WWW table style: three rules, bold headers, reference green highlight.
+\begin{table}[htbp]\centering\scriptsize
+\caption{All completed paired extension endpoints: state retained relative to AdamW, and final test metrics. Lower state is beneficial; metric direction is explicit. These are the original versioned periodic endpoints, not the transport-corrected follow-up. Wall time is not encoded as isolated speed.}
+\label{tab:state-quality}
+\reviewfit{\begin{tabular}{lrrrr}\toprule {\bfseries Task} & {\bfseries State / AdamW} & {\bfseries AdamW} & \cellcolor{oursbg}{\bfseries GrassRoute} & {\bfseries Periodic}\\\midrule
+Matrix reg. / 128 $\downarrow$  &  62.5\%  &  $1.07\!\times\!10^{-4}$  &  \cellcolor{oursbg}0.484 &  $1.07\!\times\!10^{-4}$\\
+Matrix reg. / 256 $\downarrow$  &  56.2\%  &  $1.12\!\times\!10^{-4}$  &  \cellcolor{oursbg}0.341 &  $1.12\!\times\!10^{-4}$\\
+Matrix reg. / 512 $\downarrow$  &  53.1\%  &  $1.31\!\times\!10^{-4}$  &  \cellcolor{oursbg}0.366 &  $1.31\!\times\!10^{-4}$\\
+Low-rank reg. / 128 $\downarrow$  &  62.5\%  &  $1.04\!\times\!10^{-4}$  &  \cellcolor{oursbg}0.023 &  $1.04\!\times\!10^{-4}$\\
+Low-rank reg. / 256 $\downarrow$  &  56.2\%  &  $1.19\!\times\!10^{-4}$  &  \cellcolor{oursbg}0.00962 &  $1.19\!\times\!10^{-4}$\\
+Low-rank reg. / 512 $\downarrow$  &  53.1\%  &  $1.32\!\times\!10^{-4}$  &  \cellcolor{oursbg}0.0194 &  $1.32\!\times\!10^{-4}$\\
+MNIST / MLP $\uparrow$  &  6.5\%  &  98.13  &  \cellcolor{oursbg}97.90 &  97.82\\
+ResNet-18 / CIFAR-10 $\uparrow$  &  10.4\%  &  94.50  &  \cellcolor{oursbg}89.99 &  92.85\\
+Cora / SAGE $\uparrow$  &  7.0\%  &  78.30  &  \cellcolor{oursbg}78.00 &  79.10\\
+CiteSeer / SAGE $\uparrow$  &  6.6\%  &  68.10  &  \cellcolor{oursbg}67.10 &  68.70\\
+PubMed / SAGE $\uparrow$  &  8.5\%  &  74.20  &  \cellcolor{oursbg}76.00 &  77.10\\
+ogbn-arxiv / SAGE $\uparrow$  &  16.1\%  &  55.05  &  \cellcolor{oursbg}51.86 &  53.16\\
+Poisson / PINN $\downarrow$  &  14.2\%  &  $9.28\!\times\!10^{-5}$  &  \cellcolor{oursbg}$1.26\!\times\!10^{-4}$ &  $2.99\!\times\!10^{-4}$\\
+Forced Burgers / PINN $\downarrow$  &  14.5\%  &  0.00149  &  \cellcolor{oursbg}0.00208 &  0.0019\\
+Darcy / DeepONet $\downarrow$  &  16.5\%  &  0.0199  &  \cellcolor{oursbg}0.038 &  0.037\\
+Burgers operator / FNO $\downarrow$  &  27.4\%  &  0.00782  &  \cellcolor{oursbg}0.0201 &  0.0148\\
+MovieLens-1M / MF $\uparrow$  &  25.3\%  &  12.36  &  \cellcolor{oursbg}12.25 &  12.35\\
+Amazon Books subset / MF $\uparrow$  &  25.1\%  &  1.25  &  \cellcolor{oursbg}0.95 &  0.90\\
+Yelp subset / MF $\uparrow$  &  25.1\%  &  2.30  &  \cellcolor{oursbg}1.45 &  2.00\\
+\bottomrule\end{tabular}}\end{table}

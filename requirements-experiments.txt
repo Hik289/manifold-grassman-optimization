@@ -1,0 +1,12 @@
+-r requirements.txt
+torchvision
+torch-geometric
+ogb
+timm
+scipy
+scikit-learn
+pandas
+matplotlib
+datasets
+h5py
+pyarrow

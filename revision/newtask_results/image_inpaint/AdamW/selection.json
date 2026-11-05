@@ -1,0 +1,134 @@
+{
+  "hp": {
+    "lr": 0.01
+  },
+  "criterion": "final validation primary metric; fresh formal initialization; one final test evaluation",
+  "candidates": [
+    {
+      "hp": {
+        "lr": 0.0003
+      },
+      "status": "complete",
+      "validation": {
+        "score": 0.07561354339122772,
+        "mse": 0.07561354339122772,
+        "full_image_mse": 0.03772183135151863,
+        "psnr": 14.234072309253749,
+        "n": 765
+      },
+      "error": null
+    },
+    {
+      "hp": {
+        "lr": 0.0005
+      },
+      "status": "complete",
+      "validation": {
+        "score": 0.0745183452963829,
+        "mse": 0.0745183452963829,
+        "full_image_mse": 0.037175461649894714,
+        "psnr": 14.297436296450943,
+        "n": 765
+      },
+      "error": null
+    },
+    {
+      "hp": {
+        "lr": 0.001
+      },
+      "status": "complete",
+      "validation": {
+        "score": 0.07419276237487793,
+        "mse": 0.07419276237487793,
+        "full_image_mse": 0.037013035267591476,
+        "psnr": 14.316452989655513,
+        "n": 765
+      },
+      "error": null
+    },
+    {
+      "hp": {
+        "lr": 0.002
+      },
+      "status": "complete",
+      "validation": {
+        "score": 0.07413490116596222,
+        "mse": 0.07413490116596222,
+        "full_image_mse": 0.036984167993068695,
+        "psnr": 14.3198414687105,
+        "n": 765
+      },
+      "error": null
+    },
+    {
+      "hp": {
+        "lr": 0.003
+      },
+      "status": "complete",
+      "validation": {
+        "score": 0.07413104921579361,
+        "mse": 0.07413104921579361,
+        "full_image_mse": 0.03698224946856499,
+        "psnr": 14.320066761386322,
+        "n": 765
+      },
+      "error": null
+    },
+    {
+      "hp": {
+        "lr": 0.005
+      },
+      "status": "complete",
+      "validation": {
+        "score": 0.059373680502176285,
+        "mse": 0.059373680502176285,
+        "full_image_mse": 0.02962014265358448,
+        "psnr": 15.284128542038928,
+        "n": 765
+      },
+      "error": null
+    },
+    {
+      "hp": {
+        "lr": 0.01
+      },
+      "status": "complete",
+      "validation": {
+        "score": 0.04448951035737991,
+        "mse": 0.04448951035737991,
+        "full_image_mse": 0.02219477668404579,
+        "psnr": 16.53749220333345,
+        "n": 765
+      },
+      "error": null
+    },
+    {
+      "hp": {
+        "lr": 0.02
+      },
+      "status": "complete",
+      "validation": {
+        "score": 0.06675008684396744,
+        "mse": 0.06675008684396744,
+        "full_image_mse": 0.03330005705356598,
+        "psnr": 14.775550224087656,
+        "n": 765
+      },
+      "error": null
+    },
+    {
+      "hp": {
+        "lr": 0.03
+      },
+      "status": "complete",
+      "validation": {
+        "score": 0.07412680238485336,
+        "mse": 0.07412680238485336,
+        "full_image_mse": 0.03698012977838516,
+        "psnr": 14.320315690573853,
+        "n": 765
+      },
+      "error": null
+    }
+  ]
+}

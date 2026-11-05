@@ -1,0 +1,108 @@
+% !TeX program = pdflatex
+\documentclass{article}
+% ICML 2027 draft: the official 2027 style URL returned 404 on 2026-11-02.
+% Use the latest verified official release unchanged until 2027 is available.
+\usepackage{hyperref}
+\usepackage{icml2026}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{microtype}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{array,pifont,colortbl}
+\usepackage{longtable}
+\usepackage{placeins}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{algorithm}
+\usepackage{algorithmic}
+\usepackage{enumitem}
+\usepackage{xcolor}
+\usepackage{etoolbox}
+\definecolor{oursbg}{RGB}{230,244,233}
+\definecolor{checkgreen}{RGB}{21,128,61}
+\definecolor{crossred}{RGB}{190,35,45}
+\newsavebox{\reviewtablebox}
+\newcommand{\reviewfit}[1]{%
+  \sbox{\reviewtablebox}{#1}%
+  \ifdim\wd\reviewtablebox>\linewidth
+    \resizebox{\linewidth}{!}{\usebox{\reviewtablebox}}%
+  \else\usebox{\reviewtablebox}\fi}
+\AtBeginEnvironment{table}{\renewcommand{\arraystretch}{1.16}}
+\AtBeginEnvironment{table*}{\renewcommand{\arraystretch}{1.16}}
+\AtBeginEnvironment{longtable}{\renewcommand{\arraystretch}{1.12}}
+\setlength{\emergencystretch}{1em}
+\providecommand{\theHalgorithm}{\arabic{algorithm}}
+\makeatletter
+\renewcommand{\Notice@String}{ICML 2027 working draft.}
+\makeatother
+\hypersetup{pdfsubject={ICML 2027 working draft}}
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}{Lemma}
+\newtheorem{assumption}{Assumption}
+\newtheorem{definition}{Definition}
+\newtheorem{proposition}{Proposition}
+\newtheorem{corollary}{Corollary}
+\newcommand{\yes}{\textcolor{checkgreen}{\ding{51}}}
+\newcommand{\no}{\textcolor{crossred}{\ding{55}}}
+\allowdisplaybreaks[1]
+\icmltitlerunning{GrassRoute: Online Gradient Routing on the Grassmann Manifold}
+\begin{document}
+\twocolumn[
+\icmltitle{GrassRoute: Online Gradient Routing on the Grassmann Manifold}
+\begin{icmlauthorlist}
+\icmlauthor{Anonymous Authors}{anon}
+\end{icmlauthorlist}
+\icmlaffiliation{anon}{Anonymous Institution}
+\icmlcorrespondingauthor{}{}
+\icmlkeywords{Manifold optimization, Grassmann manifold, memory-efficient training}
+\vskip 0.3in
+]
+\printAffiliationsAndNotice{}
+\begin{abstract}
+GrassRoute learns an online Grassmann routing subspace, applies adaptive
+updates in its coordinates, and preserves the orthogonal gradient residual
+through a stateless branch. We derive sharp QR pullback and normalized-covariance
+constants using CS/Poincar\'e geometry and a Householder identity, while a Ky Fan
+variational argument controls moving-target tracking. A virtual iterate and
+an averaged quadratic-root argument analyze the transported Adam recursion;
+full-state coupling, exact Gaussian orientation costs, Seeger--Maurer inversion
+and a Haar-mixture prior give conditional stability and PAC-Bayes guarantees.
+Archived Burgers experiments record best training loss $1.97\times10^{-3}$
+versus AdamW's $1.10\times10^{-2}$ and periodic SVD's $3.27\times10^{-3}$,
+with 84.1\% less optimizer state and a reported $1.78\times$ step cost.
+One Cora comparison improves on AdamW and corrected periodic
+routing with 93.0\% less state than AdamW; three new initializations do not
+consistently preserve that accuracy gain. The new SMS comparison
+retains 87.0\% less state at a 0.85 percentage-point macro-F1 cost.
+The original proposal matrix completed 117 of 162 representative comparisons
+before a disclosed compute reprioritization. Six additional public-data tasks,
+controlled tracking and focused seed replications retain complete outcomes
+and protocol versions alongside selected evidence.
+\end{abstract}
+\input{sections/1_introduction}
+\input{sections/2_related_work}
+\input{sections/3_preliminaries}
+\input{sections/4_methodology}
+\input{sections/5_experiments}
+\input{sections/new_task_evaluation}
+\input{sections/6_conclusion}
+\clearpage
+\bibliographystyle{icml2026}
+\bibliography{references}
+\appendix
+\onecolumn
+\input{sections/theory_geometry}
+\input{sections/theory_tracking}
+\input{sections/theory_formal_geometry}
+\input{sections/theory_formal_moments}
+\input{sections/theory_convergence}
+\input{sections/theory_sharp_descent}
+\input{sections/theory_formal_adam}
+\input{sections/theory_deep_coupling}
+\input{sections/theory_deep_dynamics}
+\input{sections/theory_generalization}
+\input{sections/theory_formal_generalization}
+\input{sections/theory_sharp_tools}
+\input{sections/theory_deep_generalization}
+\input{sections/experimental_audit}
+\end{document}

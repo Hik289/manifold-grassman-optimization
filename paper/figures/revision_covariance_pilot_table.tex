@@ -1,0 +1,8 @@
+% WWW table style: three rules, bold headers, reference green highlight.
+\begin{table}[htbp]\centering\scriptsize
+\caption{Additional covariance-concentration pilot, retained separately from the proposal-completion count. These 2000-epoch runs have full-rank target matrices and concentrated input covariance; they do not satisfy the planted-low-rank-target benchmark. Values are final test MSE.}
+\reviewfit{\begin{tabular}{rrrrrrr}\toprule {\bfseries $d$} & {\bfseries SGD-M} & {\bfseries AdamW} & {\bfseries Fixed} & {\bfseries Periodic} & \cellcolor{oursbg}{\bfseries GrassRoute} & {\bfseries SubTrack++}\\\midrule
+128  &  $1.07\!\times\!10^{-4}$  &  $1.07\!\times\!10^{-4}$  &  0.0719  &  $1.07\!\times\!10^{-4}$  &  \cellcolor{oursbg}$8.98\!\times\!10^{-3}$ &  $1.07\!\times\!10^{-4}$ \\
+256  &  $1.12\!\times\!10^{-4}$  &  $1.12\!\times\!10^{-4}$  &  0.0681  &  $1.12\!\times\!10^{-4}$  &  \cellcolor{oursbg}0.0410 &  $1.12\!\times\!10^{-4}$ \\
+512  &  $1.45\!\times\!10^{-4}$  &  $1.31\!\times\!10^{-4}$  &  0.0667  &  $1.31\!\times\!10^{-4}$  &  \cellcolor{oursbg}0.0676 &  $1.31\!\times\!10^{-4}$ \\
+\bottomrule\end{tabular}}\end{table}

@@ -1,0 +1,17 @@
+\begin{table*}[t]\centering\footnotesize
+\caption{\textbf{SMS text classification fixed-hyperparameter seed replication.} Three fresh 1000-epoch runs use
+hyperparameters frozen from the original seed-42 validation selection.
+The public split and architecture are fixed; seeds 43--45 vary
+initialization and stochastic training. Accuracy or macro-F1 is in
+percent. Mean and sample standard deviation are descriptive.
+Persistent optimizer state is in decimal MB. All endpoints are shown;
+\emph{fail} denotes a retained numerical failure.}
+\label{tab:focused-sms-replication}
+\setlength{\tabcolsep}{7pt}
+\begin{tabular}{lrrrrr}\toprule
+Method & Seed 43 & Seed 44 & Seed 45 & Mean $\pm$ SD & State MB \\ \midrule
+SGD & 96.30 & 94.63 & 94.60 & 95.18 $\pm$ 0.97 & 0.525 \\
+AdamW & 95.76 & 95.20 & 95.48 & 95.48 $\pm$ 0.28 & 1.050 \\
+Periodic SVD & 93.94 & 94.29 & 94.63 & 94.29 $\pm$ 0.35 & 0.071 \\
+GrassRoute & \cellcolor{oursbg}94.29 & \cellcolor{oursbg}95.64 & \cellcolor{oursbg}94.29 & \cellcolor{oursbg}94.74 $\pm$ 0.78 & 0.137 \\
+\bottomrule\end{tabular}\end{table*}

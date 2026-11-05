@@ -1,0 +1,40 @@
+{
+  "status": "complete",
+  "task": "sciml_burgers",
+  "method": "AdamW",
+  "hp": {
+    "lr": 0.007208434242404265
+  },
+  "formal": true,
+  "epochs": 2000,
+  "n_epochs": 2000,
+  "seed": 42,
+  "validation": {
+    "score": 0.0023609139025211334,
+    "pde_residual_l2": 0.0019423586782068014
+  },
+  "test": {
+    "score": 0.0023892910685390234,
+    "pde_residual_l2": 0.0023362969513982534
+  },
+  "state_bytes": 268328,
+  "routed_layers": [
+    {
+      "name": "net.2.weight",
+      "shape": [
+        128,
+        128
+      ],
+      "rank": 8
+    },
+    {
+      "name": "net.4.weight",
+      "shape": [
+        128,
+        128
+      ],
+      "rank": 8
+    }
+  ],
+  "wall_s": 11.473561624999995
+}

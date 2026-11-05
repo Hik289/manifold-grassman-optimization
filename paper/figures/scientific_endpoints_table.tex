@@ -1,0 +1,33 @@
+% WWW table style: three rules, bold headers, reference green highlight.
+\begin{table}[t]\centering\footnotesize
+\caption{\textbf{Scientific-learning validation and test endpoints.} Complete 2000-epoch formal runs from the original proposal extension, selected on validation data. All entries are solution relative error. Initial validation denotes the first stored validation checkpoint; models and tasks follow the versioned protocol.}
+\label{tab:new-sciml}
+\setlength{\tabcolsep}{5pt}
+\reviewfit{\begin{tabular}{lrrrr}
+\toprule {\bfseries Task} & {\bfseries Method} & {\bfseries Initial val.} & {\bfseries Final val.} & {\bfseries Final test}\\\midrule
+Poisson / PINN  &  SGD-M  &  0.4309  &  1  &  1\\
+Poisson / PINN  &  AdamW  &  2.481  &  $9.19\times10^{-5}$  &  $9.28\times10^{-5}$\\
+Poisson / PINN  &  Fixed  &  0.7925  &  $9.79\times10^{-4}$  &  $9.95\times10^{-4}$\\
+Poisson / PINN  &  Periodic SVD  &  0.4188  &  $2.92\times10^{-4}$  &  $2.99\times10^{-4}$\\
+\rowcolor{oursbg}Poisson / PINN  & \textbf{GrassRoute} &  0.4188  &  $1.25\times10^{-4}$  &  $1.26\times10^{-4}$\\
+Poisson / PINN  &  SubTrack++  &  0.5623  &  $3.94\times10^{-4}$  &  $4.03\times10^{-4}$\\
+Forced Burgers / PINN  &  SGD-M  &  0.8454  &  0.01289  &  0.01316\\
+Forced Burgers / PINN  &  AdamW  &  2.568  &  0.001492  &  0.001489\\
+Forced Burgers / PINN  &  Fixed  &  0.4933  &  0.006064  &  0.006414\\
+Forced Burgers / PINN  &  Periodic SVD  &  0.4933  &  0.001853  &  0.001898\\
+\rowcolor{oursbg}Forced Burgers / PINN  & \textbf{GrassRoute} &  0.4933  &  0.001953  &  0.002079\\
+Forced Burgers / PINN  &  SubTrack++  &  0.8114  &  0.001515  &  0.001549\\
+Darcy / DeepONet  &  SGD-M  &  0.7469  &  0.08382  &  0.08672\\
+Darcy / DeepONet  &  AdamW  &  2.201  &  0.01937  &  0.01989\\
+Darcy / DeepONet  &  Fixed  &  0.5206  &  0.02219  &  0.02226\\
+Darcy / DeepONet  &  Periodic SVD  &  0.5206  &  0.03552  &  0.03698\\
+\rowcolor{oursbg}Darcy / DeepONet  & \textbf{GrassRoute} &  0.4898  &  0.03734  &  0.03799\\
+Darcy / DeepONet  &  SubTrack++  &  0.599  &  0.1036  &  0.1087\\
+Burgers operator / FNO  &  SGD-M  &  0.9935  &  0.01471  &  0.01447\\
+Burgers operator / FNO  &  AdamW  &  0.4612  &  0.00797  &  0.007823\\
+Burgers operator / FNO  &  Fixed  &  0.7662  &  0.01922  &  0.01772\\
+Burgers operator / FNO  &  Periodic SVD  &  0.7662  &  0.01526  &  0.01476\\
+\rowcolor{oursbg}Burgers operator / FNO  & \textbf{GrassRoute} &  0.7062  &  0.02147  &  0.02013\\
+Burgers operator / FNO  &  SubTrack++  &  0.7643  &  0.01422  &  0.01406\\
+\bottomrule\end{tabular}}
+\end{table}

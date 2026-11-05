@@ -1,0 +1,144 @@
+{
+  "hp": {
+    "lr": 0.01,
+    "rho": 1.0
+  },
+  "criterion": "final validation primary metric; fresh formal initialization; one final test evaluation",
+  "candidates": [
+    {
+      "hp": {
+        "lr": 0.001,
+        "rho": 0.1
+      },
+      "status": "complete",
+      "validation": {
+        "accuracy": 0.4197967300044189,
+        "macro_f1": 0.35339888855924084,
+        "cross_entropy": 2.3553218841552734,
+        "n": 2263,
+        "score": 0.35339888855924084
+      },
+      "error": null
+    },
+    {
+      "hp": {
+        "lr": 0.001,
+        "rho": 1.0
+      },
+      "status": "complete",
+      "validation": {
+        "accuracy": 0.4197967300044189,
+        "macro_f1": 0.35339888855924084,
+        "cross_entropy": 2.3553271293640137,
+        "n": 2263,
+        "score": 0.35339888855924084
+      },
+      "error": null
+    },
+    {
+      "hp": {
+        "lr": 0.001,
+        "rho": 3.0
+      },
+      "status": "complete",
+      "validation": {
+        "accuracy": 0.4197967300044189,
+        "macro_f1": 0.35339888855924084,
+        "cross_entropy": 2.355325698852539,
+        "n": 2263,
+        "score": 0.35339888855924084
+      },
+      "error": null
+    },
+    {
+      "hp": {
+        "lr": 0.003,
+        "rho": 0.1
+      },
+      "status": "complete",
+      "validation": {
+        "accuracy": 0.5475033141847105,
+        "macro_f1": 0.5375341085189542,
+        "cross_entropy": 1.4774060249328613,
+        "n": 2263,
+        "score": 0.5375341085189542
+      },
+      "error": null
+    },
+    {
+      "hp": {
+        "lr": 0.003,
+        "rho": 1.0
+      },
+      "status": "complete",
+      "validation": {
+        "accuracy": 0.5475033141847105,
+        "macro_f1": 0.5375341085189542,
+        "cross_entropy": 1.4773982763290405,
+        "n": 2263,
+        "score": 0.5375341085189542
+      },
+      "error": null
+    },
+    {
+      "hp": {
+        "lr": 0.003,
+        "rho": 3.0
+      },
+      "status": "complete",
+      "validation": {
+        "accuracy": 0.5475033141847105,
+        "macro_f1": 0.5375341085189542,
+        "cross_entropy": 1.477388620376587,
+        "n": 2263,
+        "score": 0.5375341085189542
+      },
+      "error": null
+    },
+    {
+      "hp": {
+        "lr": 0.01,
+        "rho": 0.1
+      },
+      "status": "complete",
+      "validation": {
+        "accuracy": 0.5722492266902341,
+        "macro_f1": 0.5683155902386974,
+        "cross_entropy": 2.0887718200683594,
+        "n": 2263,
+        "score": 0.5683155902386974
+      },
+      "error": null
+    },
+    {
+      "hp": {
+        "lr": 0.01,
+        "rho": 1.0
+      },
+      "status": "complete",
+      "validation": {
+        "accuracy": 0.5731330092797172,
+        "macro_f1": 0.5692244448364802,
+        "cross_entropy": 2.088911771774292,
+        "n": 2263,
+        "score": 0.5692244448364802
+      },
+      "error": null
+    },
+    {
+      "hp": {
+        "lr": 0.01,
+        "rho": 3.0
+      },
+      "status": "complete",
+      "validation": {
+        "accuracy": 0.5722492266902341,
+        "macro_f1": 0.568399449811434,
+        "cross_entropy": 2.0895602703094482,
+        "n": 2263,
+        "score": 0.568399449811434
+      },
+      "error": null
+    }
+  ]
+}

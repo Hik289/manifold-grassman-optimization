@@ -1,0 +1,490 @@
+\subsection{Generalization with neutral routing states and summable feedback}
+\label{app:neutral-state-stability}
+
+\begin{theorem}[Replacement stability without strict routing contraction]
+\label{thm:neutral-routing-stability}
+Suppose a valid common-randomness neighboring-data coupling admits two
+expected distances $w_t,u_t\ge0$, initially zero, satisfying
+\begin{align}
+ w_{t+1}&\le q w_t+b_tu_t+B_W/n,&0\le q&<1,\\
+ u_{t+1}&\le(1+d_t)u_t+c_tw_t+B_{U,t}/n.\label{eq:neutral-coupling}
+\end{align}
+Here $c_t,d_t,B_{U,t},B_W\ge0$.
+The first block controls parameter distance; any eliminated moment states
+must be accounted for in these inequalities. Assume deterministic uniform
+bounds
+\begin{equation}
+ 0\le b_t\le B,\quad
+ C_*:=\sum_{t\ge0}c_t<\infty,\quad
+ D_*:=\sum_{t\ge0}d_t<\infty,\quad
+ J_*:=\sum_{t\ge0}B_{U,t}<\infty.
+\end{equation}
+Then, with $A_*=D_*+BC_* /(1-q)$,
+\begin{align}
+ \sup_tu_t&\le\frac{e^{A_*}}n
+                  \left(J_*+\frac{C_*B_W}{1-q}\right)=:U_*,\\
+ \sup_tw_t&\le\frac{B_W}{n(1-q)}+\frac{B}{1-q}U_*.
+ \label{eq:neutral-stability-bound}
+\end{align}
+For $L_\ell$-Lipschitz evaluation losses, the corresponding expected
+replacement-stability bound is $\beta_t\le L_\ell w_t$ uniformly in time.
+The routing diagonal in \eqref{eq:neutral-coupling} may equal one or exceed
+one; no uniform positive routing eigengap is assumed in this theorem.
+\end{theorem}
+\begin{proof}
+Unroll the first recurrence:
+\begin{equation}
+ w_t\le\frac{B_W}{n(1-q)}+
+                    \sum_{j<t}q^{t-1-j}b_ju_j.
+\end{equation}
+For $V_t=\max_{j\le t}u_j$,
+\begin{align}
+ w_t&\le\frac{B_W}{n(1-q)}+\frac{B}{1-q}V_t,\\
+ V_{t+1}&\le\left(1+d_t+\frac{Bc_t}{1-q}\right)V_t
+              +\frac1n\left(B_{U,t}+\frac{c_tB_W}{1-q}\right).
+\end{align}
+The right side is at least $V_t$, so it also bounds the new maximum.
+Iteration and $\prod_j(1+a_j)\le e^{\sum_ja_j}$ imply
+\begin{equation}
+ V_T\le\frac1n\sum_{t<T}
+ \left(B_{U,t}+\frac{c_tB_W}{1-q}\right)
+ \prod_{j=t+1}^{T-1}\left(1+d_j+\frac{Bc_j}{1-q}\right),
+\end{equation}
+which proves \eqref{eq:neutral-stability-bound}. Apply loss Lipschitzness.
+\end{proof}
+
+\begin{corollary}[Geometrically decaying feedback budgets]
+If $c_t\le C_1a^t$, $d_t\le D_1a^t$,
+$B_{U,t}\le J_1a^{2t}$ with $0<a<1$, one may take
+\begin{equation}
+ C_*=\frac{C_1}{1-a},\qquad D_*=\frac{D_1}{1-a},\qquad
+ J_*=\frac{J_1}{1-a^2}.
+\end{equation}
+For per-example gradients bounded by $G_t$ and $L_g$-Lipschitz, the
+normalized-covariance primitives satisfy
+\begin{align}
+ \|\mathcal C_{\varepsilon_c}(G_z(W_t))\|_{\rm op}
+ &\le G_t^2/\varepsilon_c,\\
+ \|D_W\mathcal C_{\varepsilon_c}(G_z(W_t))\|_{\rm op}
+ &\le L_g(2G_t/\varepsilon_c+2G_t^3/\varepsilon_c^2),\\
+ \|\mathcal C_{\varepsilon_c}(G_z(W_t))
+    -\mathcal C_{\varepsilon_c}(G_{z'}(W_t))\|
+ &\le2G_t^2/\varepsilon_c.\label{eq:decaying-covariance-sensitivity}
+\end{align}
+These quantify how covariance feedback and sample injection can vanish
+near an interpolating solution. A signed contraction for the parameter
+block and a valid reduction of all moment states are still separate
+requirements of \eqref{eq:neutral-coupling}.
+\end{corollary}
+\begin{proof}
+Sum the geometric series. Bound the two first-differential terms in
+Lemma~\ref{lem:covariance-second-differential} by
+$2\|G\|\|E\|/\varepsilon_c$ and
+$2\|G\|^3\|E\|/\varepsilon_c^2$; use the triangle inequality for the
+changed-example term.
+\end{proof}
+
+\subsection{Anisotropic prior geometry: an exact angle-dependent KL identity}
+\label{app:angle-KL}
+
+\begin{theorem}[Prior--posterior orientation cost]
+\label{thm:angle-KL}
+Let $P_0$ be a rank-$r$ projector independent of the training set, and
+$P$ any data-dependent rank-$r$ projector. Independence may hold conditional
+on an auxiliary pilot sample. Define full-rank row covariances
+\begin{align}
+ \Sigma_0&=a_0P_0+b_0(I-P_0),&a_0,b_0&>0,\\
+ \Sigma&=aP+b(I-P),&a,b&>0,
+\end{align}
+and Gaussian laws $\Pi=\mathcal N(\operatorname{vec}W_0,I_m\otimes\Sigma_0)$,
+$Q=\mathcal N(\operatorname{vec}W,I_m\otimes\Sigma)$ with row-wise
+vectorization. Put $D=W-W_0$, $s^2=\|\sin\Theta(P,P_0)\|^2$ and
+$k(x)=x-1-\log x$. Then
+\begin{align}
+ \operatorname{KL}(Q\|\Pi)
+ &=\frac12\left(\frac{\|DP_0\|^2}{a_0}
+                    +\frac{\|D(I-P_0)\|^2}{b_0}\right)\notag\\
+ &\quad+\frac m2\left[rk(a/a_0)+(d-r)k(b/b_0)
+                +(a-b)(b_0^{-1}-a_0^{-1})s^2\right].
+ \label{eq:exact-oriented-KL}
+\end{align}
+In the matched-variance case $a=a_0$, $b=b_0$, $\kappa=a/b$,
+\begin{equation}
+ \operatorname{KL}(Q\|\Pi)
+ =\frac12\left(\frac{\|DP_0\|^2}{a}
+                 +\frac{\|D(I-P_0)\|^2}{b}\right)
+               +\frac m2\frac{(\kappa-1)^2}{\kappa}s^2.
+ \label{eq:matched-oriented-KL}
+\end{equation}
+For an isotropic prior $a_0=b_0$, the orientation coefficient is exactly
+zero, consistently with Proposition~\ref{prop:pacbayes}.
+\end{theorem}
+\begin{proof}
+Projector trace identities give
+\begin{align}
+ \operatorname{tr}(P_0P)&=r-s^2,&
+ \operatorname{tr}(P_0(I-P))&=s^2,\\
+ \operatorname{tr}((I-P_0)P)&=s^2,&
+ \operatorname{tr}((I-P_0)(I-P))&=d-r-s^2.
+\end{align}
+Since $\Sigma_0^{-1}=a_0^{-1}P_0+b_0^{-1}(I-P_0)$,
+\begin{align}
+ \operatorname{tr}(\Sigma_0^{-1}\Sigma)
+ &=ra/a_0+(d-r)b/b_0
+                   +(a-b)(b_0^{-1}-a_0^{-1})s^2,\\
+ \log\frac{\det\Sigma_0}{\det\Sigma}
+ &=r\log(a_0/a)+(d-r)\log(b_0/b).
+\end{align}
+The Gaussian density ratio therefore integrates to
+\begin{align}
+ 2\operatorname{KL}(Q\|\Pi)
+ &=\operatorname{tr}(D\Sigma_0^{-1}D^\top)
+      +m\{\operatorname{tr}(\Sigma_0^{-1}\Sigma)-d
+                                +\log(\det\Sigma_0/\det\Sigma)\}.
+\end{align}
+Expand the mean term using $P_0(I-P_0)=0$ and collect the variance terms.
+For matched variances,
+$(a-b)(b^{-1}-a^{-1})=(a-b)^2/(ab)=(\kappa-1)^2/\kappa$.
+\end{proof}
+
+\subsection{From a tracking certificate to a valid pilot-prior generalization bound}
+\label{app:pilot-prior}
+Let $S=(z_i)_{i=1}^n$ and $S_0=(z_j^0)_{j=1}^{n_0}$ be independent
+samples, and fix $W_0$ independently of both. This subsection uses
+one-example uniform sampling for its covariance definition:
+\begin{align}
+ \psi(W,z)&=\frac{G_z(W)^\top G_z(W)}{\|G_z(W)\|^2+\varepsilon_c},\\
+ C_S(W)&=n^{-1}\sum_i\psi(W,z_i),&
+ \widehat C_0&=n_0^{-1}\sum_j\psi(W_0,z_j^0),\\
+ C_{\rm pop}(W_0)&=\mathbb E_z\psi(W_0,z),&
+ P_0&=\operatorname{Top}_r(\widehat C_0).
+\end{align}
+Choose a fixed measurable tie convention for $\operatorname{Top}_r$.
+Conditional on $S_0$, a Gaussian prior with this $P_0$ and fixed mean $W_0$
+is independent of the training set $S$.
+
+\begin{lemma}[A two-norm, fixed-initialization concentration bridge]
+\label{lem:pilot-concentration}
+Assume $G_z$ is $L_g$-Lipschitz on the comparison domain and put
+$L_F=2L_g/\sqrt{\varepsilon_c}$, $L_{\rm op}=L_g/\sqrt{\varepsilon_c}$.
+For $\delta_S,\delta_0\in(0,1)$, define
+\begin{align}
+ E_F(W)&=\min\{\sqrt2,\ L_F\|W-W_0\|
+       +h_n(\delta_S;1)+h_{n_0}(\delta_0;1)\},\\
+ E_{\rm op}(W)&=\min\{1,\ L_{\rm op}\|W-W_0\|
+       +b_n(\delta_S;1/4)+b_{n_0}(\delta_0;1/4)\}.
+\end{align}
+With probability at least $1-\delta_S-\delta_0$, simultaneously for every
+$W$ in that domain,
+\begin{equation}
+ \|C_S(W)-\widehat C_0\|_F\le E_F(W),\qquad
+ \|C_S(W)-\widehat C_0\|_{\rm op}\le E_{\rm op}(W).
+ \label{eq:pilot-covariance-bridge}
+\end{equation}
+The envelopes are those of Lemma~\ref{lem:sharp-covariance-concentration}.
+\end{lemma}
+\begin{proof}
+Apply that lemma separately to the training and pilot averages at the
+fixed, data-independent $W_0$. Then use, in each norm,
+\begin{align}
+ C_S(W)-\widehat C_0
+ &=[C_S(W)-C_S(W_0)]
+   +[C_S(W_0)-C_{\rm pop}(W_0)]
+   +[C_{\rm pop}(W_0)-\widehat C_0].
+\end{align}
+Lemma~\ref{lem:building-blocks} supplies $L_F$;
+Lemma~\ref{lem:covariance-second-differential} supplies $L_{\rm op}$.
+All terms are PSD trace-one contractions, so their difference has operator
+norm at most one and Frobenius norm at most $\sqrt2$. This justifies the
+caps. Only the initial point is concentrated; the Lipschitz bridge is
+pointwise in every $W$, including a fitted $W_T$.
+\end{proof}
+
+\begin{theorem}[Exact PAC-Bayes certificate with a residual-based tracking envelope]
+\label{thm:tracking-PAC}
+Use the pilot prior and Gaussian posterior of Theorem~\ref{thm:angle-KL},
+with $a_0,b_0$ fixed before observing $S$ conditional on $S_0$, and let
+$K_T^{\rm obs}$ be the exact right side of \eqref{eq:exact-oriented-KL}
+with $P=P_T$, $W=W_T$. No tracking or eigengap assumption is needed for
+\begin{equation}
+ L(Q_T)\le\operatorname{kl}^{-1}_+\left(\widehat L_S(Q_T),
+                  \frac{K_T^{\rm obs}+\log(\Xi_n/\delta_{\rm PB})}{n}\right),
+ \label{eq:tracking-to-PAC-final}
+\end{equation}
+which holds with probability at least $1-\delta_{\rm PB}$.
+
+For a structural tracking envelope, additionally suppose an event of
+probability at least $1-\delta_{\rm tr}$ gives
+\begin{equation}
+ \Delta_r(C_S(W_T))\ge\Delta_0>0,\quad
+ h_{C_S(W_T)}(P_T)\le H_T,\quad E_{\rm op}(W_T)<\Delta_0.
+ \label{eq:tracking-pilot-conditions}
+\end{equation}
+Let $\gamma_0=(a-b)(b_0^{-1}-a_0^{-1})\ge0$, $k_r=\min(r,d-r)$, and
+\begin{align}
+ B_T&=\frac{\min\{E_F(W_T),\sqrt{k_r}E_{\rm op}(W_T)\}}
+                    {\Delta_0-E_{\rm op}(W_T)},\\
+ J_T&=\min\{k_r,(\sqrt{2H_T/\Delta_0}+B_T)^2\},\\
+ K_T^{\rm str}&=\frac12\left(\frac{\|(W_T-W_0)P_0\|^2}{a_0}
+       +\frac{\|(W_T-W_0)(I-P_0)\|^2}{b_0}\right)\notag\\
+ &\quad+\frac m2\{rk(a/a_0)+(d-r)k(b/b_0)+\gamma_0J_T\}.
+\end{align}
+With probability at least $1-\delta_S-\delta_0-\delta_{\rm tr}$,
+$K_T^{\rm obs}\le K_T^{\rm str}$. Thus \eqref{eq:tracking-to-PAC-final}
+remains valid with $K_T^{\rm str}$ after adding those failure probabilities.
+For reporting a certificate, the observed-angle cost is preferable: it is
+exact and does not pay the additional concentration or tracking failures.
+The structural envelope explains how tracking controls that cost.
+\end{theorem}
+\begin{proof}
+Conditional on every pilot sample, Theorem~\ref{thm:Seeger-Maurer} holds
+simultaneously for all posteriors. Use the exact Gaussian identity of
+Theorem~\ref{thm:angle-KL} and integrate over $S_0$.
+For the structural statement put
+$P_T^\star=\operatorname{Top}_r(C_S(W_T))$. On the concentration and
+tracking events,
+\begin{align}
+ s(P_T,P_T^\star)&\le\sqrt{2H_T/\Delta_0},\\
+ s(P_T^\star,P_0)&\le B_T.
+\end{align}
+The second line is Lemma~\ref{lem:sharp-Davis-Kahan}, with $A=C_S(W_T)$
+and $\widehat A=\widehat C_0$. Its mixed gap is at least
+$\Delta_0-E_{\rm op}(W_T)>0$. Chordal triangle inequality and
+$s(P,Q)^2\le k_r$ give $s(P_T,P_0)^2\le J_T$.
+Insert this in the KL identity, using $\gamma_0\ge0$, and union bound.
+No independence between the auxiliary good events is needed. In particular,
+gap collapse invalidates the structural tracking envelope, not the exact
+PAC-Bayes certificate with an independent prior.
+\end{proof}
+
+\begin{corollary}[Clopper--Pearson evaluation of the empirical Gibbs loss]
+\label{cor:CP-Gibbs}
+For a $0/1$ evaluation loss, after selecting $Q_T$ and before inspecting
+its Monte Carlo evaluations, fix $M$ and draw independent pairs
+$\theta_j\sim Q_T$, $I_j\sim\operatorname{Unif}\{1,\ldots,n\}$.
+Let $K=\sum_{j=1}^M\ell(\theta_j,z_{I_j})$ and
+\begin{equation}
+ p_{\rm CP}=
+ \begin{cases}
+ \operatorname{Beta}^{-1}(1-\delta_{\rm MC};K+1,M-K),&K<M,\\
+ 1,&K=M.
+ \end{cases}
+\end{equation}
+With joint probability at least $1-\delta_{\rm PB}-\delta_{\rm MC}$,
+\begin{equation}
+ L(Q_T)\le\operatorname{kl}^{-1}_+\left(p_{\rm CP},
+             \frac{K_T^{\rm obs}+\log(\Xi_n/\delta_{\rm PB})}{n}\right).
+ \label{eq:CP-PAC-certificate}
+\end{equation}
+For $K=0$, $p_{\rm CP}=1-\delta_{\rm MC}^{1/M}$, not zero.
+\end{corollary}
+\begin{proof}
+Conditional on $S,S_0,Q_T$, the indicators are i.i.d. Bernoulli with mean
+$\widehat L_S(Q_T)$. The one-sided Clopper--Pearson construction
+\cite{clopper1934confidence} gives
+$\Pr(\widehat L_S(Q_T)>p_{\rm CP}\mid S,S_0,Q_T)\le\delta_{\rm MC}$.
+The upper binary-KL inverse is nondecreasing in its first argument:
+for $p<q$, $\partial_p\operatorname{kl}(p\|q)\le0$ and
+$\partial_q\operatorname{kl}(p\|q)>0$. Apply this monotonicity to
+\eqref{eq:tracking-to-PAC-final} and union bound the two failures.
+\end{proof}
+
+\subsection{Orientation complexity from Haar measure and Gibbs duality}
+\label{app:Grassmann-mixture-prior}
+Let $\mu_{r,d}$ be normalized Haar measure on $\mathrm{Gr}(r,d)$
+\cite{chikuse2003manifolds}. Fix $a\ge b>0$ and a data-independent $W_0$.
+For $P_0\sim\mu_{r,d}$, write
+\begin{align}
+ \Pi_{P_0}&=\mathcal N(\operatorname{vec}W_0,
+                      I_m\otimes[aP_0+b(I-P_0)]),\\
+ \Pi_H&=\int\Pi_{P_0}\,d\mu_{r,d}(P_0),&
+ Q&=\mathcal N(\operatorname{vec}W,I_m\otimes[aP+b(I-P)]).
+\end{align}
+The prior $\Pi_H$ is independent of the fitted orientation $P$.
+
+\begin{theorem}[Haar mixture and the Gibbs variational principle]
+\label{thm:mixture-orientation-KL}
+Put $D=W-W_0$, $\kappa=a/b$, $c=m(\kappa-1)^2/(2\kappa)$, and
+\begin{align}
+ V(P_0)&=\tfrac12\left(\frac{\|DP_0\|^2}{a}
+                          +\frac{\|D(I-P_0)\|^2}{b}\right)
+                         +c\,s(P,P_0)^2,\\
+ Z_{d,r}(c)&=\int e^{-c\,s(P,P_0)^2}\,d\mu_{r,d}(P_0),&
+ \Phi_{d,r}(c)&=-\log Z_{d,r}(c).
+\end{align}
+Then
+\begin{align}
+ \operatorname{KL}(Q\|\Pi_H)
+ &\le-\log\int e^{-V(P_0)}\,d\mu_{r,d}(P_0)\label{eq:Haar-joint-bound}\\
+ &\le\frac{\|D\|^2}{2b}+\Phi_{d,r}(c).
+ \label{eq:learned-orientation-complexity}
+\end{align}
+The partition function $Z_{d,r}$ is independent of $P$. For
+$D_r=r(d-r)$,
+\begin{align}
+ \Phi_{d,r}(0)&=0,&0\le\Phi_{d,r}(c)&\le cD_r/d,\\
+ \Phi_{d,r}'(c)&=\mathbb E_{\nu_c}s(P,P_0)^2,&
+ \Phi_{d,r}''(c)&=-\operatorname{Var}_{\nu_c}(s(P,P_0)^2)\le0,\\
+ \frac{d\nu_c}{d\mu_{r,d}}&=Z_{d,r}(c)^{-1}e^{-cs(P,P_0)^2}.
+\end{align}
+The first bound retains coupling between mean displacement and orientation;
+the second is a simpler closed envelope. Neither is asserted to equal the
+actual marginal KL in general. For $a=b$, both equal the Gaussian mean-shift
+KL exactly and the orientation term vanishes.
+\end{theorem}
+\begin{proof}
+For any $\nu\ll\mu_{r,d}$, compare the joint laws
+$\nu(dP_0)Q(dW)$ and $\mu_{r,d}(dP_0)\Pi_{P_0}(dW)$.
+The KL chain rule and data-processing inequality
+\cite{cover2006information} give
+\begin{align}
+ \operatorname{KL}(Q\|\Pi_H)
+ &\le\operatorname{KL}(\nu\|\mu_{r,d})
+                +\mathbb E_\nu\operatorname{KL}(Q\|\Pi_{P_0})\\
+ &=\operatorname{KL}(\nu\|\mu_{r,d})+\mathbb E_\nu V(P_0).
+\end{align}
+The equality is Theorem~\ref{thm:angle-KL}. Minimize over $\nu$ using the
+Gibbs variational principle \cite{donsker1975asymptotic}:
+\begin{equation}
+ \inf_\nu\{\mathbb E_\nu V+\operatorname{KL}(\nu\|\mu_{r,d})\}
+                 =-\log\mathbb E_{\mu_{r,d}}e^{-V}.
+\end{equation}
+Bounding the mean term by $\|D\|^2/(2b)$ gives the second bound.
+Haar invariance eliminates $P$ from $Z$ and gives
+$\mathbb E_{\mu_{r,d}}P_0=(r/d)I$, so Jensen yields
+$\Phi(c)\le c\mathbb E s^2=cD_r/d$. Differentiate the compact-domain
+integral to obtain the exact first and second derivatives.
+\end{proof}
+
+\begin{corollary}[Exact weak-anisotropy curvature]
+For $d>1$ and $D_r=r(d-r)$,
+\begin{equation}
+ \Phi_{d,r}(c)=\frac{D_r}{d}c-
+       \frac{D_r^2}{d^2(d-1)(d+2)}c^2+O(c^3)
+                         \qquad(c\downarrow0).
+\end{equation}
+\end{corollary}
+\begin{proof}
+A diagonal entry of a Haar rank-$r$ projector has distribution
+$\operatorname{Beta}(r/2,(d-r)/2)$, with variance
+$2r(d-r)/[d^2(d+2)]$. Exchangeability and the fixed trace give covariance
+$-1/(d-1)$ times this variance between distinct diagonal entries.
+Therefore $\operatorname{Var}(\operatorname{tr}(PP_0))=
+2D_r^2/[d^2(d-1)(d+2)]$. Insert this into
+$\Phi'(0)=\mathbb Es^2$, $\Phi''(0)=-\operatorname{Var}(s^2)$.
+\end{proof}
+
+\begin{proposition}[Wishart--Jacobi evaluation and the exact entropy exponent]
+\label{prop:Haar-Jacobi}
+Put $k=\min(r,d-r)$, $u=k/2$, $v=(d-k)/2$, and $D_r=k(d-k)$.
+For the multivariate gamma and beta functions,
+\begin{align}
+ \Gamma_k(z)&=\pi^{k(k-1)/4}\prod_{j=1}^k\Gamma(z-(j-1)/2),\\
+ B_k(u,v)&=\Gamma_k(u)\Gamma_k(v)/\Gamma_k(u+v),
+\end{align}
+both $u,v>(k-1)/2$, so the matrix-beta integral is finite:
+
+\begin{equation}
+ Z_{d,r}(c)=\frac1{B_k(u,v)}\int_{0\prec Y\prec I}
+ e^{-c(k-\operatorname{tr}Y)}|Y|^{-1/2}
+                  |I-Y|^{(d-2k-1)/2}\,dY.
+ \label{eq:Jacobi-partition}
+\end{equation}
+As $c\to\infty$ at fixed $d,r$,
+\begin{align}
+ Z_{d,r}(c)&\sim\frac{\Gamma_k(d/2)}{\Gamma_k(k/2)}c^{-D_r/2},\\
+ \Phi_{d,r}(c)&=\tfrac12D_r\log c+
+                   \log\Gamma_k(k/2)-\log\Gamma_k(d/2)+o(1).
+ \label{eq:intrinsic-orbital-entropy}
+\end{align}
+For $k=1$, a scalar form is
+\begin{equation}
+ Z_{d,1}(c)={}_1F_1((d-1)/2;d/2;-c).
+\end{equation}
+Thus the orbital term automatically balances concentration and entropy,
+without a chart-count factor or a chosen covering resolution.
+\end{proposition}
+\begin{proof}
+Complementation preserves chordal distance, so reduce to rank $k\le d/2$.
+Generate a Haar frame by normalizing a $d\times k$ standard Gaussian matrix.
+Split it into $k$ and $d-k$ rows. Their Gram matrices are independent
+Wishart matrices, and the normalized upper Gram has the matrix-beta law
+$\operatorname{Beta}_k(k/2,(d-k)/2)$
+\citep[Chapter 3]{muirhead1982aspects}. Its eigenvalues are the squared
+canonical cosines; $s^2=k-\operatorname{tr}Y$ gives
+\eqref{eq:Jacobi-partition}.
+For completeness, the asymptotic constant follows directly. Set $S=I-Y$,
+then $T=cS$. On $\operatorname{tr}S<1/2$, the rescaled integrand is
+\begin{equation}
+ c^{-D_r/2}e^{-\operatorname{tr}T}|T|^{v-(k+1)/2}
+                         |I-T/c|^{-1/2}.
+\end{equation}
+The last factor is at most $2^{k/2}$; dominated convergence gives the
+matrix-gamma integral $\Gamma_k(v)$. On $\operatorname{tr}S\ge1/2$,
+the original normalized integral is at most $e^{-c/2}$, negligible after
+multiplication by $c^{D_r/2}$. Therefore
+$Z(c)c^{D_r/2}\to\Gamma_k(v)/B_k(u,v)=
+\Gamma_k(d/2)/\Gamma_k(k/2)$. The $k=1$ formula is the scalar beta
+Laplace transform, equivalently Kummer's confluent hypergeometric integral.
+\end{proof}
+
+\begin{corollary}[Rank and covariance selection with a fixed mixture prior]
+For a predeclared countable mixture
+$\Pi=\sum_{r,j}\pi_{r,j}\Pi_{H,r,a_j,b_j}$,
+$\pi_{r,j}>0$, $\sum_{r,j}\pi_{r,j}=1$, either bound in
+Theorem~\ref{thm:mixture-orientation-KL} remains valid after adding
+$\log(1/\pi_{r,j})$. Rank and covariance scale may then be selected after
+training. The parameter displacement cost remains present; low-rank
+optimizer state is not, by itself, a low-capacity model assumption.
+\end{corollary}
+\begin{proof}
+The mixture density is at least $\pi_{r,j}$ times that component density.
+Integrate its log ratio under $Q$ and apply
+Theorem~\ref{thm:mixture-orientation-KL}.
+\end{proof}
+
+\subsection{Closing the risk decomposition under an empirical PL condition}
+\label{app:end-to-end-risk}
+
+\begin{theorem}[Stationarity plus state stability implies an excess-risk bound]
+\label{thm:end-to-end-risk}
+Let $S$ be i.i.d., $\widehat L_S=n^{-1}\sum_i\ell(\cdot,z_i)$, and let
+$\tau$ be independent uniform on $\{1,\ldots,T\}$. Suppose all quantities
+below are integrable, replacement stability at step $t$ is $\beta_t$, and
+\begin{align}
+ \mathbb E\|\nabla\widehat L_S(W_\tau)\|^2&\le R_T,\\
+ \widehat L_S(W_t)-\inf_{w\in\mathcal W}\widehat L_S(w)
+ &\le\frac{\|\nabla\widehat L_S(W_t)\|^2}{2\mu_f}
+ \quad\text{at every reachable iterate, for every }S,
+ \qquad\mu_f>0.
+\end{align}
+Then
+\begin{equation}
+ \mathbb E L(W_\tau)-\inf_{w\in\mathcal W}L(w)
+ \le\frac1T\sum_{t=1}^T\beta_t+\frac{R_T}{2\mu_f}.
+ \label{eq:closed-risk-decomposition}
+\end{equation}
+One may substitute the full-state stability product, the contractive
+feedback bound, or Theorem~\ref{thm:neutral-routing-stability} for
+$\beta_t$. Substituting Theorem~\ref{thm:actual-adam} for $R_T$ additionally
+requires its stochastic-gradient hypotheses for the \emph{empirical}
+objective, uniformly over $S$. This theorem does not assert empirical PL or
+those noise hypotheses for the deep-network benchmarks.
+\end{theorem}
+\begin{proof}
+Couple the two runs using the same $\tau$ as well as all training randomness.
+Their loss difference is at most $\bar\beta_T=T^{-1}\sum_t\beta_t$.
+For every fixed data-independent comparator $w\in\mathcal W$,
+\begin{align}
+ \mathbb E[L(W_\tau)-L(w)]
+ &=\mathbb E[L(W_\tau)-\widehat L_S(W_\tau)]\notag\\
+ &\quad+\mathbb E[\widehat L_S(W_\tau)-\inf_v\widehat L_S(v)]\notag\\
+ &\quad+\mathbb E[\inf_v\widehat L_S(v)-\widehat L_S(w)]
+                   +\mathbb E[\widehat L_S(w)-L(w)]\\
+ &\le\bar\beta_T+\frac1{2\mu_f}
+                          \mathbb E\|\nabla\widehat L_S(W_\tau)\|^2.
+\end{align}
+The third term is nonpositive and the fourth is zero by i.i.d. sampling.
+Take the infimum over fixed comparators. No existence of an attained
+population minimizer is required.
+\end{proof}

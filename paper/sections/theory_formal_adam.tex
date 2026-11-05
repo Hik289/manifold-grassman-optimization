@@ -1,0 +1,378 @@
+\subsection{A closed stochastic bound for the actual transported Adam recursion}
+\label{app:actual-adam}
+We now analyze the current-batch denominator itself. This result uses the
+additional noise and schedule hypotheses below; it is not a consequence of
+unbiasedness alone. Indices in this subsection start at $t=1$.
+
+\begin{assumption}[Actual-recursion specialization]
+\label{ass:actual-adam}
+There is one routed matrix $W\in\mathbb R^{m\times d}$, no weight decay,
+and $f\ge f_\star$ is $L$-smooth on the ambient parameter space.
+With $g_t=\nabla f(W_t)$,
+\begin{align}
+ G_t&=g_t+\xi_t,&\mathbb E_t\xi_t&=0,&\|G_t\|&\le G_0\quad\text{a.s.}
+\end{align}
+Conditional on $\mathcal F_t$, either $\xi_t=0$, or its vectorization has
+an integrable density $p_t(x)=\varphi_t(\|x\|)$ with
+$\varphi_t$ nonincreasing. The stored basis $U_t$ is
+$\mathcal F_t$-measurable. The two branch learning rates equal $\eta>0$,
+and $\rho>0$ is constant within the horizon. Let
+\begin{equation}
+ 0\le\beta_1<1,\quad0<\beta_2<1,\quad
+ \varepsilon_a,\varepsilon_r,\varepsilon_c>0,\quad s_{\max}\ge1.
+\end{equation}
+All moment states start at zero, QR uses a fixed positive-diagonal
+convention, and the Procrustes factor is computed exactly. The residual gain
+is $s_t=\operatorname{clip}(\|G_t\|/(\|G_t(I-P_t)\|+\varepsilon_r);0,s_{\max})$.
+The tracker is precisely the normalized-covariance momentum tracker in
+Table~\ref{tab:method-update}, with $0\le\mu_H<1$.
+\end{assumption}
+
+Write $M_t^-$ and $V_t^-$ for the preceding states after alignment to $U_t$,
+and $M_t,V_t$ for the fresh moments before the next alignment:
+\begin{align}
+ Z_t&=G_tU_t,&M_t&=\beta_1M_t^-+(1-\beta_1)Z_t,\\
+ V_t&=\beta_2V_t^-+(1-\beta_2)Z_t^{\odot2},&
+ \widehat M_t&=M_t/(1-\beta_1^t),\quad
+ \widehat V_t=V_t/(1-\beta_2^t),\\
+ R_t&=\operatorname{Polar}(U_{t+1}^\top U_t),&
+ M_{t+1}^-&=M_tR_t^\top,\quad
+ V_{t+1}^-=V_t(R_t^\top)^{\odot2}.\label{eq:actual-recursion}
+\end{align}
+For row-wise coordinate multiplication, define the lifted operator
+\begin{equation}
+ [\mathcal A(U,a)X]_{i,:}
+   =(X_{i,:}U)\operatorname{Diag}(a_{i,:})U^\top,
+ \quad
+ a_{t,ij}=(\sqrt{\widehat V_{t,ij}}+\varepsilon_a)^{-1}.
+\end{equation}
+It has support $P=UU^\top$ and is self-adjoint, although it is not
+strictly positive on the full ambient space.
+
+\begin{lemma}[Uniform state bounds without an eigengap]
+\label{lem:actual-invariants}
+Under Assumption~\ref{ass:actual-adam}, for every $t$,
+\begin{align}
+ \|M_t\|&\le(1-\beta_1^t)G_0,&
+ \|V_t\|_1&\le(1-\beta_2^t)G_0^2,\\
+ \|\widehat M_t\|&\le G_0,&
+ \|\sqrt{\widehat V_t}\|&\le G_0,\\
+ a\le a_{t,ij}&\le b,&a&=(G_0+\varepsilon_a)^{-1},\quad b=\varepsilon_a^{-1},\\
+ \|Q_t\|&\le1,&\|H_t\|&\le1,\\
+ d_{\rm Gr}(U_{t+1},U_t)&\le\rho,&
+ \|U_{t+1}-U_t\|&\le\sqrt3\rho,\quad
+ \|R_t-I\|\le2\sqrt3\rho.\label{eq:actual-invariants}
+\end{align}
+\end{lemma}
+\begin{proof}
+Orthogonality gives $\|M R^\top\|=\|M\|$. Nonnegativity and double
+stochasticity of $R^{\odot2}$ give
+\begin{align}
+ \|V(R^\top)^{\odot2}\|_1
+ &=\sum_{ijk}V_{ik}R_{jk}^2=\sum_{ik}V_{ik}=\|V\|_1,\\
+ \|M_t\|&\le\beta_1\|M_{t-1}\|+(1-\beta_1)G_0,\\
+ \|V_t\|_1&\le\beta_2\|V_{t-1}\|_1+(1-\beta_2)G_0^2.
+\end{align}
+Induction and bias correction prove the first three lines. Also
+\begin{align}
+ \widehat C_t&=G_t^\top G_t/(\|G_t\|^2+\varepsilon_c),\\
+ \|Q_t\|&=\|(I-P_t)\widehat C_tU_t\|
+ \le\|\widehat C_t\|\le\operatorname{tr}(\widehat C_t)\le1,\\
+ \|H_t\|&\le\mu_H\|H_{t-1}\|+(1-\mu_H)\|Q_t\|\le1.
+\end{align}
+The last line follows from Lemmas~\ref{lem:qr} and~\ref{lem:qr-frame}.
+None of these inequalities invokes $\lambda_r(C_t)-\lambda_{r+1}(C_t)$.
+\end{proof}
+
+\begin{lemma}[A predictable denominator and its explicit current-sample defect]
+\label{lem:predictable-denominator}
+Define
+\begin{align}
+ c_t&=\frac{1-\beta_2}{1-\beta_2^t},&c_0&=0,\\
+ \overline V_t
+ &=\frac{\beta_2V_t^-+(1-\beta_2)\mathbb E_tZ_t^{\odot2}}
+                   {1-\beta_2^t},&
+ \overline a_t&=(\sqrt{\overline V_t}+\varepsilon_a)^{\odot(-1)},\\
+ \overline{\mathcal A}_t&=\mathcal A(U_t,\overline a_t),&
+ m_t&=\widehat M_tU_t^\top.
+\end{align}
+Then $\overline{\mathcal A}_t$ is predictable, its routed eigenvalues lie
+in $[a,b]$, and the actual adaptive direction satisfies
+\begin{align}
+ D_t^\parallel U_t^\top
+ &=\overline{\mathcal A}_tm_t+e_t,\\
+ \mathbb E_t\|e_t\|^2
+ &\le2G_0^4\varepsilon_a^{-4}c_t.\label{eq:same-batch-defect}
+\end{align}
+For $\mathsf H_T=\sum_{t=1}^Tt^{-1}$,
+\begin{equation}
+ \frac1T\sum_{t=1}^Tc_t
+ \le(1-\beta_2)+\frac{\mathsf H_T}{T}.\label{eq:c-summation}
+\end{equation}
+\end{lemma}
+\begin{proof}
+For nonnegative scalars $x,y$,
+\begin{equation}
+ (\sqrt x-\sqrt y)^2\le|x-y|,\qquad
+ \left|\frac1{\sqrt x+\varepsilon_a}
+       -\frac1{\sqrt y+\varepsilon_a}\right|
+ \le\varepsilon_a^{-2}|\sqrt x-\sqrt y|.
+\end{equation}
+Consequently,
+\begin{align}
+ \mathbb E_t\|\sqrt{\widehat V_t}-\sqrt{\overline V_t}\|^2
+ &\le\mathbb E_t\|\widehat V_t-\overline V_t\|_1\\
+ &=c_t\mathbb E_t\|Z_t^{\odot2}-\mathbb E_tZ_t^{\odot2}\|_1
+ \le2G_0^2c_t,\\
+ \|e_t\|^2
+ &\le\|\widehat M_t\|^2\|a_t-\overline a_t\|^2
+ \le G_0^2\varepsilon_a^{-4}
+                 \|\sqrt{\widehat V_t}-\sqrt{\overline V_t}\|^2.
+\end{align}
+Let $u=1-\beta_2$. Since
+$(1-u)^{-t}\ge1+tu$,
+\begin{equation}
+ 1-\beta_2^t\ge\frac{tu}{1+tu},\qquad
+ c_t\le u+\frac1t.
+\end{equation}
+Summation proves \eqref{eq:c-summation}. The pointwise bounds on
+$\overline V_t$ follow by the same induction as for $\widehat V_t$.
+\end{proof}
+
+\begin{lemma}[Variation of the transported predictable metric]
+\label{lem:metric-variation}
+Let $\mathcal T_t$ denote the isometric transport from $U_{t-1}$ to $U_t$.
+For $t\ge2$,
+\begin{equation}
+ \|\overline{\mathcal A}_t\mathcal T_t
+          -\overline{\mathcal A}_{t-1}\|_{\rm op,old}
+ \le K_\rho\rho+K_c(\sqrt{c_t}+\sqrt{c_{t-1}}),\label{eq:metric-variation}
+\end{equation}
+where the domain is the old routed space and
+\begin{equation}
+ K_\rho=(2\sqrt3+1)b+2\sqrt3G_0\varepsilon_a^{-2},\qquad
+ K_c=2G_0\varepsilon_a^{-2}.
+\end{equation}
+\end{lemma}
+\begin{proof}
+For a nonnegative amplitude matrix $A$ and an orthogonal $R$,
+\begin{align}
+ [\sqrt{A^{\odot2}(R^\top)^{\odot2}}]_{ij}
+ &=\|(A_{ik}R_{jk})_k\|_2,\\
+ \|\sqrt{A^{\odot2}(R^\top)^{\odot2}}-A\|^2
+ &\le\sum_{ijk}A_{ik}^2(R_{jk}-\delta_{jk})^2
+ \le\|A\|^2\|R-I\|_{\rm op}^2.
+\end{align}
+For $\widehat V_{t-1}^{\rm carried}
+=\widehat V_{t-1}(R_{t-1}^\top)^{\odot2}$,
+\begin{align}
+ \overline V_t
+ &=(1-c_t)\widehat V_{t-1}^{\rm carried}
+                       +c_t\mathbb E_tZ_t^{\odot2},\\
+ \|\sqrt{\overline V_t}
+       -\sqrt{\widehat V_{t-1}^{\rm carried}}\|
+ &\le2G_0\sqrt{c_t},\\
+ \|\sqrt{\widehat V_{t-1}}-\sqrt{\overline V_{t-1}}\|
+ &\le2G_0\sqrt{c_{t-1}}.
+\end{align}
+These last two bounds hold pathwise, using
+$\|Z^{\odot2}-\mathbb E Z^{\odot2}\|_1\le2G_0^2$.
+The triangle inequality gives
+\begin{equation}
+ \|\sqrt{\overline V_t}-\sqrt{\overline V_{t-1}}\|
+ \le2\sqrt3G_0\rho+2G_0(\sqrt{c_t}+\sqrt{c_{t-1}}).
+\end{equation}
+The coordinate arrays here use the stored QR gauge. Lifting their inverse
+amplitudes into ambient operators gives
+\begin{align}
+ \|\overline{\mathcal A}_t
+       -\overline{\mathcal A}_{t-1}\|_{\rm op}
+ &\le2b\|U_t-U_{t-1}\|
+       +\varepsilon_a^{-2}
+          \|\sqrt{\overline V_t}-\sqrt{\overline V_{t-1}}\|.
+\end{align}
+Finally $\|\overline{\mathcal A}_t(\mathcal T_t-I)\|_{\rm op,old}
+\le b\rho$ by \eqref{eq:transport-near-identity}.
+\end{proof}
+
+\begin{lemma}[Exact virtual-iterate cancellation of first-moment history]
+\label{lem:virtual-iterate}
+Set
+\begin{align}
+ b_t^{(1)}&=\frac{\beta_1(1-\beta_1^{t-1})}{1-\beta_1^t},&
+ q_t&=\frac{b_t^{(1)}}{1-b_t^{(1)}}
+     =\frac{\beta_1(1-\beta_1^{t-1})}{1-\beta_1},\\
+ q_0&=0,&q&=\frac{\beta_1}{1-\beta_1}.
+\end{align}
+Then $m_t=b_t^{(1)}\mathcal T_tm_{t-1}+(1-b_t^{(1)})G_tP_t$.
+For $Y_1=W_1$ and
+$Y_t=W_t-\eta q_{t-1}\overline{\mathcal A}_{t-1}m_{t-1}$,
+\begin{align}
+ Y_{t+1}-Y_t&=-\eta(K_t+F_t),\\
+ K_t&=\overline{\mathcal A}_t(G_tP_t)+s_tG_t(I-P_t),\\
+ F_t&=e_t-J_t,\\
+ J_t&=(q_{t-1}\overline{\mathcal A}_{t-1}
+                -q_t\overline{\mathcal A}_t\mathcal T_t)m_{t-1},\quad J_1=0,
+ \label{eq:virtual-identity}\\
+ \|W_t-Y_t\|&\le\eta qbG_0.
+\end{align}
+Moreover, with $\overline F_T^2=T^{-1}\sum_{t=1}^T\mathbb E\|F_t\|^2$,
+\begin{align}
+ \overline F_T^2
+ &\le\frac{8G_0^2b^2}{T(1-\beta_1^2)}+8G_0^2q^2K_\rho^2\rho^2\notag\\
+ &\quad+(4G_0^4\varepsilon_a^{-4}+16G_0^2q^2K_c^2)
+                  \left(1-\beta_2+\frac{\mathsf H_T}{T}\right).
+ \label{eq:closed-F-budget}
+\end{align}
+\end{lemma}
+\begin{proof}
+Bias correction in \eqref{eq:actual-recursion} gives the displayed
+recursion for $m_t$. Since $(1+q_t)(1-b_t^{(1)})=1$,
+\begin{align}
+ Y_{t+1}
+ &=W_t-\eta(1+q_t)\overline{\mathcal A}_tm_t
+          -\eta s_tG_t(I-P_t)-\eta e_t\\
+ &=W_t-\eta\overline{\mathcal A}_tG_tP_t
+       -\eta q_t\overline{\mathcal A}_t\mathcal T_tm_{t-1}
+       -\eta s_tG_t(I-P_t)-\eta e_t.
+\end{align}
+Subtract $Y_t$. For $t\ge2$, $q_t-q_{t-1}=\beta_1^{t-1}$, so
+\begin{align}
+ \|J_t\|
+ &\le G_0\{b\beta_1^{t-1}+qK_\rho\rho
+                    +qK_c\sqrt{c_t}+qK_c\sqrt{c_{t-1}}\},\\
+ \mathbb E\|F_t\|^2
+ &\le2\mathbb E\|e_t\|^2+2\mathbb E\|J_t\|^2\\
+ &\le4G_0^4\varepsilon_a^{-4}c_t
+   +8G_0^2\{b^2\beta_1^{2(t-1)}+q^2K_\rho^2\rho^2
+                         +q^2K_c^2(c_t+c_{t-1})\}.
+\end{align}
+The same upper bound is valid for $t=1$ because $J_1=0$.
+Summing the geometric term and using \eqref{eq:c-summation} proves
+\eqref{eq:closed-F-budget}.
+\end{proof}
+
+\begin{lemma}[Residual coercivity under radial unimodal noise]
+\label{lem:radial-residual}
+Under Assumption~\ref{ass:actual-adam},
+\begin{align}
+ \langle g_t(I-P_t),\mathbb E_t[s_tG_t(I-P_t)]\rangle
+ &\ge\|g_t(I-P_t)\|^2-\varepsilon_r\|g_t(I-P_t)\|\\
+ &\ge\tfrac12\|g_t(I-P_t)\|^2-\tfrac12\varepsilon_r^2.\label{eq:residual-coercivity}
+\end{align}
+Thus, with $a_0=\min(a,1/2)$ and $B_0=\max(b,s_{\max})$,
+\begin{equation}
+ \langle g_t,\mathbb E_tK_t\rangle
+ \ge a_0\|g_t\|^2-\varepsilon_r^2/2,\qquad
+ \|K_t\|\le B_0G_0.\label{eq:K-coercivity}
+\end{equation}
+\end{lemma}
+\begin{proof}
+Condition additionally on the parallel component of $\xi_t$. In the residual
+space its conditional density remains radial and nonincreasing, and has
+mean zero. Denote the residual population gradient by $v$, the residual
+sample by $x=v+\zeta$, and the parallel sample norm by $a_\parallel$.
+For every nonnegative radial function $h$, reflection $\mathcal R$ across
+$v^\perp$ gives
+\begin{align}
+ \langle v,\mathbb E[h(\|x\|)x]\rangle
+ &=\int_{\langle v,x\rangle\ge0}
+ h(\|x\|)\langle v,x\rangle
+       [p(x-v)-p(\mathcal Rx-v)]\,dx\ge0,\label{eq:reflection-pair}\\
+ \|x-v\|^2-\|\mathcal Rx-v\|^2&=-4\langle v,x\rangle\le0.
+\end{align}
+Since $s_{\max}\ge1$,
+\begin{equation}
+ h(r)=\operatorname{clip}\left(\frac{\sqrt{a_\parallel^2+r^2}}
+                                    {r+\varepsilon_r};0,s_{\max}\right)
+                     -\frac r{r+\varepsilon_r}\ge0.
+\end{equation}
+Use \eqref{eq:reflection-pair} and then $\mathbb E x=v$:
+\begin{align}
+ \langle v,\mathbb E[sx]\rangle
+ &\ge\left\langle v,\mathbb E\left[x-
+                    \frac{\varepsilon_r x}{\|x\|+\varepsilon_r}\right]\right\rangle
+ \ge\|v\|^2-\varepsilon_r\|v\|.
+\end{align}
+The deterministic case follows pointwise. Young's inequality proves
+\eqref{eq:residual-coercivity}. Predictability of
+$\overline{\mathcal A}_t$ gives
+$\langle g_t,\mathbb E_t\overline{\mathcal A}_tG_tP_t\rangle
+\ge a\|g_tP_t\|^2$. The two branches have orthogonal row supports,
+which proves the norm bound and \eqref{eq:K-coercivity}.
+\end{proof}
+
+\begin{theorem}[Actual transported Adam: a quadratic-root bound]
+\label{thm:actual-adam}
+Under Assumption~\ref{ass:actual-adam}, define
+\begin{align}
+ e_T&=\left(T^{-1}\sum_{t=1}^T\mathbb E\|F_t\|^2\right)^{1/2},&
+ K_0&=B_0G_0,\quad d_0=L\eta qbG_0,\\
+ C_T^{\rm virt}&=\frac{f(W_1)-f_\star}{\eta T}
+       +\frac{\varepsilon_r^2}{2}
+       +d_0(K_0+e_T)+\frac{L\eta}{2}(K_0+e_T)^2.
+\end{align}
+The implemented moments and current-batch denominator satisfy
+\begin{equation}
+ \frac1T\sum_{t=1}^T\mathbb E\|\nabla f(W_t)\|^2
+ \le\left(\frac{e_T+\sqrt{e_T^2+4a_0 C_T^{\rm virt}}}{2a_0}\right)^2.
+ \label{eq:actual-adam-bound}
+\end{equation}
+One may use the closed budget \eqref{eq:closed-F-budget} for $e_T^2$,
+while retaining a smaller rigorously established budget when available.
+For $T\ge2$, $\eta=\eta_0T^{-1/2}$, $\rho=\rho_0T^{-1/2}$,
+$\beta_2=1-T^{-1}$ and fixed $\beta_1$,
+\begin{equation}
+ \frac1T\sum_{t=1}^T\mathbb E\|\nabla f(W_t)\|^2
+ =O(T^{-1/2})+O((\log T)/T)+O(\varepsilon_r^2).
+ \label{eq:actual-adam-rate}
+\end{equation}
+These extra noise and schedule assumptions are not established properties
+of the benchmark runs. The bound closes the actual recursion but is not
+claimed optimal for all Adam trajectories.
+\end{theorem}
+\begin{proof}
+Let $z_T^2=T^{-1}\sum_t\mathbb E\|g_t\|^2$ and
+$u_t=\nabla f(Y_t)$. The virtual-iterate identity gives
+$Y_{t+1}=Y_t-\eta(K_t+F_t)$ and
+$\|u_t-g_t\|\le d_0$. Lemma~\ref{lem:radial-residual} gives
+\begin{equation}
+ \langle u_t,\mathbb E_tK_t\rangle
+ \ge a_0\|g_t\|^2-\varepsilon_r^2/2-d_0K_0.
+\end{equation}
+Average the descent lemma \emph{before} relaxing cross terms.
+Cauchy--Schwarz and Minkowski on the time--probability product space imply
+\begin{align}
+ T^{-1}\sum_t\mathbb E|\langle u_t,F_t\rangle|
+ &\le(z_T+d_0)e_T,\\
+ T^{-1}\sum_t\mathbb E\|K_t+F_t\|^2&\le(K_0+e_T)^2.
+\end{align}
+Telescope $f(Y_t)$, use $Y_1=W_1$, $f(Y_{T+1})\ge f_\star$, and obtain
+\begin{equation}
+ a_0 z_T^2\le e_Tz_T+C_T^{\rm virt}.
+\end{equation}
+Its positive root is \eqref{eq:actual-adam-bound}. Finally
+$e_T^2=O(\rho^2)+O(1-\beta_2+(\log T)/T)+O(T^{-1})$.
+Using $z_T\le e_T/a_0+\sqrt{C_T^{\rm virt}/a_0}$ gives the stated rate.
+This retains the averaged direction budget rather than inserting a
+per-step Young allocation or doubling both squared directions.
+\end{proof}
+
+\begin{corollary}[Positive residual floor, fixed schedules, and the scope of the rate]
+If the residual rule in Assumption~\ref{ass:actual-adam} is instead clipped
+to $[s_{\min},s_{\max}]$ with $s_{\min}>0$, the same radial-noise argument
+applied to $h(r)=s(r)-s_{\min}$ gives
+\begin{equation}
+ \langle g_t(I-P_t),\mathbb E_t[s_tG_t(I-P_t)]\rangle
+ \ge s_{\min}\|g_t(I-P_t)\|^2.
+\end{equation}
+Then Theorem~\ref{thm:actual-adam} holds with
+$a_0=\min(a,s_{\min})$ and the $\varepsilon_r^2/2$ term deleted from
+$C_T^{\rm virt}$.
+For fixed $\beta_2<1$ and fixed $\rho>0$, the explicit bound retains
+$O(1-\beta_2)+O(\rho^2)$ terms. No claim that these are unavoidable lower
+bounds follows from this upper bound. For several routed matrices, a joint
+radial unimodality condition on the vectorized total gradient, block-diagonal
+$\overline{\mathcal A}_t$, and the sum of squared block residual offsets
+give the corresponding block result.
+\end{corollary}

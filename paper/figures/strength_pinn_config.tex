@@ -1,0 +1,13 @@
+% WWW table style: three rules, bold headers, reference green highlight.
+\begin{table}[htbp]\centering\scriptsize
+\caption{Follow-up selections and resources. Shared local CPU wall times include evaluation; persistent state is in decimal MB. All selected endpoints are reported, irrespective of their ranking.}
+\reviewfit{\begin{tabular}{llrrrl}\toprule {\bfseries Task} & {\bfseries Method} & {\bfseries LR} & {\bfseries State MB} & {\bfseries Seconds} & {\bfseries Other selection}\\\midrule
+Poisson / PINN  &  AdamW  &  0.01471  &  0.267  &  6.6  &  --\\
+Poisson / PINN  &  Fixed  &  0.01  &  0.038  &  8.2  &  residual ratio=0.3\\
+Poisson / PINN  &  PeriodicDiag  &  0.01  &  0.038  &  10.3  &  period=25\\
+\rowcolor{oursbg}Poisson / PINN  & \textbf{GrassRoute} &  0.01  &  0.038  &  11.5  &  $\rho$=1\\
+Forced Burgers / PINN  &  AdamW  &  0.007208  &  0.268  &  11.5  &  --\\
+Forced Burgers / PINN  &  Fixed  &  0.01  &  0.039  &  13.1  &  residual ratio=0.3\\
+Forced Burgers / PINN  &  PeriodicDiag  &  0.01  &  0.039  &  9.5  &  period=5\\
+\rowcolor{oursbg}Forced Burgers / PINN  & \textbf{GrassRoute} &  0.01  &  0.039  &  12.3  &  $\rho$=1\\
+\bottomrule\end{tabular}}\end{table}

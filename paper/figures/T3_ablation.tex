@@ -1,0 +1,20 @@
+% WWW table style: three rules, bold headers, reference green highlight.
+\begin{table}[t]
+\centering
+\small
+\caption{\textbf{T3: Ablation Mechanism Table.} Graph/ogbn-arxiv SAGE, seed=42. B5 baseline test-acc = 0.510.}
+\label{tab:ablation}
+\reviewfit{\begin{tabular}{llrrp{3cm}}
+\toprule {\bfseries \textbf{Ablation}} & {\bfseries \textbf{Component Removed}} & {\bfseries \textbf{Test-Acc}} & {\bfseries \textbf{$\Delta$ vs B5}} & {\bfseries \textbf{Mechanism}}\\
+\midrule
+A3  &  Grassmann momentum  &  0.505  &  $-0.005$  &  Smooth drift tracking; minor positive role \\
+A6  &  Main-branch Adam (use SGD)  &  0.078  &  $-0.432$  &  Main subspace coords need adaptive LR \\
+A7  &  Procrustes alignment  &  0.510  &  $\approx 0$  &  Single-task; critical at high-frequency task switches \\
+A8  &  Hard V-reset (V$\leftarrow$0)  &  0.006  &  $-0.504$  &  Theorem 4: first-order stability shock $\Rightarrow$ divergence \\
+A9  &  Sub-space update every 5ep  &  0.412  &  $-0.098$  &  Periodic update degrades vs continuous (G2 mechanism) \\
+A10  &  Sub-space update every 25ep  &  0.322  &  $-0.189$  &  Sparser $\Rightarrow$ worse; confirms online $>$ periodic \\
+\rowcolor{oursbg}\midrule
+B5  &  Full GrassRoute  &  0.510  &  ---  &  Baseline \\
+\bottomrule
+\end{tabular}}
+\end{table}

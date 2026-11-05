@@ -1,0 +1,13 @@
+% WWW table style: three rules, bold headers, reference green highlight.
+\begin{table}[t]\centering\footnotesize
+\caption{\textbf{Controlled geometry checks.} Random pairs cover $(d,r)=(6,1),(8,3),(8,6),(32,8)$; ratios at least one verify the sampled lower bounds.}
+\label{tab:geometry-checks}
+\setlength{\tabcolsep}{5pt}
+\reviewfit{\begin{tabular}{lr}
+\toprule {\bfseries Check} & {\bfseries Value}\\\midrule
+Random covariance/subspace cases  &  600\\
+Minimum measured / PL lower bound  &  1.131\\
+Minimum measured / quadratic-growth bound  &  1.111\\
+Maximum directional-derivative error  &  $2.17\times10^{-10}$\\
+\bottomrule\end{tabular}}
+\end{table}

@@ -1,0 +1,41 @@
+{
+  "status": "complete",
+  "task": "sciml_poisson",
+  "method": "GrassRoute",
+  "hp": {
+    "lr": 0.01,
+    "rho": 1.0
+  },
+  "formal": true,
+  "epochs": 2000,
+  "n_epochs": 2000,
+  "seed": 42,
+  "validation": {
+    "score": 6.923387263668701e-05,
+    "pde_residual_l2": 0.006533627863973379
+  },
+  "test": {
+    "score": 6.703891995130107e-05,
+    "pde_residual_l2": 0.0064439489506185055
+  },
+  "state_bytes": 37896,
+  "routed_layers": [
+    {
+      "name": "net.2.weight",
+      "shape": [
+        128,
+        128
+      ],
+      "rank": 8
+    },
+    {
+      "name": "net.4.weight",
+      "shape": [
+        128,
+        128
+      ],
+      "rank": 8
+    }
+  ],
+  "wall_s": 11.512248457999995
+}

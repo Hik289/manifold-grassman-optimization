@@ -1,0 +1,75 @@
+\subsection{Averaging before relaxation: a quadratic-root stationarity bound}
+\label{app:sharp-descent}
+
+\begin{proposition}[Descent lemma with Hilbert-space Minkowski]
+\label{prop:root-stationarity}
+Let $f\ge f_\star$ be $L$-smooth, $\mathbb E_tG_t=g_t=\nabla f(W_t)$,
+and let the predictable self-adjoint metric $\mathcal B_t$ satisfy
+$aI\preceq\mathcal B_t\preceq bI$. For
+$D_t=\mathcal B_tG_t+e_t$, $W_{t+1}=W_t-\eta D_t$, define
+\begin{align}
+ z_T^2&=T^{-1}\sum_{t<T}\mathbb E\|g_t\|^2,&
+ e_T^2&=T^{-1}\sum_{t<T}\mathbb E\|e_t\|^2,\\
+ s_T^2&=T^{-1}\sum_{t<T}\mathbb E
+                   \|\mathcal B_t(G_t-g_t)\|^2,&
+ A_\eta&=a-L\eta b^2/2.
+\end{align}
+If $0<\eta<2a/(Lb^2)$, put
+\begin{equation}
+ C_T=\frac{f(W_0)-f_\star}{\eta T}
+                          +\frac{L\eta}{2}(s_T+e_T)^2.
+\end{equation}
+Then
+\begin{equation}
+ z_T\le\frac{e_T(1+L\eta b)+
+       \sqrt{e_T^2(1+L\eta b)^2+4A_\eta C_T}}{2A_\eta}.
+ \label{eq:root-stationarity}
+\end{equation}
+The variance $s_T^2$ is the actual metric-noise energy, not necessarily the
+worst-case replacement $b^2\sigma_G^2$.
+\end{proposition}
+\begin{proof}
+The descent lemma, conditional predictability, and Cauchy--Schwarz on the
+product space of time and randomness give
+\begin{equation}
+ a z_T^2\le\frac{f(W_0)-f_\star}{\eta T}
+                +z_Te_T+\frac{L\eta}{2T}\sum_t\mathbb E\|D_t\|^2.
+\end{equation}
+The cross term between $\mathcal B_tg_t$ and
+$\mathcal B_t(G_t-g_t)$ has zero mean. Minkowski therefore yields
+\begin{align}
+ \left(T^{-1}\sum_t\mathbb E\|D_t\|^2\right)^{1/2}
+ &\le\sqrt{b^2z_T^2+s_T^2}+e_T,\\
+ T^{-1}\sum_t\mathbb E\|D_t\|^2
+ &\le b^2z_T^2+2be_Tz_T+(s_T+e_T)^2.
+\end{align}
+In the second line, only the defect cross term uses
+$\sqrt{b^2z_T^2+s_T^2}\le bz_T+s_T$; no artificial cross term between
+metric-gradient energy and metric-noise energy is introduced.
+Rearrange to $A_\eta z_T^2-e_T(1+L\eta b)z_T-C_T\le0$
+and take its positive root.
+\end{proof}
+
+\begin{corollary}[A sharp quadratic reference]
+If $e_T=0$, \eqref{eq:root-stationarity} reduces to
+\begin{equation}
+ z_T^2\le\frac{f(W_0)-f_\star}{\eta T(a-L\eta b^2/2)}
+                   +\frac{L\eta s_T^2}{2(a-L\eta b^2/2)}.
+\end{equation}
+For $f(w)=Lw^2/2$, $\mathcal B_t=aI$, and additive martingale noise of
+constant variance $\sigma^2$, the stability threshold is exactly
+$\eta aL<2$, and the stationary gradient variance is
+\begin{equation}
+ \lim_t\mathbb E|\nabla f(w_t)|^2
+       =\frac{L\eta a\sigma^2}{2-\eta aL}.
+\end{equation}
+This equals the noise term above, since $s_T^2=a^2\sigma^2$.
+The step-size threshold and noise coefficient cannot be uniformly improved
+for this reference class.
+\end{corollary}
+\begin{proof}
+Here $w_{t+1}=(1-\eta aL)w_t-\eta a\xi_t$.
+The AR(1) Yule--Walker equation \cite{brockwell1991time} gives
+$\operatorname{Var}(w)=\eta^2a^2\sigma^2/[1-(1-\eta aL)^2]$.
+The descent lemma is an equality for this quadratic.
+\end{proof}

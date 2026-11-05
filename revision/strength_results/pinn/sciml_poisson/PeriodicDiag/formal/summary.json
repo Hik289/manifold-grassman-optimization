@@ -1,0 +1,41 @@
+{
+  "status": "complete",
+  "task": "sciml_poisson",
+  "method": "PeriodicDiag",
+  "hp": {
+    "lr": 0.01,
+    "period": 25
+  },
+  "formal": true,
+  "epochs": 2000,
+  "n_epochs": 2000,
+  "seed": 42,
+  "validation": {
+    "score": 5.029160820413381e-05,
+    "pde_residual_l2": 0.005696884356439114
+  },
+  "test": {
+    "score": 4.896788959740661e-05,
+    "pde_residual_l2": 0.005242982413619757
+  },
+  "state_bytes": 37896,
+  "routed_layers": [
+    {
+      "name": "net.2.weight",
+      "shape": [
+        128,
+        128
+      ],
+      "rank": 8
+    },
+    {
+      "name": "net.4.weight",
+      "shape": [
+        128,
+        128
+      ],
+      "rank": 8
+    }
+  ],
+  "wall_s": 10.294672791999997
+}

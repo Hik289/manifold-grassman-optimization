@@ -1,0 +1,16 @@
+\begin{table}[t]\centering\footnotesize
+\caption{\textbf{Focused Cora GCN architecture check.} Nine 100-epoch
+validation candidates per method and a fresh 1000-epoch formal run.
+Final public-test accuracy (\%) on the Planetoid split, seed 42.
+All six methods and incomplete cells are shown. This reuses Cora and
+is an architecture replication, not a new dataset-family win.}
+\label{tab:focused-gcn}
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{lr}\toprule Method & Test accuracy \\ \midrule
+SGD & 81.10 \\
+AdamW & 78.50 \\
+Fixed & 21.40 \\
+Periodic SVD & 80.50 \\
+GrassRoute & \cellcolor{oursbg}80.30 \\
+SubTrack++ & 78.60 \\
+\bottomrule\end{tabular}\end{table}

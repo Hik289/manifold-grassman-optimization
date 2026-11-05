@@ -1,0 +1,134 @@
+{
+  "hp": {
+    "lr": 0.01
+  },
+  "criterion": "final validation primary metric; fresh formal initialization; one final test evaluation",
+  "candidates": [
+    {
+      "hp": {
+        "lr": 0.0003
+      },
+      "status": "complete",
+      "validation": {
+        "score": 0.07475890219211578,
+        "mse": 0.07475890219211578,
+        "full_image_mse": 0.07475890219211578,
+        "psnr": 11.26337084706353,
+        "n": 765
+      },
+      "error": null
+    },
+    {
+      "hp": {
+        "lr": 0.0005
+      },
+      "status": "complete",
+      "validation": {
+        "score": 0.0731583759188652,
+        "mse": 0.0731583759188652,
+        "full_image_mse": 0.0731583759188652,
+        "psnr": 11.357359442194582,
+        "n": 765
+      },
+      "error": null
+    },
+    {
+      "hp": {
+        "lr": 0.001
+      },
+      "status": "complete",
+      "validation": {
+        "score": 0.06357943266630173,
+        "mse": 0.06357943266630173,
+        "full_image_mse": 0.06357943266630173,
+        "psnr": 11.966833517121211,
+        "n": 765
+      },
+      "error": null
+    },
+    {
+      "hp": {
+        "lr": 0.002
+      },
+      "status": "complete",
+      "validation": {
+        "score": 0.04667149856686592,
+        "mse": 0.04667149856686592,
+        "full_image_mse": 0.04667149856686592,
+        "psnr": 13.30948254206509,
+        "n": 765
+      },
+      "error": null
+    },
+    {
+      "hp": {
+        "lr": 0.003
+      },
+      "status": "complete",
+      "validation": {
+        "score": 0.04079103842377663,
+        "mse": 0.04079103842377663,
+        "full_image_mse": 0.04079103842377663,
+        "psnr": 13.894352386403543,
+        "n": 765
+      },
+      "error": null
+    },
+    {
+      "hp": {
+        "lr": 0.005
+      },
+      "status": "complete",
+      "validation": {
+        "score": 0.03802965581417084,
+        "mse": 0.03802965581417084,
+        "full_image_mse": 0.03802965581417084,
+        "psnr": 14.198776051349014,
+        "n": 765
+      },
+      "error": null
+    },
+    {
+      "hp": {
+        "lr": 0.01
+      },
+      "status": "complete",
+      "validation": {
+        "score": 0.03078792802989483,
+        "mse": 0.03078792802989483,
+        "full_image_mse": 0.03078792802989483,
+        "psnr": 15.116195373216026,
+        "n": 765
+      },
+      "error": null
+    },
+    {
+      "hp": {
+        "lr": 0.02
+      },
+      "status": "complete",
+      "validation": {
+        "score": 0.033773813396692276,
+        "mse": 0.033773813396692276,
+        "full_image_mse": 0.033773813396692276,
+        "psnr": 14.714199004649695,
+        "n": 765
+      },
+      "error": null
+    },
+    {
+      "hp": {
+        "lr": 0.03
+      },
+      "status": "complete",
+      "validation": {
+        "score": 0.07359815388917923,
+        "mse": 0.07359815388917923,
+        "full_image_mse": 0.07359815388917923,
+        "psnr": 11.33133079219537,
+        "n": 765
+      },
+      "error": null
+    }
+  ]
+}

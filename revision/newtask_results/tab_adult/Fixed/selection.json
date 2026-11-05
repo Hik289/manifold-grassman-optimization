@@ -1,0 +1,153 @@
+{
+  "hp": {
+    "lr": 0.01,
+    "residual_ratio": 100.0
+  },
+  "criterion": "final validation primary metric; fresh formal initialization; one final test evaluation",
+  "candidates": [
+    {
+      "hp": {
+        "lr": 0.001,
+        "residual_ratio": 1.0
+      },
+      "status": "complete",
+      "validation": {
+        "accuracy": 0.8182097343773991,
+        "macro_f1": 0.6928374497634917,
+        "cross_entropy": 0.39855363965034485,
+        "n": 6513,
+        "auroc": 0.8563887713831742,
+        "score": 0.8563887713831742
+      },
+      "error": null
+    },
+    {
+      "hp": {
+        "lr": 0.001,
+        "residual_ratio": 10.0
+      },
+      "status": "complete",
+      "validation": {
+        "accuracy": 0.8265008444649163,
+        "macro_f1": 0.7241710541307125,
+        "cross_entropy": 0.3789520263671875,
+        "n": 6513,
+        "auroc": 0.8703702461773385,
+        "score": 0.8703702461773385
+      },
+      "error": null
+    },
+    {
+      "hp": {
+        "lr": 0.001,
+        "residual_ratio": 100.0
+      },
+      "status": "complete",
+      "validation": {
+        "accuracy": 0.8440042990941194,
+        "macro_f1": 0.7749916351340691,
+        "cross_entropy": 0.33694925904273987,
+        "n": 6513,
+        "auroc": 0.8964397917913374,
+        "score": 0.8964397917913374
+      },
+      "error": null
+    },
+    {
+      "hp": {
+        "lr": 0.003,
+        "residual_ratio": 1.0
+      },
+      "status": "complete",
+      "validation": {
+        "accuracy": 0.84692154153232,
+        "macro_f1": 0.7766071557766001,
+        "cross_entropy": 0.33059850335121155,
+        "n": 6513,
+        "auroc": 0.8989172349930872,
+        "score": 0.8989172349930872
+      },
+      "error": null
+    },
+    {
+      "hp": {
+        "lr": 0.003,
+        "residual_ratio": 10.0
+      },
+      "status": "complete",
+      "validation": {
+        "accuracy": 0.8516812528788577,
+        "macro_f1": 0.7864834240853844,
+        "cross_entropy": 0.31959566473960876,
+        "n": 6513,
+        "auroc": 0.9061390860692103,
+        "score": 0.9061390860692103
+      },
+      "error": null
+    },
+    {
+      "hp": {
+        "lr": 0.003,
+        "residual_ratio": 100.0
+      },
+      "status": "complete",
+      "validation": {
+        "accuracy": 0.8604329801934593,
+        "macro_f1": 0.8003937965578877,
+        "cross_entropy": 0.3030855059623718,
+        "n": 6513,
+        "auroc": 0.9161451992323725,
+        "score": 0.9161451992323725
+      },
+      "error": null
+    },
+    {
+      "hp": {
+        "lr": 0.01,
+        "residual_ratio": 1.0
+      },
+      "status": "complete",
+      "validation": {
+        "accuracy": 0.8549055734684478,
+        "macro_f1": 0.7910740455713465,
+        "cross_entropy": 0.3105490207672119,
+        "n": 6513,
+        "auroc": 0.9113524277253874,
+        "score": 0.9113524277253874
+      },
+      "error": null
+    },
+    {
+      "hp": {
+        "lr": 0.01,
+        "residual_ratio": 10.0
+      },
+      "status": "complete",
+      "validation": {
+        "accuracy": 0.8596652848149854,
+        "macro_f1": 0.7983706617502411,
+        "cross_entropy": 0.3045029640197754,
+        "n": 6513,
+        "auroc": 0.915311797115206,
+        "score": 0.915311797115206
+      },
+      "error": null
+    },
+    {
+      "hp": {
+        "lr": 0.01,
+        "residual_ratio": 100.0
+      },
+      "status": "complete",
+      "validation": {
+        "accuracy": 0.863196683555965,
+        "macro_f1": 0.803968236890272,
+        "cross_entropy": 0.2985263764858246,
+        "n": 6513,
+        "auroc": 0.918903860836549,
+        "score": 0.918903860836549
+      },
+      "error": null
+    }
+  ]
+}

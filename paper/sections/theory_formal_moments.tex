@@ -1,0 +1,196 @@
+\subsection{Accumulated diagonal-covariance error and tracking-momentum estimation}
+\label{app:moment-error-calculus}
+The reference covariance below is a full $r\times r$ \emph{transported
+history}; it is not the covariance of gradients discarded before projection.
+For a fixed row, let $z_t\in\mathbb R^r$ be its routed gradient as a column,
+let $B_0=0$, $v_0=0$, and define
+\begin{align}
+ \widetilde B_t&=\beta_2B_{t-1}+(1-\beta_2)z_tz_t^\top,&
+ B_t&=R_t\widetilde B_tR_t^\top,\\
+ \widetilde v_t&=\beta_2v_{t-1}+(1-\beta_2)z_t^{\odot2},&
+ v_t&=R_t^{\odot2}\widetilde v_t,\\
+ e_t^v&=\operatorname{diag}(B_t)-v_t,&
+ O_t&=\widetilde B_t-\operatorname{Diag}(\operatorname{diag}\widetilde B_t).
+\end{align}
+Here $R_t$ is exactly the new-coordinate rotation; the column-vector form
+$v_t=R_t^{\odot2}\widetilde v_t$ equals the row-wise update in the algorithm.
+
+\begin{proposition}[Exact covariance-error recursion and rotation accumulation]
+\label{prop:accumulated-covariance}
+With $\delta_t=\|R_t-I\|_{\rm op}$,
+\begin{align}
+ e_t^v&=\beta_2R_t^{\odot2}e_{t-1}^v
+                    +\operatorname{diag}(R_tO_tR_t^\top),\label{eq:diag-error-recursion}\\
+ \|e_t^v\|_2&\le\beta_2\|e_{t-1}^v\|_2+2\delta_t\|O_t\|_F,\\
+ \|e_T^v\|_2&\le2\sum_{t=1}^T\beta_2^{T-t}\delta_t\|O_t\|_F.
+ \label{eq:diag-error-unrolled}
+\end{align}
+Thus if $\delta_t\le\delta$ and $\|O_t\|_F\le B_O$,
+\begin{equation}
+ \frac{\|e_T^v\|_2}{1-\beta_2^T}
+          \le\frac{2\delta B_O}{1-\beta_2}.\label{eq:diag-error-steady}
+\end{equation}
+The trace is nevertheless exact:
+\begin{equation}
+ \mathbf1^\top e_t^v=0,\qquad
+ \mathbf1^\top v_t=\operatorname{tr}(B_t).
+\end{equation}
+\end{proposition}
+\begin{proof}
+Separate the diagonal and off-diagonal parts before rotation:
+\begin{align}
+ \operatorname{diag}\widetilde B_t-\widetilde v_t
+ &=\beta_2(\operatorname{diag}B_{t-1}-v_{t-1}),\\
+ \operatorname{diag}(R_t\widetilde B_tR_t^\top)
+ &=R_t^{\odot2}\operatorname{diag}\widetilde B_t
+                          +\operatorname{diag}(R_tO_tR_t^\top).
+\end{align}
+Subtract the implemented $v_t$. Since $R_t^{\odot2}$ is doubly stochastic,
+$\|R_t^{\odot2}\|_2\le
+\sqrt{\|R_t^{\odot2}\|_1\|R_t^{\odot2}\|_\infty}=1$.
+Moreover $\operatorname{diag}O_t=0$, and
+\begin{align}
+ R_tO_tR_t^\top-O_t
+ &=(R_t-I)O_tR_t^\top+O_t(R_t^\top-I),\\
+ \|\operatorname{diag}(R_tO_tR_t^\top)\|_2
+ &\le\|R_tO_tR_t^\top-O_t\|_F
+ \le2\delta_t\|O_t\|_F.
+\end{align}
+Unroll the recursion and sum the geometric series. Orthogonal similarity
+preserves the full covariance trace, and double stochasticity preserves
+the sum of the diagonal approximation. Both have identical EMA trace
+injections $(1-\beta_2)\|z_t\|^2$, proving the trace identities.
+\end{proof}
+
+\begin{corollary}[Coordinatewise adaptive-direction error]
+Let $\widehat b_t=\operatorname{diag}(B_t)/(1-\beta_2^t)$ and
+$\widehat v_t=v_t/(1-\beta_2^t)$. For a common first-moment row $m$,
+\begin{align}
+ \left\|m\oslash(\sqrt{\widehat b_t}+\varepsilon_a)
+       -m\oslash(\sqrt{\widehat v_t}+\varepsilon_a)\right\|_2^2
+ &\le\|m\|_\infty^2\varepsilon_a^{-4}
+                           \|\widehat b_t-\widehat v_t\|_1\\
+ &\le\|m\|_\infty^2\varepsilon_a^{-4}\sqrt r\,
+                       \frac{\|e_t^v\|_2}{1-\beta_2^t}.
+ \label{eq:diag-direction-error}
+\end{align}
+For QR tracking with $\|H_t\|\le H_0$ one may use
+$\delta_t\le2\sqrt3\rho_tH_0$ in
+\eqref{eq:diag-error-unrolled}. The resulting comparison budget can scale
+as $\rho/(1-\beta_2)$; it need not vanish under every simultaneous choice
+of $\rho$ and $\beta_2$. Theorem~\ref{thm:actual-adam} analyzes the
+implemented diagonal states directly and does not assume this comparison
+error vanishes.
+\end{corollary}
+\begin{proof}
+For each coordinate use
+$|1/(\sqrt x+\varepsilon_a)-1/(\sqrt y+\varepsilon_a)|^2
+\le\varepsilon_a^{-4}|x-y|$, then sum and apply
+$\|e\|_1\le\sqrt r\|e\|_2$.
+\end{proof}
+
+\begin{proposition}[A first-order rotation error with exact coefficient]
+For
+\begin{equation}
+ B=\begin{pmatrix}a&c\\c&b\end{pmatrix}\succeq0,\quad
+ R(\theta)=\begin{pmatrix}\cos\theta&-\sin\theta\\
+                            \sin\theta&\cos\theta\end{pmatrix},
+\end{equation}
+the diagonal-covariance discrepancy is exactly
+\begin{equation}
+ \operatorname{diag}(RBR^\top)-R^{\odot2}\operatorname{diag}B
+     =\binom{-2c\sin\theta\cos\theta}{2c\sin\theta\cos\theta}.
+\end{equation}
+Consequently its norm is $\sqrt2|c\sin(2\theta)|$
+and its derivative norm at $\theta=0$ is $2\sqrt2|c|$.
+Small rotations alone do not make omitted-covariance error quadratic.
+\end{proposition}
+\begin{proof}
+Multiply the three $2\times2$ matrices and subtract their diagonal terms.
+\end{proof}
+
+\begin{proposition}[Moving-basis EMA error with explicit drift and noise]
+\label{prop:tracker-momentum-error}
+Let $q_t=(I-P_t)C_tU_t$ and
+$\widehat q_t=q_t+\zeta_t$, with
+$\mathbb E_t\zeta_t=0$ and $\mathbb E_t\|\zeta_t\|^2\le\sigma_t^2$.
+For
+\begin{equation}
+ H_t=\mu\Pi_{U_t}H_{t-1}+(1-\mu)\widehat q_t,\quad
+ a_t=H_t-q_t,\quad
+ d_t=\Pi_{U_t}q_{t-1}-q_t,\quad0<\mu<1,
+\end{equation}
+one has the exact recursion and conditional bound
+\begin{align}
+ a_t&=\mu\Pi_{U_t}a_{t-1}+\mu d_t+(1-\mu)\zeta_t,\\
+ \mathbb E_t\|a_t\|^2
+ &\le(1+\gamma)\mu^2\|a_{t-1}\|^2
+      +(1+\gamma^{-1})\mu^2\|d_t\|^2
+      +(1-\mu)^2\sigma_t^2\qquad(\gamma>0).\label{eq:EMA-full-recursion}
+\end{align}
+If $\|d_t\|\le D$ and $\sigma_t\le\sigma$, put
+$q_\mu=(1+\mu^2)/2$. Then
+\begin{align}
+ \mathbb E\|a_T\|^2
+ &\le q_\mu^T\mathbb E\|a_0\|^2
+  +\left\{\frac{2\mu^2(1+\mu^2)}{(1-\mu^2)^2}D^2
+             +\frac{2(1-\mu)}{1+\mu}\sigma^2\right\}(1-q_\mu^T).
+ \label{eq:EMA-drift-noise}
+\end{align}
+If $D=0$, the sharper noise-only steady bound is
+$(1-\mu)\sigma^2/(1+\mu)$.
+\end{proposition}
+\begin{proof}
+Subtract $q_t$ and insert $\Pi_{U_t}q_{t-1}$.
+Everything except $\zeta_t$ is $\mathcal F_t$-measurable, so the cross
+term with current noise has zero conditional expectation. Apply
+$\|x+y\|^2\le(1+\gamma)\|x\|^2+(1+\gamma^{-1})\|y\|^2$
+and $\|\Pi_{U_t}a_{t-1}\|\le\|a_{t-1}\|$.
+Choose $\gamma=(1-\mu^2)/(2\mu^2)$:
+\begin{align}
+ (1+\gamma)\mu^2&=q_\mu,\\
+ (1+\gamma^{-1})\mu^2&=\frac{\mu^2(1+\mu^2)}{1-\mu^2},\\
+ 1-q_\mu&=(1-\mu^2)/2.
+\end{align}
+Summation gives \eqref{eq:EMA-drift-noise}. If $D=0$, omit Young's
+inequality: the contraction coefficient is $\mu^2$ exactly.
+\end{proof}
+
+\begin{corollary}[A closed drift budget from parameter and basis motion]
+Suppose $C_t=C(W_t)$, $\|C(W)\|_{\rm op}\le C_0$, and
+$\|C(W)-C(W')\|\le L_C\|W-W'\|$. Then
+\begin{align}
+ \|d_t\|&\le\|C_t-C_{t-1}\|+2C_0\|U_t-U_{t-1}\|\\
+ &\le L_C\eta_{t-1}D_0+2\sqrt3C_0\rho_{t-1}H_0.\label{eq:closed-EMA-drift}
+\end{align}
+If each sampled gradient is $L_g$-Lipschitz in $W$, then the normalized
+population covariance admits $L_C=2L_g/\sqrt{\varepsilon_c}$.
+For $\epsilon=1-\mu\in(0,1)$, the steady upper bound in
+\eqref{eq:EMA-drift-noise} is at most
+\begin{equation}
+ \frac{4D^2}{\epsilon^2}+2\epsilon\sigma^2.
+\end{equation}
+If $(4D^2/\sigma^2)^{1/3}<1$, this latter expression is minimized at
+$\epsilon=(4D^2/\sigma^2)^{1/3}$, with value
+$3\,4^{1/3}D^{2/3}\sigma^{4/3}$.
+\end{corollary}
+\begin{proof}
+Since $q_{t-1}=C_{t-1}U_{t-1}-U_{t-1}A_{t-1}$ with
+$\|A_{t-1}\|_{\rm op}\le C_0$,
+\begin{align}
+ d_t&=(I-P_t)\{C_{t-1}U_{t-1}-C_tU_t-U_{t-1}A_{t-1}\},\\
+ \|(I-P_t)U_{t-1}A_{t-1}\|
+ &\le C_0\|U_{t-1}-U_t\|.
+\end{align}
+The other difference contributes
+$\|C_t-C_{t-1}\|+C_0\|U_t-U_{t-1}\|$.
+The normalized-covariance Lipschitz constant follows by taking expectation
+in \eqref{eq:cov-lip}. Finally,
+\begin{align}
+ \frac{2\mu^2(1+\mu^2)}{(1-\mu^2)^2}&\le\frac4{(1-\mu)^2},&
+ \frac{2(1-\mu)}{1+\mu}&\le2(1-\mu),
+\end{align}
+and elementary differentiation proves the optimization claim. These are
+estimation-error budgets for the tracker momentum; they are not a
+replacement for the neighborhood assumption in the tracking theorem.
+\end{proof}

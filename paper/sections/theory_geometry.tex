@@ -1,0 +1,339 @@
+% WWW table style: three rules, bold headers, reference green highlight.
+\section{Detailed Theoretical Analysis}
+\label{app:theory}
+
+The proof is organized around three reductions: orthogonal routing to
+independent principal planes; spectral perturbation to a separated Sylvester
+equation; and generalization to an exact Gaussian KL followed by binary-KL
+inversion. Their classical ingredients and their exact roles are explicit.
+The parameter matrix is unconstrained, and a rank-$r$ optimizer state is not
+a rank-$r$ parameter constraint. The table distinguishes sharp atomic
+inequalities from the sufficient adaptive-state budgets used to combine them.
+
+\begin{table}[htbp]
+\centering\small
+\caption{\textbf{Proof structure and sharpness.} Exactness concerns the stated
+model or atomic inequality, not universal optimality of the complete optimizer
+or of every composed finite-sample bound.}
+\label{tab:proof-sharpness}
+\setlength{\tabcolsep}{4pt}\renewcommand{\arraystretch}{1.18}
+\reviewfit{\begin{tabular}{@{}p{.25\linewidth}p{.31\linewidth}p{.37\linewidth}@{}}
+\toprule {\bfseries Reduction / classical tool} & {\bfseries Retained quantity} & {\bfseries Equality or scope}\\
+\midrule
+CS + Poincar\'e separation  &  QR pullback $L_R=\lambda_1-\lambda_d$  &  Two extremal eigenvectors; dimension-free and attained.\\
+Ky Fan + square completion  &  Moving-excess coefficient $(1+a^{-1})/(4\Delta)$  &  Optimal to second order in a two-plane perturbation.\\
+Principal-angle Rayleigh quotient  &  PL factor $2\Delta\cos^2R$  &  Rank one at angle $R$ attains it.\\
+Householder involution  &  $\|D^2\mathcal C_\epsilon[E,E]\|_{\rm op}\le2\|E\|_F^2/\epsilon$  &  Attained at zero with rank-one $E$.\\
+Davis--Kahan / Rosenblum  &  Off-diagonal residual divided by the mixed gap  &  Unit residual constant is exact for one Sylvester entry.\\
+Descent + Minkowski  &  Quadratic-root stationarity  &  The reference quadratic attains the zero-defect noise coefficient.\\
+Yule--Walker / Polyak  &  Exact modal stationary covariance  &  Additive tangent oracle; no multiplicative-noise identification.\\
+Gaussian entropy identity  &  Exact prior--posterior angle cost  &  Identity for every positive two-variance covariance.\\
+Seeger--Maurer  &  Exact $\Xi_n$ and binary-KL inverse  &  Bernoulli moment is exact; final confidence bound need not be optimal.\\
+\bottomrule
+\end{tabular}}
+\end{table}
+The actual Adam defect and the coupled state Lipschitz constants remain
+sufficient upper bounds; sharpness is not claimed for those worst-case
+budgets. A positive-gap tracking regime is also kept separate from a
+stationarity limit in which that gap may vanish.
+
+\subsection{Notation, filtration, and the population being tracked}
+\label{app:population}
+
+Write $\langle A,B\rangle=\operatorname{tr}(A^\top B)$ and let $\|\cdot\|$
+denote the Frobenius norm unless the operator norm is explicitly indicated.
+The pre-sampling filtration $\mathcal F_t$ contains the data set, parameters,
+bases, and all optimizer states before drawing the current mini-batch.
+Thus $W_t,U_t,M_{t-1},V_{t-1},H_{t-1}$ are measurable with respect to
+$\mathcal F_t$. The sampled gradient $G_t$ generally is not. We use two
+covariances:
+\begin{align}
+ S_t&=\mathbb E[G_t^\top G_t\mid\mathcal F_t],\label{eq:raw-cov}\\
+ C_t&=\mathbb E\left[\frac{G_t^\top G_t}{\|G_t\|^2+\varepsilon_c}
+                 \,\middle|\,\mathcal F_t\right].\label{eq:normalized-cov}
+\end{align}
+The implemented normalized tracker is unbiased for the tangent gradient of
+$\Phi_t(U)=-\operatorname{tr}(U^\top C_tU)/2$. Its eigenspace is not in
+general the leading eigenspace of $S_t$. Normalization preserves the eigenvectors
+of a \emph{single} covariance sample; it need not preserve eigenvectors after
+expectation. For example, let $G^\top G$ equal $100e_1e_1^\top$ with
+probability $0.1$ and $e_2e_2^\top$ with probability $0.9$. With
+$\varepsilon_c=0$, the unnormalized population selects $e_1$, whereas the
+normalized population selects $e_2$. All tracking statements refer to $C_t$;
+raw residual-energy statements refer to $S_t$. They coincide up to scale only
+under an additional structural assumption, such as deterministic gradient norm.
+
+For a fixed covariance $C\succeq0$, put
+\begin{equation}
+ \lambda_1\ge\cdots\ge\lambda_d,\quad
+ \Delta=\lambda_r-\lambda_{r+1}>0,\quad
+ \Lambda=\lambda_1-\lambda_d,\quad
+ P=UU^\top,\quad P_\star=U_\star U_\star^\top.
+\end{equation}
+Here $U_\star$ spans the leading eigenspace. Let
+$\theta_1,\ldots,\theta_r\in[0,\pi/2]$ be the principal angles and define
+\begin{equation}
+ R(U)=\|\Theta\|_F,\quad \theta_{\max}(U)=\max_i\theta_i,
+ \quad s(U)=\|\sin\Theta\|_F,\quad h_C(U)=\Phi(U)-\Phi(U_\star).
+\end{equation}
+The angle $\theta_{\max}$ controls transversality to the optimal subspace;
+$R$ is geodesic distance. They must not be identified with the distance between
+two consecutive optimizer bases. Constants in the analysis are specific to a
+layer, rank, and time interval. A positive average captured energy across layers
+does not verify a uniform lower bound on their individual eigengaps.
+
+\subsection{Quotient geometry and implemented operations}
+
+The canonical quotient metric on $\mathrm{Gr}(r,d)$ has horizontal lift
+\begin{equation}
+ \mathcal H_U=\{\xi:U^\top\xi=0\},\qquad
+ \Pi_U(A)=(I-P)A,\qquad g_U(\xi,\zeta)=\langle\xi,\zeta\rangle.
+\end{equation}
+Equivalently, for projector tangent vectors the metric is half the ambient
+Frobenius inner product. These normalizations agree under
+$\dot P=\xi U^\top+U\xi^\top$ \cite{bendokat2024grassmann}.
+This metric has nonnegative sectional curvature bounded by $2$; the upper
+bound need not be attained in every low-dimensional case
+\cite{zimmermann2024curvature}. The injectivity radius is $\pi/2$.
+The cut locus relative to $[U_\star]$ consists of subspaces having at least
+one principal angle $\pi/2$. Consequently $\theta_{\max}<\pi/2$ ensures
+the usual graph chart exists, while $R<\pi/2$ is a sufficient, stronger
+condition. Neither condition implies geodesic convexity of $\Phi$ throughout
+that region.
+
+\begin{lemma}[Projection and exact energy accounting]
+\label{lem:decomposition}
+For every $G$ and orthonormal $U$,
+\begin{equation}
+ G=GP+G(I-P),\qquad
+ \|G\|^2=\|GU\|^2+\|G(I-P)\|^2.
+\end{equation}
+For a covariance $S=\mathbb E[G^\top G]$, an
+$\mathcal F_t$-measurable projector satisfies
+\begin{equation}
+ \mathbb E_t\|G(I-P)\|^2
+ =\operatorname{tr}(S)-\operatorname{tr}(U^\top SU)
+ =\tau_r(S)+2h_S(U),\label{eq:tail-exact}
+\end{equation}
+where $\tau_r(S)=\sum_{j>r}\lambda_j(S)$.
+\end{lemma}
+\begin{proof}
+The two gradient components are orthogonal because $P(I-P)=0$. Also
+$\|GP\|^2=\operatorname{tr}(U^\top G^\top GU)=\|GU\|^2$.
+Taking conditional expectation yields the first equality in
+\eqref{eq:tail-exact}; adding and subtracting the leading $r$ eigenvalues
+yields the second. If $P$ is chosen from the \emph{current} sampled gradient,
+the conditional-expectation step requires separate justification.
+\end{proof}
+
+\begin{lemma}[QR retraction and its quotient error]
+\label{lem:qr}
+Let $\xi\in\mathcal H_U$ have compact singular value decomposition
+$\xi=A\operatorname{diag}(\sigma_i)B^\top$. The projector of
+$\mathrm{qf}(U+\xi)$ is
+\begin{equation}
+ P_{\mathrm{QR}}=(U+\xi)(I+\xi^\top\xi)^{-1}(U+\xi)^\top.
+ \label{eq:qr-projector}
+\end{equation}
+In the principal planes of $\xi$, QR and the exponential map rotate through
+$\arctan\sigma_i$ and $\sigma_i$, respectively. If $\|\xi\|\le1/4$,
+\begin{equation}
+ d_{\mathrm{Gr}}([\mathrm{qf}(U+\xi)],\operatorname{Exp}_{[U]}\xi)
+ \le\frac13\Big(\sum_i\sigma_i^6\Big)^{1/2}
+ \le\frac13\|\xi\|^3.\label{eq:qr-exp}
+\end{equation}
+Projection transport $\mathcal T_{U\to V}\xi=(I-VV^\top)\xi$ is
+nonexpansive and satisfies
+\begin{equation}
+ \|\mathcal T_{U\to V}\xi-\xi\|
+ \le\|VV^\top-UU^\top\|_{\mathrm{op}}\|\xi\|.
+\end{equation}
+\end{lemma}
+\begin{proof}
+Horizontal tangency gives $(U+\xi)^\top(U+\xi)=I+\xi^\top\xi$,
+which is positive definite for every $\xi$. The orthogonal projector onto its
+column span is therefore \eqref{eq:qr-projector}. The polar representative
+$(U+\xi)(I+\xi^\top\xi)^{-1/2}$ has exactly the same span as its QR
+representative. In the $i$th principal plane its coefficients are
+$(1,\sigma_i)/\sqrt{1+\sigma_i^2}$, giving angle
+$\arctan\sigma_i$. The exponential coefficients are
+$(\cos\sigma_i,\sin\sigma_i)$. The small-step condition prevents angle
+wrapping. Since
+$0\le x-\arctan x=\int_0^x t^2/(1+t^2)\,dt\le x^3/3$,
+summing squared angular differences proves \eqref{eq:qr-exp}.
+Finally, orthogonal projection cannot increase norm and
+$(I-VV^\top)\xi-\xi=(UU^\top-VV^\top)\xi$.
+\end{proof}
+
+This calculation identifies the retraction error on the quotient, where the
+algorithm actually tracks a subspace. The QR basis itself can also contain a
+within-subspace rotation. That rotation affects coordinatewise Adam even when
+it has no effect on the routing objective. Numerical orthogonality error,
+retraction approximation error, and statistical tracking error are three
+different quantities; a small value of the first does not establish either of
+the others.
+
+\subsection{The routing landscape: exact principal-angle analysis}
+\label{app:landscape}
+
+\begin{theorem}[Landscape, local PL inequality, and its boundary]
+\label{thm:landscape}
+For $C\succeq0$ with gap $\Delta>0$, the unique minimizing subspace of
+$\Phi(U)=-\operatorname{tr}(U^\top CU)/2$ is $[U_\star]$.
+Its horizontal gradient and Hessian quadratic form are
+\begin{align}
+ \operatorname{grad}\Phi(U)&=-(I-P)CU,\label{eq:grass-grad}\\
+ \langle\xi,\operatorname{Hess}\Phi(U)[\xi]\rangle
+ &=\operatorname{tr}(\xi^\top\xi\,U^\top CU)
+   -\operatorname{tr}(\xi^\top C\xi).\label{eq:grass-hess}
+\end{align}
+Globally,
+\begin{equation}
+ \frac\Delta2s(U)^2\le h_C(U)\le\frac\Lambda2s(U)^2,
+ \qquad \frac2\pi R(U)\le s(U)\le R(U).\label{eq:gap-bounds}
+\end{equation}
+Whenever $\theta_{\max}(U)\le R_0<\pi/2$,
+\begin{equation}
+ \|\operatorname{grad}\Phi(U)\|^2
+ \ge2\Delta\cos^2 R_0\,h_C(U).\label{eq:PL}
+\end{equation}
+At the minimum the Hessian eigenvalues are
+$\lambda_i-\lambda_j$, $i\le r<j$. Every nonoptimal critical subspace
+has a tangent direction of curvature at most $-\Delta$.
+Quadratic growth in \eqref{eq:gap-bounds} and PL in \eqref{eq:PL} do
+\emph{not} assert geodesic strong convexity on the entire normal neighborhood.
+\end{theorem}
+
+\begin{proof}
+The variational characterization of eigenvalues gives
+$\max_{U^\top U=I}\operatorname{tr}(U^\top CU)=\sum_{i\le r}\lambda_i$.
+The gap separates this maximizing subspace from its complement, giving
+uniqueness on the quotient. Differentiating $\Phi$ in the ambient space gives
+$-CU$; horizontal projection proves \eqref{eq:grass-grad}.
+For a Grassmann geodesic with $\dot U(0)=\xi$, one can choose a horizontal
+lift satisfying $\ddot U(0)=-U\xi^\top\xi$. Differentiating
+$-\operatorname{tr}(U(t)^\top CU(t))/2$ twice proves
+\eqref{eq:grass-hess}.
+
+Choose principal vectors $x_i\in[U_\star]$ and
+$y_i\in[U_\star]^\perp$ so the columns of a representative of $U$ are
+\begin{equation}
+ u_i=x_i\cos\theta_i+y_i\sin\theta_i.
+\end{equation}
+Terms with $\theta_i=0$ need no complementary vector; when the complement
+has dimension smaller than $r$, only the nonzero-angle pairs are used.
+The $x_i$ form an orthonormal basis for $[U_\star]$ and the relevant
+$y_i$ are orthonormal. Since this leading subspace is invariant under $C$,
+$x_i^\top Cy_j=0$. Put $a_i=x_i^\top Cx_i$,
+$b_i=y_i^\top Cy_i$, and $c_i=a_i-b_i$. Then
+\begin{equation}
+ h_C(U)=\frac12\sum_i c_i\sin^2\theta_i,
+ \qquad \Delta\le c_i\le\Lambda.\label{eq:CS-excess}
+\end{equation}
+This is an exact excess formula in principal coordinates. The coefficients
+$c_i$ are Rayleigh quotients, not generally individual eigenvalue
+differences. The bounds on $c_i$ prove the first part of
+\eqref{eq:gap-bounds}; $2x/\pi\le\sin x\le x$ on $[0,\pi/2]$
+proves the second.
+
+For every nonzero angle set
+$e_i=-x_i\sin\theta_i+y_i\cos\theta_i$. The matrix tangent directions
+which place $e_i$ in column $i$ and zero elsewhere are orthonormal and
+horizontal. Direct differentiation gives their gradient components
+$c_i\sin\theta_i\cos\theta_i$. Bessel's inequality therefore gives
+\begin{align}
+ \|\operatorname{grad}\Phi(U)\|^2
+ &\ge\sum_i c_i^2\sin^2\theta_i\cos^2\theta_i\\
+ &\ge\Delta\cos^2R_0\sum_i c_i\sin^2\theta_i
+ =2\Delta\cos^2R_0\,h_C(U).
+\end{align}
+This proves PL without a curvature-comparison shortcut. It is consistent
+with prior analyses of the block Rayleigh quotient
+\cite{alimisis2024geodesic}; the angular factor is not claimed as a new
+standalone manifold theorem.
+
+At $U_\star$, diagonalize $C$ in its invariant subspaces. A tangent
+coordinate moving selected eigenvector $i$ toward unselected eigenvector
+$j$ has Hessian eigenvalue $\lambda_i-\lambda_j$. For a critical point,
+$(I-P)CU=0$, so its selected subspace is invariant. If it is not leading,
+some selected eigenvector has eigenvalue at most $\lambda_{r+1}$ and some
+unselected one has eigenvalue at least $\lambda_r$. Rotating the former
+toward the latter gives Hessian curvature at most $-\Delta$.
+Finally, for $r=1,d=2$,
+\begin{equation}
+ h(\theta)=\frac\Delta2\sin^2\theta,\qquad
+ h''(\theta)=\Delta\cos(2\theta).
+ \label{eq:nonconvex-counterexample}
+\end{equation}
+Thus the Hessian is negative for $\pi/4<\theta<\pi/2$ even though
+quadratic growth and the positive PL bound still hold.
+\end{proof}
+
+The distinction in the last sentence is essential for tracking and stability.
+PL controls objective decrease along one trajectory. Contraction of the
+distance between \emph{two} trajectories requires additional hypotheses;
+it does not follow from PL alone. Nor does \eqref{eq:PL} prove that the
+scalar $\Delta\cos^2R_0$ predicts the ranking of complete neural-network
+optimizers. Gradient noise, covariance normalization, parameter-state
+conditioning, and computational cost remain independent factors.
+
+\subsection{Coordinate transport and the limits of diagonal Adam}
+\label{app:transport}
+
+\begin{lemma}[First moments and diagonal second moments]
+\label{lem:moments}
+Let $U_+=UQ$ for $Q\in O(r)$, representing a pure basis change. Then
+$Z_+=ZQ$ and exact first-moment consistency requires $M_+=MQ$.
+For a row-wise full second moment $B_i=\mathbb E[z_i^\top z_i]$,
+the exact transformation is $B_{i,+}=Q^\top B_iQ$. If only its diagonal
+$v_i$ is stored, the diagonal-covariance approximation is
+\begin{equation}
+ v_{i,+}=v_i Q^{\odot2},\label{eq:diag-transport}
+\end{equation}
+and its error is precisely
+\begin{equation}
+ \operatorname{diag}(Q^\top B_iQ)-v_iQ^{\odot2}
+ =\operatorname{diag}\{Q^\top(B_i-\operatorname{Diag}v_i)Q\}.
+ \label{eq:offdiag-error}
+\end{equation}
+The error need not be second order in the basis rotation. Furthermore,
+coordinatewise Adam is not invariant under general $Q$, even with an
+exactly transformed diagonal.
+\end{lemma}
+\begin{proof}
+$G(UQ)=(GU)Q$ gives the first claim and
+$(MQ)(UQ)^\top=MU^\top$ verifies the lifted first moment.
+For second moments, expand $(z_iQ)^\top(z_iQ)$ and take expectation.
+Its diagonal under the approximation $B_i=\operatorname{Diag}v_i$ is
+$\sum_k v_{ik}Q_{kj}^2$, proving \eqref{eq:diag-transport} and
+\eqref{eq:offdiag-error}. For $Q=I+\epsilon A+O(\epsilon^2)$,
+the omitted off-diagonal covariance can contribute a linear term through
+$\operatorname{diag}(B_iA-AB_i)$.
+Finally, entrywise division by a diagonal square root does not commute with
+orthogonal mixing. For example, the zero-history, negligible-$\varepsilon$
+Adam direction for $z=(2,1)$ is $(1,1)$. A generic rotation followed by
+coordinatewise normalization and rotation back does not reproduce that
+vector. Signed coordinate permutations are a special invariant case.
+\end{proof}
+
+For consecutive, genuinely different subspaces we use
+$R=\operatorname{Polar}(U_+^\top U)$ and align $M_+=MR^\top$.
+This minimizes basis mismatch, but cannot restore the part of a historical
+ambient moment orthogonal to the new span. If an ambient moment is $A$,
+then
+\begin{equation}
+ \|AP-AP_+\|\le\|A\|\|P-P_+\|_{\mathrm{op}}
+ =\|A\|\sin\theta_{\max}(U,U_+).
+\end{equation}
+This is a first-order perturbation bound, not an exact transport identity.
+The covariance error from omitted correlations must be added separately.
+
+The archived implementation used $(\sqrt v\,Q)^{\odot2}$ rather than
+\eqref{eq:diag-transport}. These differ even for diagonal covariance:
+with $v=(1,1)$ and a $45$-degree rotation the former gives $(2,0)$ up to
+column order, while the correct diagonal is $(1,1)$. New experiments use
+\eqref{eq:diag-transport}; historical outcomes retain their original
+algorithm label. Resetting $v$ to zero is another distinct algorithm. A
+reset is a deterministic state transformation, not a generic additive
+statistical error, and its effect on descent must be analyzed through the
+resulting parameter direction.

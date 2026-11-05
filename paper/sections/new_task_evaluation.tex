@@ -1,0 +1,42 @@
+\subsection{New public-data task domains}
+\label{sec:new-public-tasks}
+We add six tasks in three domains: raw-text classification (20 Newsgroups
+and SMS Spam), structured-data classification (Adult and Spambase), and inverse
+imaging (Optdigits denoising and missing-pixel completion)
+\cite{sklearn20newsdata,uci2011sms,uci1996adult,uci1999spambase,uci1998optdigits}.
+The two inverse tasks share the same image corpus and constitute two settings
+within one domain, not two independent task-family replications. Dataset and
+split definitions are fixed before formal training.
+
+\input{figures/newtasks_selected_fig}
+
+Every task compares SGD-M, AdamW, fixed routing, thin periodic SVD,
+GrassRoute, and pinned official SubTrack++. All six receive nine 200-epoch
+validation candidates and a fresh 1000-epoch selected run. Each epoch passes
+through the complete training split in one full-data update. The routed grids
+explicitly vary the residual/parallel learning-rate ratio across
+$\{1,10,100\}$, since an SGD residual and an adaptive branch need not have
+the same useful step-size scale. This changes the search protocol relative to
+the original extension and is not silently pooled with it.
+
+The periodic comparator directly factorizes the gradient matrix,
+$G=L\Sigma V^\top$, and uses its top right singular vectors. This avoids
+forming the full $G^\top G$ and transports both the first moment and the
+diagonal second moment. Fixed and periodic methods store no unused routing
+momentum. The complete search, sources and data hashes are frozen in the
+new-task protocol; Appendix~\ref{app:new-task-full} reports every outcome.
+
+The main-text subset uses an explicit reporting rule. A primary-metric gain
+requires a better final held-out score than both AdamW and thin periodic SVD
+after all six methods finish. A separate memory--quality trade-off requires
+at least 50\% less state than AdamW, a primary classification score within
+0.01 or an image MSE within 5\%, and a nondominated score--state point among
+the six methods. The corresponding quality cost is stated explicitly. These are descriptive
+one-seed criteria; statistical significance is not estimated.
+\input{figures/newtasks_summary}
+\par
+\input{figures/newtasks_selected_table}
+
+\input{figures/newtasks_evidence_detail}
+\input{figures/focused_sms_replication_main}
+\par

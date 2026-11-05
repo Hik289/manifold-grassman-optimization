@@ -1,0 +1,97 @@
+\subsection{Accuracy--state evidence and independent follow-up}
+\label{sec:strength-followup}
+The practical claim is specific: retaining adaptive state only in selected
+directions can reduce persistent optimizer memory while preserving useful
+prediction quality, and continuous tracking can average noisy directional
+information. It does not require the same optimizer to win every final-error
+comparison. We expose both the favorable and unfavorable cases.
+
+\paragraph{Measured state versus final prediction quality.}
+On PubMed the original extension obtains 76.0\% with GrassRoute versus
+74.2\% with AdamW, retaining 87,576 versus 1,031,216 state bytes: a 91.5\%
+reduction and a 1.8 percentage-point accuracy gain in the single paired run.
+The periodic implementation is more accurate at 77.1\% with the same state
+cost. On all-user MovieLens, GrassRoute retains 25.3\% of AdamW's state and
+obtains 12.247\% versus 12.363\% Recall@20, a 0.116 percentage-point loss.
+This is a measured memory--quality trade-off, not a significance or
+noninferiority claim. On Poisson its relative solution error is
+$1.255\times10^{-4}$ versus $2.987\times10^{-4}$ for the original periodic
+implementation at the same persistent state cost, but AdamW is more accurate.
+Table~\ref{tab:state-quality} retains every completed paired task, including
+the unfavorable regression and operator-learning results.
+
+\paragraph{Actual-implementation tracking test.}
+We run the routed optimizer code on Gaussian gradient matrices with a known
+rotating population covariance, using rank 4 in dimension 64, signal/tail
+eigenvalues $1$ and $0.03$, and 16 or 128 gradient rows per update. The four
+rotation rates are $0,0.001,0.005,0.02$ radians per step. All methods start
+from the same random frame and observe the same 2000 matrices. We compare
+GrassRoute at a fixed $\rho=3$, its no-momentum ablation, a fixed router,
+and transport-corrected instantaneous SVD refreshes at periods 5, 25 and 100.
+The target projector is known analytically; no compressed-Gram proxy is used.
+Error is measured \emph{before} updating on the current gradient, preventing
+a freshly computed SVD from being evaluated only on its fitting batch.
+\input{figures/strength_tracking_summary}
+\input{figures/tracking_resource_table}
+\IfFileExists{figures/strength_tracking_table.tex}{\input{figures/strength_tracking_table}}{}
+
+\paragraph{Stronger smoothing controls and a faster-drift stress test.}
+Instantaneous SVD does not average sample noise; that is a meaningful
+property of that baseline; full-covariance estimators can also average noise. A second,
+independently recorded protocol therefore adds normalized full-covariance EMA
+estimators with decays $0.9$ and $0.99$, each refreshed every 5 or 25 steps.
+It retains every original condition and adds rotation rate $0.1$ at both row
+counts. The full $64\times64$ covariance is stored and counted. The same
+moment transport, starting frame, stream and pre-update metric are used.
+This control can exploit temporal smoothing without requiring Grassmann
+momentum, at an additional state cost.
+\IfFileExists{figures/strength_tracking_ema_summary.tex}{\input{figures/strength_tracking_ema_summary}}{}
+
+\IfFileExists{figures/strength_tracking_ema_table.tex}{\input{figures/strength_tracking_ema_table}}{}
+
+\paragraph{Independent, larger validation budget on exact-solution PINNs.}
+We return to the scientific-learning family motivated by the archived
+Burgers result and include \emph{both} exact-solution PINNs, rather than
+searching only the favorable task. Each of AdamW, fixed routing,
+\textsc{PeriodicDiag}, and GrassRoute receives nine 100-epoch validation
+screening runs. AdamW searches nine geometrically spaced learning rates from
+$10^{-4}$ to $0.03$. Each routed method searches learning rates
+$\{0.001,0.003,0.01\}$, crossed with a method-specific parameter:
+residual-rate ratios $\{0.3,1,3\}$ for fixed routing; refresh periods
+$\{5,25,100\}$ for \textsc{PeriodicDiag}; and tracking rates
+$\{0.3,1,3\}$ for GrassRoute. All candidates, including divergence records,
+are retained. Selection uses final validation relative solution error;
+the selected configuration is trained afresh for 2000 full epochs, and test
+error is evaluated once at the end. Parameter initialization and collocation
+streams are paired. The protocol and source hash were saved before the runs.
+This follow-up changes the search budget and periodic transport, so its
+endpoints remain separate from the 162-comparison proposal extension.
+\input{figures/strength_pinn_summary}
+On Poisson, GrassRoute's selected relative solution error is
+$6.70\times10^{-5}$ at 0.0379 MB of persistent optimizer state, versus
+$9.52\times10^{-4}$ at 0.2673 MB for the independently selected AdamW
+configuration. This favorable comparison is selection-sensitive: the original,
+smaller search already found an AdamW endpoint of $9.28\times10^{-5}$,
+and \textsc{PeriodicDiag} in the new search achieves $4.90\times10^{-5}$.
+On forced Burgers, AdamW remains better than GrassRoute. More screening
+candidates do not guarantee better long-horizon selection when screening
+lasts only 100 epochs; the complete endpoints, not only favorable pairs,
+are shown below.
+\IfFileExists{figures/strength_pinn_table.tex}{\input{figures/strength_pinn_table}}{}
+
+\paragraph{Checking the graph result with equal, expanded search budgets.}
+A separate follow-up tests Cora, CiteSeer and PubMed against all six methods,
+including corrected periodic transport and official SubTrack++. Each method
+receives nine 100-epoch validation candidates and 1000 fresh formal epochs.
+GrassRoute crosses three learning rates with tracking rates
+$\{0.3,1,3\}$; fixed routing searches residual-rate ratios, corrected periodic
+routing searches refresh intervals, and official SubTrack++ searches its
+initial geodesic step. AdamW and SGD each search nine learning rates. The
+protocol records every candidate before training, uses paired model/dropout
+streams and the public graph splits, and retains every selected endpoint.
+These transductive results test optimizer performance and do not validate the
+iid assumptions of the generalization theorem.
+Numerical failures, bounded process retries, and a device-only CPU adapter
+are recorded separately; they do not alter the nine unique hyperparameters or
+permit test-driven fallback (Appendix~\ref{app:numerical-recovery}).
+\input{figures/strength_graph_summary}

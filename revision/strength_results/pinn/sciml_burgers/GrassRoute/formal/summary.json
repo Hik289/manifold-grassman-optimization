@@ -1,0 +1,41 @@
+{
+  "status": "complete",
+  "task": "sciml_burgers",
+  "method": "GrassRoute",
+  "hp": {
+    "lr": 0.01,
+    "rho": 1.0
+  },
+  "formal": true,
+  "epochs": 2000,
+  "n_epochs": 2000,
+  "seed": 42,
+  "validation": {
+    "score": 0.004218517802655697,
+    "pde_residual_l2": 0.004833157639950514
+  },
+  "test": {
+    "score": 0.0042685773223638535,
+    "pde_residual_l2": 0.0053129796870052814
+  },
+  "state_bytes": 38920,
+  "routed_layers": [
+    {
+      "name": "net.2.weight",
+      "shape": [
+        128,
+        128
+      ],
+      "rank": 8
+    },
+    {
+      "name": "net.4.weight",
+      "shape": [
+        128,
+        128
+      ],
+      "rank": 8
+    }
+  ],
+  "wall_s": 12.276470457999991
+}

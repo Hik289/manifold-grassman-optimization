@@ -1,0 +1,84 @@
+{
+  "task": "tab_adult",
+  "method": "PeriodicThinSVD",
+  "hp": {
+    "lr": 0.003,
+    "residual_ratio": 100.0,
+    "period": 5
+  },
+  "epochs": 200,
+  "seed": 42,
+  "formal": false,
+  "routed_layers": [
+    {
+      "name": "0.weight",
+      "shape": [
+        128,
+        108
+      ],
+      "rank": 8
+    },
+    {
+      "name": "3.weight",
+      "shape": [
+        64,
+        128
+      ],
+      "rank": 8
+    }
+  ],
+  "data": {
+    "family": "tabular",
+    "metric": "auroc",
+    "higher": true,
+    "source": "https://archive.ics.uci.edu/dataset/2/adult",
+    "source_sha256": "7537312dd56c2b98035880805ce99e68183a30ee468aa5329d6df0fbb3cc21bb",
+    "split": "20% stratified validation from official train; official test unchanged",
+    "n_raw": 48842,
+    "preprocessing": "numeric train-standardization; train-fitted one-hot categories; missing category explicit",
+    "name": "tab_adult",
+    "seed": 42,
+    "shape": [
+      [
+        26048,
+        108
+      ],
+      [
+        6513,
+        108
+      ],
+      [
+        16281,
+        108
+      ]
+    ],
+    "preprocessing_fit_split": "training only",
+    "file_sha256": {
+      "x_train.npy": "cb2298b8bb63a0e4c3d0822d062aab761a969b93176a606575022eb412bf4824",
+      "y_train.npy": "80370e9401ac4eaa8fb86410dd884ccce6938f102d6541de6dfc815785f1cf7c",
+      "x_val.npy": "46ec58e43e94a15624e41e77e2478e007eb6528b2e2347d79754d79c8f8078c7",
+      "y_val.npy": "1c01dd632f1f63f9e0638364b8d1cc7dfe8dc1b90c2a053e4e910b9da40fc445",
+      "x_test.npy": "29316dba6133aeba2cf202e84ea4832af53af07e2dcd841238b50ca307ebac9e",
+      "y_test.npy": "d574d3c784592de068cea10a291f40bf0f7f2ef9f8544bc71a32279ee4e618f1",
+      "indices_train.npy": "c2277536274d34d7268936c3884761e388fef24ee454afc6a92ed504cffb9fe1",
+      "indices_val.npy": "bf4ffdfafac4ee8ab07428a575442bbb4ead9b0770e09f4cab62e1a9fe1a0dda",
+      "indices_test.npy": "4e45b4725f4a57528adf7094ec5067cd32633f5bc4b194fa3530d8b6254fcc9e"
+    },
+    "preparation_source_sha256": "3c91b1ef9023d7775d4a9d85bb8928dd7746dcda26526c32f8c5730c729f7309"
+  },
+  "protocol_sha256": "f79744557aae2f3e5a51fb9db8734d40728a460b9666edfe87151a3162dedddf",
+  "status": "complete",
+  "n_epochs": 200,
+  "validation": {
+    "accuracy": 0.8607400583448488,
+    "macro_f1": 0.8008329741232169,
+    "cross_entropy": 0.29977574944496155,
+    "n": 6513,
+    "auroc": 0.917984693877551,
+    "score": 0.917984693877551
+  },
+  "test": null,
+  "state_bytes": 22416,
+  "final_train_loss": 0.30786868929862976,
+  "wall_s": 12.091204047203064
+}

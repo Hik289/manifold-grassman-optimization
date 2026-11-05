@@ -1,0 +1,41 @@
+{
+  "status": "complete",
+  "task": "sciml_burgers",
+  "method": "PeriodicDiag",
+  "hp": {
+    "lr": 0.01,
+    "period": 5
+  },
+  "formal": true,
+  "epochs": 2000,
+  "n_epochs": 2000,
+  "seed": 42,
+  "validation": {
+    "score": 0.005825520493090153,
+    "pde_residual_l2": 0.007435109466314316
+  },
+  "test": {
+    "score": 0.005815635900944471,
+    "pde_residual_l2": 0.008104021660983562
+  },
+  "state_bytes": 38920,
+  "routed_layers": [
+    {
+      "name": "net.2.weight",
+      "shape": [
+        128,
+        128
+      ],
+      "rank": 8
+    },
+    {
+      "name": "net.4.weight",
+      "shape": [
+        128,
+        128
+      ],
+      "rank": 8
+    }
+  ],
+  "wall_s": 9.546956207999997
+}

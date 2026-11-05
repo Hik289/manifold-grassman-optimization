@@ -1,0 +1,134 @@
+{
+  "hp": {
+    "lr": 3.0
+  },
+  "criterion": "final validation primary metric; fresh formal initialization; one final test evaluation",
+  "candidates": [
+    {
+      "hp": {
+        "lr": 0.001
+      },
+      "status": "complete",
+      "validation": {
+        "score": 0.17740553617477417,
+        "mse": 0.17740553617477417,
+        "full_image_mse": 0.17740553617477417,
+        "psnr": 7.510328315581835,
+        "n": 765
+      },
+      "error": null
+    },
+    {
+      "hp": {
+        "lr": 0.002720446295173432
+      },
+      "status": "complete",
+      "validation": {
+        "score": 0.17390283942222595,
+        "mse": 0.17390283942222595,
+        "full_image_mse": 0.17390283942222595,
+        "psnr": 7.596933269372686,
+        "n": 765
+      },
+      "error": null
+    },
+    {
+      "hp": {
+        "lr": 0.0074008280449228536
+      },
+      "status": "complete",
+      "validation": {
+        "score": 0.16384579241275787,
+        "mse": 0.16384579241275787,
+        "full_image_mse": 0.16384579241275787,
+        "psnr": 7.855647068930444,
+        "n": 765
+      },
+      "error": null
+    },
+    {
+      "hp": {
+        "lr": 0.020133555236026012
+      },
+      "status": "complete",
+      "validation": {
+        "score": 0.12798552215099335,
+        "mse": 0.12798552215099335,
+        "full_image_mse": 0.12798552215099335,
+        "psnr": 8.928391553955112,
+        "n": 765
+      },
+      "error": null
+    },
+    {
+      "hp": {
+        "lr": 0.05477225575051662
+      },
+      "status": "complete",
+      "validation": {
+        "score": 0.07903128862380981,
+        "mse": 0.07903128862380981,
+        "full_image_mse": 0.07903128862380981,
+        "psnr": 11.022009367290371,
+        "n": 765
+      },
+      "error": null
+    },
+    {
+      "hp": {
+        "lr": 0.14900498023478467
+      },
+      "status": "complete",
+      "validation": {
+        "score": 0.07375147938728333,
+        "mse": 0.07375147938728333,
+        "full_image_mse": 0.07375147938728333,
+        "psnr": 11.322292637119713,
+        "n": 765
+      },
+      "error": null
+    },
+    {
+      "hp": {
+        "lr": 0.40536004644211043
+      },
+      "status": "complete",
+      "validation": {
+        "score": 0.07232595980167389,
+        "mse": 0.07232595980167389,
+        "full_image_mse": 0.07232595980167389,
+        "psnr": 11.407057943366699,
+        "n": 765
+      },
+      "error": null
+    },
+    {
+      "hp": {
+        "lr": 1.1027602365547697
+      },
+      "status": "complete",
+      "validation": {
+        "score": 0.058619432151317596,
+        "mse": 0.058619432151317596,
+        "full_image_mse": 0.058619432151317596,
+        "psnr": 12.319583929044718,
+        "n": 765
+      },
+      "error": null
+    },
+    {
+      "hp": {
+        "lr": 3.0
+      },
+      "status": "complete",
+      "validation": {
+        "score": 0.039395809173583984,
+        "mse": 0.039395809173583984,
+        "full_image_mse": 0.039395809173583984,
+        "psnr": 14.045499748645264,
+        "n": 765
+      },
+      "error": null
+    }
+  ]
+}

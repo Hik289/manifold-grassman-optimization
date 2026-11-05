@@ -1,0 +1,17 @@
+\begin{table*}[t]\centering\footnotesize
+\caption{\textbf{Cora GraphSAGE fixed-hyperparameter seed replication.} Three fresh 1000-epoch runs use
+hyperparameters frozen from the original seed-42 validation selection.
+The public split and architecture are fixed; seeds 43--45 vary
+initialization and stochastic training. Accuracy or macro-F1 is in
+percent. Mean and sample standard deviation are descriptive.
+Persistent optimizer state is in decimal MB. All endpoints are shown;
+\emph{fail} denotes a retained numerical failure.}
+\label{tab:focused-cora-replication}
+\setlength{\tabcolsep}{7pt}
+\begin{tabular}{lrrrrr}\toprule
+Method & Seed 43 & Seed 44 & Seed 45 & Mean $\pm$ SD & State MB \\ \midrule
+SGD & 79.30 & 79.40 & 79.00 & 79.23 $\pm$ 0.21 & 1.475 \\
+AdamW & 78.10 & 77.50 & 77.30 & 77.63 $\pm$ 0.42 & 2.950 \\
+Periodic SVD & 78.10 & \emph{fail} & 78.60 & -- & 0.207 \\
+GrassRoute & \cellcolor{oursbg}78.30 & \cellcolor{oursbg}75.70 & \cellcolor{oursbg}76.70 & \cellcolor{oursbg}76.90 $\pm$ 1.31 & 0.207 \\
+\bottomrule\end{tabular}\end{table*}

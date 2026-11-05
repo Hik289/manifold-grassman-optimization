@@ -1,0 +1,10 @@
+% WWW table style: three rules, bold headers, reference green highlight.
+\begin{table}[t]\centering\footnotesize
+\caption{\textbf{SMS memory--quality trade-off.} Validation macro-F1 selects the configurations; test CE is secondary. The complete six-task comparison is in Table~\ref{tab:newtasks-full}. Persistent state is decimal MB.}
+\label{tab:newtasks-selected}
+\setlength{\tabcolsep}{5pt}
+\reviewfit{\begin{tabular}{lrrr}\toprule {\bfseries Method} & {\bfseries F1 $\uparrow$} & {\bfseries Test CE $\downarrow$} & {\bfseries State MB $\downarrow$}\\\midrule
+AdamW  &  95.48  &  0.1752  &  1.050\\
+Thin SVD  &  94.29  &  0.0952  &  0.071\\
+\rowcolor{oursbg}\textbf{GrassRoute} &  94.63  &  0.0931  &  0.137\\
+\bottomrule\end{tabular}}\end{table}

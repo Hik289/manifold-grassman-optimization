@@ -1,0 +1,302 @@
+% WWW table style: three rules, bold headers, reference green highlight.
+\clearpage
+\section{Experimental Coverage, Provenance, and Reproducibility}
+\label{app:audit}
+
+\subsection{What was recovered and what is being rerun}
+The historical archive contains optimizer sources, tuning summaries, epoch
+trajectories, resource probes, and several incomplete training batches. It was
+recovered from the original three-GPU training host rather than reconstructed
+from the paper's rounded table. The original environment reports PyTorch
+2.10.0 with CUDA 12.8 on three RTX 6000 Ada GPUs with 48 GB each. Existing
+data caches for MNIST, CIFAR-10/100, Planetoid, ogbn-arxiv, and MovieLens were
+accessed and their resolved locations recorded. Additional public datasets
+are materialized before their queued runs. The machine-readable inventories
+are \path{revision/hpc_inventory.json} and \path{revision/remote_status/data_access.json}.
+
+The extension uses an isolated source and result tree. Each task--method pair
+has three screening learning rates, selected by its final validation score,
+followed by a fresh, full-budget formal run. Formal runs use seed 42 only,
+with no early stopping. A classification epoch is a complete pass over the
+designated training split, not a capped number of mini-batches. Graphs and
+PINNs use one full-graph or freshly sampled collocation update per epoch.
+Generated regression uses 2000 full-batch epochs. Screening runs are never
+pooled with formal endpoints.
+
+Every formal run stores its configuration before training, source hashes,
+routed parameter names and actual ranks, full epoch records, checkpointed
+optimizer/RNG states, validation scores, final test score, persistent state
+bytes, and peak allocated GPU memory. Test scores are evaluated only after
+formal training; no test-best checkpoint is selected. Tables are regenerated
+from completed result files after checking the epoch count and ordering.
+The provenance ledger is \path{revision/status.json}. Missing, failed, or
+interrupted runs are not numerical results.
+
+\subsection{Representative configurations for all proposal tasks}
+\begin{table}[ht]
+\centering\small
+\caption{Proposal coverage. The experiment manifest contains 27 representative
+configurations and six optimizer methods per configuration. Listing a
+configuration does not imply its training has finished; completion is reported
+in Table~\ref{tab:extension} and the provenance ledger.}
+\reviewfit{\begin{tabular}{p{.18\linewidth}p{.44\linewidth}p{.25\linewidth}}
+\toprule {\bfseries Family} & {\bfseries Datasets or generated tasks} & {\bfseries Representative model / epochs}\\
+\midrule
+Regression / MLP  &  Matrix and planted-low-rank-target regression at input dimensions
+128, 256, 512; MNIST  &  Linear matrix model / 2000; deep MLP / 2000\\
+CNN  &  CIFAR-10, CIFAR-100, Tiny-ImageNet, ImageNet-100  &  ResNet-18 / 1000\\
+ViT  &  CIFAR-100, Tiny-ImageNet, ImageNet-100  &  ViT-Tiny / 1000\\
+Graph  &  Cora, CiteSeer, PubMed, ogbn-arxiv  &  two-layer GraphSAGE / 1000\\
+Scientific learning  &  Poisson, forced Burgers, variable-coefficient Darcy,
+periodic Burgers solution operator  &  PINN, DeepONet, FNO / 2000\\
+Recommendation  &  MovieLens-1M, Amazon Books subset, Yelp subset  &  MF-BPR / 1000\\
+Continual learning  &  Rotated MNIST; Split CIFAR-100  &  MLP; ResNet-18 / 1000 total\\
+\bottomrule
+\end{tabular}}
+\end{table}
+
+\paragraph{Data and split definitions.}
+Classification reserves a deterministic 10\% validation split from training
+data. The official test set, or official validation images for ImageNet-style
+data, supplies the held-out test endpoint. CIFAR inputs are $32\times32$;
+Tiny-ImageNet and ImageNet-100 use $64\times64$ in this extension. The latter
+is a stated resolution-specific experiment, not a standard-resolution
+ImageNet result. ViT-Tiny uses patch size 4 at 32 pixels and 8 at 64 pixels.
+ImageNet-100 is the public \url{https://huggingface.co/datasets/clane9/imagenet-100}
+release. Tiny-ImageNet uses the Stanford release. Planetoid and ogbn-arxiv
+retain their public splits; every graph model in the extension is GraphSAGE,
+so the archived Cora GCN comparison is not silently reused as a SAGE result.
+
+Recommendation uses the original MovieLens rating file and the author-released
+Amazon Books/Yelp2018 interaction lists at
+\url{https://github.com/gusye1234/LightGCN-PyTorch/tree/master/data}.
+Amazon/Yelp subsets select up to 2000 users by hashing their identifiers
+with the fixed seed string. MovieLens retains all users with at least five
+positive interactions from the complete input rating file. For each
+user the last two interactions in the input order are held out for validation
+and testing; MovieLens input is time sorted, while the author-preprocessed
+Amazon/Yelp order is not claimed to be chronological. MF has 64-dimensional
+embeddings and is trained with BPR and sampled unobserved negatives. Evaluation
+ranks the entire subset catalog, masking observed training items and the
+validation item for test evaluation. With one held-out target per user,
+Recall@20 is the hit rate. The Amazon/Yelp catalogs are the subset catalogs;
+MovieLens uses the full eligible catalog. This differs from the archived
+explicit-rating MF, whose Recall denominator was capped by 20.
+
+The Poisson PINN solves $-u_{xx}=\pi^2\sin(\pi x)$ on $[0,1]$ with zero
+Dirichlet values. The new forced Burgers task uses the exact solution
+$u(x,t)=-e^{-t}\sin(\pi x)$, the corresponding manufactured forcing, zero
+spatial boundary values, and its exact initial condition. It differs from the
+archived unforced PINN. Both new PINNs draw 1024 interior collocation points
+per training update and use independent fixed validation/test coordinates.
+Their reported metric is actual relative solution error against the exact
+solution, with PDE residual reported separately.
+
+Darcy data solve $-\nabla\cdot(a\nabla u)=1$ on a 32-by-32 interior grid
+with zero Dirichlet values. Permeability is the exponential of a random smooth
+cosine field. Harmonic face conductivities define the sparse finite-difference
+operator, solved independently for each realization. DeepONet receives 64
+permeability sensors and predicts the solution grid. The FNO task uses a
+periodic one-dimensional viscous Burgers solution operator on 64 points,
+$\nu=0.01$, final time $0.1$, with a dealiased pseudospectral RK4 solver at
+step $0.0005$. Its real/imaginary spectral parameters are stored as paired
+real coordinates for compatibility with all optimizers. Each operator dataset
+has 256 training, 64 validation, and 64 test functions. These small generated
+operator benchmarks are not claims of state-of-the-art PDE accuracy.
+
+Continual tasks have no replay and a single classifier head without a task
+identifier at inference. The 1000 total epochs are distributed equally over
+four MNIST rotations or five disjoint 20-class CIFAR tasks. A global learning
+rate schedule is used. Task-boundary validation matrices permit a separate
+forgetting calculation; final held-out average test accuracy remains distinct.
+
+\subsection{Methods and hyperparameter selection}
+All methods receive the same training/validation/test split and a fresh paired
+model initialization. The optimizer's random basis initialization is isolated
+from subsequent data, dropout, and collocation random streams. The extension
+compares SGD with momentum 0.9, AdamW, fixed random routing, periodic SVD at
+interval 25, GrassRoute, and the official SubTrack++ implementation pinned to
+commit \texttt{f85bfb369a4a73b26f2e46459abc1e20863185f0}.
+The official optimizer is imported from its source; a shape-only wrapper
+flattens routed convolution tensors during its update and restores their
+parameter/gradient shapes. Its own projection-aware moments and recovery
+scaling are retained. It uses interval 25 and an iteratively decreasing
+raw-gradient subspace step, initialized at 1.0. This is not the archive's
+unofficial geodesic surrogate. Its projection side may differ from the
+right-sided GrassRoute convention, following its upstream implementation.
+
+SGD screens learning rates $\{0.01,0.1,0.3\}$. For regression, graph, and
+scientific tasks the adaptive methods screen $\{0.001,0.003,0.01\}$;
+other adaptive tasks screen $\{0.0003,0.001,0.003\}$. Screening lasts 100
+epochs for regression, graph, and scientific tasks, and 30 for others.
+These budgets are equal across methods within each task. The GrassRoute
+tracking rate is fixed at 3.0 on graph tasks and 0.3 elsewhere; it is not
+claimed to be exhaustively optimized. Main and residual parameter rates
+share the cosine schedule with a 1\% floor; ViT adds 5\% warmup. Vision
+uses weight decay 0.01; other extension tasks use zero except the explicit
+BPR embedding penalty. Divergent screen configurations are recorded and
+excluded from selection; a failed formal run is not replaced by a
+test-informed alternative.
+
+Routed ranks start from 32 for CNN, 16 for ViT/MLP/recommendation, and 8 for
+graph/scientific tasks, capped at half the output dimension and below the
+input dimension. Small parameters use full AdamW fallback. The actual
+per-layer values, which can differ from these starting values, are recorded
+in each configuration. In contrast to the historical driver, these values
+are set directly in the parameter groups rather than merely passed as an
+optimizer default. GrassRoute uses the diagonal transport in
+Table~\ref{tab:method-update}. The fixed variant does not change its basis.
+An implementation audit found that the local periodic comparator transports
+its first moment at refreshes but retains its second-moment diagonal in the
+old coordinates, despite accepting the same configuration flag. The original
+extension endpoints therefore describe that specific periodic implementation;
+they do not isolate the effect of the subspace update under identical moment
+transport. They and their source hashes are preserved. The independent
+follow-up in Section~\ref{sec:strength-followup} includes a corrected
+\textsc{PeriodicDiag} comparator, which applies $V\leftarrow V(R^\top\odot
+R^\top)$ after each refresh while retaining its moment age. No running
+extension checkpoint is silently converted to a different algorithm.
+GrassRoute uses $\beta_1=0.9$, $\beta_2=0.999$, subspace momentum
+$\mu_H=0.9$, Adam offset $10^{-8}$, covariance/residual offsets
+$10^{-12}$, residual clipping $[0,10]$, and FP32 routing states.
+The official SubTrack++ Adam offset remains its upstream default $10^{-6}$;
+other Adam branches use $10^{-8}$. In particular, the positive residual-floor
+condition of Corollary~\ref{cor:deterministic-adam} is a sufficient regime
+condition, not a property asserted for these zero-lower-clip configurations.
+
+\paragraph{Numerical recovery of the independent graph follow-up.}
+\label{app:numerical-recovery}
+Numerically invalid screening candidates are retained as failures and excluded
+from selection while the remaining candidates continue. Two searches initially
+stopped on a non-finite SVD input; the recovery policy records those failures
+and resumes the unchanged candidate grids. If a selected full run fails
+numerically, the next candidate in screening-validation order is attempted,
+with every failed attempt preserved and no test score used for this fallback.
+The CPU SubTrack++ follow-up additionally adapts six hardcoded CUDA allocation
+targets to the current gradient device at runtime. The pinned source files and
+all projection/moment arithmetic remain unchanged; both projector orientations
+are checked through repeated CPU refreshes. This device adapter is recorded
+separately from the numerical-failure policy.
+For CiteSeer's periodic search, the same failed candidate completed in a fresh
+diagnostic process. A separately recorded recovery stage therefore permits
+one fresh-process retry of each numerically failed candidate, preserving its
+initial failure and keeping the nine unique hyperparameters unchanged. Full
+training still uses validation ranking and never test-driven retries. This
+execution sensitivity is reported rather than interpreted as a reliable
+method advantage. The machine-readable protocols are
+\path{revision/strength_results/graph_rescue_protocol.json},
+\path{revision/strength_results/graph_cpu_device_adapter.json}, and
+\path{revision/strength_results/graph_process_retry_protocol.json}.
+A full-horizon diagnostic subsequently identified a more specific backend
+failure: at epoch 275, the gradient, covariance, old frame, moments and
+parameters were finite, but the CPU eigensolver returned non-finite new
+eigenvectors. A recorded numerical repair therefore finishes only such
+failed refreshes using the mathematically equivalent thin SVD of the same
+gradient. It does not repeat the already applied parameter update or accept
+non-finite training gradients. An injected-eigensolver-failure check matches
+the thin-SVD parameter and moment updates exactly. The original failed runs
+remain preserved; repaired endpoints identify this backend policy in their
+source manifest.
+
+\input{figures/revision_regression_table}
+The planted-target tasks explicitly construct a rank-eight ground-truth
+matrix and check its numerical rank before training. An earlier pilot only
+concentrated the input covariance while keeping a full-rank target. Its
+completed results are retained as an additional control below, but do not
+count toward the planted-low-rank task requirement. Likewise, a preliminary
+2000-user MovieLens run was archived and superseded by the all-user protocol.
+The initial source snapshots and pilot trajectories remain available under
+\path{revision/exploratory_archive/initial_coverage_pilots} and
+\path{revision/source_versions/initial}.
+\input{figures/revision_covariance_pilot_table}
+\input{figures/revision_resources}
+\IfFileExists{figures/strength_pinn_config.tex}{\input{figures/strength_pinn_config}}{}
+\IfFileExists{figures/strength_graph_config.tex}{\input{figures/strength_graph_config}}{}
+
+\subsection{Corrections to the archived evidence}
+The archive is retained for provenance. Several qualifications change its
+interpretation and are not repaired by renaming a diagnostic.
+\begin{enumerate}[leftmargin=*]
+\item The logged \texttt{principal\_angle\_R} compares consecutive epoch
+bases, not $U_t$ and a population oracle. The logged eigengap comes from
+the routed $r\times r$ Gram matrix and cannot identify
+$\lambda_r(C)-\lambda_{r+1}(C)$. The historical win map therefore does
+not establish an empirical predictor based on $\Delta\cos^2R$.
+\item Rank arguments in the old driver did not override ranks already
+stored in parameter groups. Identical state sizes and endpoints across
+several nominal rank sweeps cannot support rank robustness. New configurations
+record their actual per-layer ranks.
+\item The historical second-moment amplitude-rotation heuristic is not
+exact diagonal covariance transport. Hard reset and no-reset runs are
+different variants; an ablation label cannot reconcile their state rules.
+The proof now distinguishes these errors explicitly.
+\item Archived SciML best training loss is distinct from a relative PDE
+solution error. The old evaluation's \texttt{rel\_l2\_proxy} sums PDE
+residual and initial-condition errors; the training loss omits an explicit
+spatial boundary penalty. The old SGD value 0.427 belongs to this proxy,
+so it is not placed in the training-loss comparison column.
+\item Some historical accuracies are the best observed test score rather
+than final held-out scores. In particular, the rounded tuned summaries and
+default full trajectories are separate sources. Neither is substituted
+for the other. The new extension uses final test endpoints after validation
+selection.
+\item The archival B6 is a local geodesic surrogate with different recovery
+and moment rules from official SubTrack++. Its numbers may be used as a
+historical mechanism comparison but not as a faithful implementation claim.
+\end{enumerate}
+
+The historical win-map source and figure remain in the archive for provenance;
+their uncalibrated proxy axes are not reused as quantitative evidence here.
+
+\subsection{Controlled theory diagnostics}
+\input{figures/geometry_checks_table}
+\input{figures/landscape_checks_table}
+\input{figures/qr_checks_table}
+\input{figures/raw_tracking_table}
+
+The numerical check suite samples 600 covariance/subspace pairs across
+$(d,r)=(6,1),(8,3),(8,6),(32,8)$, including a rank larger than the complement
+dimension. It checks the PL and quadratic-growth inequalities and the
+directional derivative, and tests the QR cubic bound over 16 step sizes.
+The tracking bed crosses three eigengaps, three drift rates, and three
+tracking rates, using the same seeded Gaussian gradient stream for each
+method. It compares online QR, interval-25 SVD, and fixed routing against
+the known population target. Momentum and covariance normalization are
+excluded in this auxiliary bed to isolate the stated mechanism.
+
+\input{figures/sensitivity_checks_table}
+
+The auxiliary sensitivity study compares AdamW, corrected GrassRoute, fixed
+routing, and hard reset, while logging parameter distance, bounded-loss
+sensitivity, and a full-batch covariance oracle. It does not estimate the
+supremum over all neighboring datasets required for uniform stability.
+Likewise, measured sample-gradient alignment or a train--test gap alone
+would not verify the conditional direction-defect assumption of the
+convergence theorem. We keep these distinctions when interpreting the
+diagnostics.
+\IfFileExists{figures/revision_sensitivity_summary.tex}{\input{figures/revision_sensitivity_summary}}{}
+
+\begin{figure}[htbp]\centering
+\includegraphics[width=.64\linewidth]{figures/fig_core_loss_poisson_control.pdf}
+\caption{Poisson loss control from the independent nine-candidate validation
+search, with all four selected 2000-epoch trajectories retained. Faint curves
+are raw objectives and solid curves are 25-epoch trailing means. The terminal
+ratio is the ratio of the final-100-epoch mean losses, GrassRoute / PeriodicDiag.
+GrassRoute has lower training loss than the selected AdamW run, whereas
+PeriodicDiag has the lowest loss. As with the held-out endpoints in
+Table~\ref{tab:pinn-strength}, this comparison is sensitive to finite-horizon
+validation selection; it does not supersede the stronger AdamW endpoint from
+the original search. This control accompanies the core loss figure in the
+main text without treating the protocols as interchangeable.}
+\label{fig:poisson-loss-control}
+\end{figure}
+
+\subsection{Evaluation and resource conventions}
+All formal comparisons use seed 42 and a predefined validation budget.
+The dataset, resolution, model and training horizon are recorded with each
+configuration. Test metrics refer to the final selected endpoint; shared-host
+resource times include evaluation and checkpointing. Completion counts refer
+to verified full trajectories, with queued and partial runs listed separately.
+
+\input{sections/experimental_full_results}
+\input{sections/new_task_audit}

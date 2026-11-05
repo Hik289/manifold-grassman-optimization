@@ -1,0 +1,33 @@
+% WWW table style: three rules, bold headers, reference green highlight.
+\begin{table}[htbp]
+\centering\scriptsize
+\setlength{\tabcolsep}{3pt}
+\caption{Validation-selected extension, seed 42. Formal budgets are 1000 epochs for classification and recommendation, 2000 for MLP and scientific learning. Accuracy and Recall@20 are percentages; scientific results report solution relative error. Bold marks a best score only after all six methods have completed. -- denotes an unfinished formal comparison. GrassRoute uses diagonal moment transport; the periodic comparator retains its old second-moment diagonal at refreshes. A transport-corrected follow-up is reported separately. SubTrack++ is the pinned official implementation.}
+\label{tab:extension}
+\reviewfit{\begin{tabular}{llrrrrrr}
+\toprule {\bfseries Task / model} & {\bfseries Metric} & {\bfseries SGD-M} & {\bfseries AdamW} & {\bfseries Fixed} & {\bfseries Periodic} & \cellcolor{oursbg}{\bfseries GrassRoute} & {\bfseries SubTrack++}\\
+\midrule
+MNIST / MLP  &  Acc. $\uparrow$  &  \textbf{98.65}  &  98.13  &  97.25  &  97.82  &  \cellcolor{oursbg}97.90 &  97.18 \\
+ResNet-18 / CIFAR-10  &  Acc. $\uparrow$  &  \textbf{95.06}  &  94.50  &  91.43  &  92.85  &  \cellcolor{oursbg}89.99 &  93.25 \\
+ResNet-18 / CIFAR-100  &  Acc. $\uparrow$  &  77.02  &  73.12  &  --  &  68.35  &  \cellcolor{oursbg}-- &  -- \\
+ResNet-18 / Tiny-ImageNet  &  Acc. $\uparrow$  &  --  &  --  &  --  &  --  &  \cellcolor{oursbg}-- &  -- \\
+ResNet-18 / ImageNet-100  &  Acc. $\uparrow$  &  --  &  --  &  --  &  --  &  \cellcolor{oursbg}-- &  -- \\
+ViT-Tiny / CIFAR-100  &  Acc. $\uparrow$  &  --  &  --  &  --  &  --  &  \cellcolor{oursbg}-- &  -- \\
+ViT-Tiny / Tiny-ImageNet  &  Acc. $\uparrow$  &  --  &  --  &  --  &  --  &  \cellcolor{oursbg}-- &  -- \\
+ViT-Tiny / ImageNet-100  &  Acc. $\uparrow$  &  --  &  --  &  --  &  --  &  \cellcolor{oursbg}-- &  -- \\
+Cora / SAGE  &  Acc. $\uparrow$  &  \textbf{79.50}  &  78.30  &  43.10  &  79.10  &  \cellcolor{oursbg}78.00 &  76.70 \\
+CiteSeer / SAGE  &  Acc. $\uparrow$  &  \textbf{69.70}  &  68.10  &  30.80  &  68.70  &  \cellcolor{oursbg}67.10 &  67.10 \\
+PubMed / SAGE  &  Acc. $\uparrow$  &  \textbf{77.40}  &  74.20  &  59.50  &  77.10  &  \cellcolor{oursbg}76.00 &  75.60 \\
+ogbn-arxiv / SAGE  &  Acc. $\uparrow$  &  53.78  &  55.05  &  32.57  &  53.16  &  \cellcolor{oursbg}51.86 &  \textbf{55.46} \\
+Poisson / PINN  &  Rel.$L_2\downarrow$  &  1.0000  &  {\boldmath $9.28\!\times\!10^{-5}$}  &  $9.95\!\times\!10^{-4}$  &  $2.99\!\times\!10^{-4}$  &  \cellcolor{oursbg}$1.26\!\times\!10^{-4}$ &  $4.03\!\times\!10^{-4}$ \\
+Forced Burgers / PINN  &  Rel.$L_2\downarrow$  &  0.0132  &  {\boldmath $1.49\!\times\!10^{-3}$}  &  $6.41\!\times\!10^{-3}$  &  $1.90\!\times\!10^{-3}$  &  \cellcolor{oursbg}$2.08\!\times\!10^{-3}$ &  $1.55\!\times\!10^{-3}$ \\
+Darcy / DeepONet  &  Rel.$L_2\downarrow$  &  0.0867  &  \textbf{0.0199}  &  0.0223  &  0.0370  &  \cellcolor{oursbg}0.0380 &  0.1087 \\
+Burgers operator / FNO  &  Rel.$L_2\downarrow$  &  0.0145  &  {\boldmath $7.82\!\times\!10^{-3}$}  &  0.0177  &  0.0148  &  \cellcolor{oursbg}0.0201 &  0.0141 \\
+MovieLens-1M / MF  &  R@20 $\uparrow$  &  10.59  &  \textbf{12.36}  &  11.77  &  12.35  &  \cellcolor{oursbg}12.25 &  12.33 \\
+Amazon Books subset / MF  &  R@20 $\uparrow$  &  0.00  &  \textbf{1.25}  &  0.85  &  0.90  &  \cellcolor{oursbg}0.95 &  0.75 \\
+Yelp subset / MF  &  R@20 $\uparrow$  &  0.20  &  \textbf{2.30}  &  1.90  &  2.00  &  \cellcolor{oursbg}1.45 &  1.95 \\
+Rotated MNIST / MLP  &  Acc. $\uparrow$  &  --  &  --  &  --  &  --  &  \cellcolor{oursbg}-- &  -- \\
+Split CIFAR-100 / ResNet-18  &  Acc. $\uparrow$  &  --  &  --  &  --  &  --  &  \cellcolor{oursbg}-- &  -- \\
+\bottomrule
+\end{tabular}}
+\end{table}

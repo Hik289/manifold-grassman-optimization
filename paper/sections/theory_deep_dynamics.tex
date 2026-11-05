@@ -1,0 +1,228 @@
+\subsection{Fixed momentum: exact modal dynamics and stationary tracking error}
+\label{app:fixed-momentum-dynamics}
+Let $\delta>0$ denote one selected--unselected eigenvalue difference.
+The additive-noise tangent model is
+\begin{align}
+ v_t&=\mu v_{t-1}-(1-\mu)\delta x_t+(1-\mu)\zeta_t,\\
+ x_{t+1}&=x_t+\rho v_t-b,\qquad
+ \mathbb E_t\zeta_t=0,\quad\mathbb E_t\zeta_t^2=\sigma^2.
+ \label{eq:tangent-momentum-model}
+\end{align}
+Here $b$ is a constant target displacement per step. This model specifies
+an additive horizontal oracle. General covariance samples can additionally
+produce multiplicative noise; no equivalence with that oracle is assumed.
+
+\begin{theorem}[Exact fixed-momentum tracking covariance]
+\label{thm:modal-tracking-covariance}
+Let $0\le\mu<1$ and
+\begin{equation}
+ 0<\rho(1-\mu)\delta<2(1+\mu).
+ \label{eq:modal-schur}
+\end{equation}
+The equilibrium mean, transition matrix, and characteristic polynomial are
+\begin{align}
+ \bar x&=-b/(\rho\delta),&\bar v&=b/\rho,\\
+ T_\delta&=\begin{pmatrix}
+ 1-\rho(1-\mu)\delta&\rho\mu\\
+ -(1-\mu)\delta&\mu
+ \end{pmatrix},&
+ B&=(1-\mu)\binom{\rho}{1},\\
+ p_\delta(z)&=z^2-[1+\mu-\rho(1-\mu)\delta]z+\mu.
+\end{align}
+For finite initial second moment, the limiting centered covariance of
+$(x_t,v_{t-1})$ exists. With
+$D_\delta=2(1+\mu)-\rho(1-\mu)\delta$, its entries are
+\begin{align}
+ \operatorname{Var}_\infty(x)
+ &=\frac{\rho(1+\mu)\sigma^2}{\delta D_\delta},\label{eq:exact-modal-variance}\\
+ \operatorname{Var}_\infty(v)
+ &=\frac{2(1-\mu)\sigma^2}{D_\delta},\\
+ \operatorname{Cov}_\infty(x_t,v_{t-1})
+ &=\frac{\rho(1-\mu)\sigma^2}{D_\delta}.
+ \label{eq:modal-cross-covariance}
+\end{align}
+Thus
+\begin{equation}
+ \lim_{t\to\infty}\mathbb E x_t^2
+ =\frac{b^2}{\rho^2\delta^2}
+  +\frac{\rho(1+\mu)\sigma^2}{\delta D_\delta}.
+ \label{eq:modal-drift-plus-noise}
+\end{equation}
+For $0<\mu<1$, the two roots have modulus $\sqrt\mu$ whenever
+$|1+\mu-\rho(1-\mu)\delta|<2\sqrt\mu$.
+\end{theorem}
+\begin{proof}
+The equilibrium equations give $\rho\bar v=b$ and
+$\bar v=-\delta\bar x$. Subtract them to obtain
+$z_{t+1}=T_\delta z_t+B\zeta_t$. The second-order Schur--Cohn stability conditions are
+\begin{equation}
+ 1-\mu>0,\quad \rho(1-\mu)\delta>0,\quad
+ 2(1+\mu)-\rho(1-\mu)\delta>0.
+\end{equation}
+For $S_t=\mathbb E[z_tz_t^\top]$,
+\begin{align}
+ S_t&=T_\delta^tS_0(T_\delta^\top)^t
+       +\sigma^2\sum_{k=0}^{t-1}T_\delta^kBB^\top(T_\delta^\top)^k,\\
+ S_\infty&=T_\delta S_\infty T_\delta^\top+\sigma^2BB^\top.
+ \label{eq:modal-lyapunov}
+\end{align}
+The Yule--Walker reduction for an AR(2) process
+\cite{brockwell1991time} gives an independent derivation. Eliminate $v$:
+\begin{equation}
+ y_{t+1}=a y_t-\mu y_{t-1}+s\zeta_t,\qquad
+ a=1+\mu-s\delta,\quad s=\rho(1-\mu),\quad y_t=x_t-\bar x.
+\end{equation}
+The Yule--Walker equations for stationary autocovariances $\gamma_k$ are
+\begin{align}
+ \gamma_1&=a\gamma_0-\mu\gamma_1
+               =\frac{a\gamma_0}{1+\mu},\\
+ \gamma_2&=a\gamma_1-\mu\gamma_0,\\
+ \gamma_0&=a\gamma_1-\mu\gamma_2+s^2\sigma^2,\\
+ \gamma_0&=\frac{s^2\sigma^2(1+\mu)}
+                   {(1-\mu)[(1+\mu)^2-a^2]}
+           =\frac{\rho(1+\mu)\sigma^2}{\delta D_\delta}.
+\end{align}
+Since $v_{t-1}-\bar v=(y_t-y_{t-1})/\rho$,
+\begin{align}
+ \operatorname{Var}(v)&=2(\gamma_0-\gamma_1)/\rho^2,\\
+ \operatorname{Cov}(x_t,v_{t-1})&=(\gamma_0-\gamma_1)/\rho.
+\end{align}
+Substitution gives the remaining entries. Complex conjugate roots have
+product $\mu$, which proves the modulus statement.
+\end{proof}
+
+\begin{corollary}[Several modes and the momentum/noise distinction]
+For modal gaps $\delta_j\in[\Delta,\Lambda]$ and corresponding drift and
+noise coordinates $b_j,\sigma_j^2$, the quadratic routing excess satisfies
+\begin{equation}
+ \lim_t\mathbb E h_{\rm quad}(x_t)
+ =\sum_j\frac{b_j^2}{2\rho^2\delta_j}
+   +\sum_j\frac{\rho(1+\mu)\sigma_j^2}
+           {2[2(1+\mu)-\rho(1-\mu)\delta_j]}.
+ \label{eq:modal-energy}
+\end{equation}
+In particular, as $\rho\downarrow0$ at fixed $\mu<1$,
+\begin{equation}
+ \operatorname{Var}_\infty(x_j)
+       =\frac{\rho\sigma_j^2}{2\delta_j}+O(\rho^2),\qquad
+ \operatorname{Var}_\infty(v_j)
+       =\frac{1-\mu}{1+\mu}\sigma_j^2+O(\rho).
+\end{equation}
+The EMA's reduced velocity variance does not multiply the leading
+subspace-position variance by the same factor.
+For $0<\Delta<\Lambda$, Polyak's optimal quadratic tuning
+\cite{polyak1964speeding} gives the choices
+\begin{equation}
+ \mu_*=\left(\frac{\sqrt\Lambda-\sqrt\Delta}
+                  {\sqrt\Lambda+\sqrt\Delta}\right)^2,
+ \qquad \rho_*=\frac1{\sqrt{\Delta\Lambda}}
+\end{equation}
+give $\operatorname{spr}(T_\delta)\le
+(\sqrt\Lambda-\sqrt\Delta)/(\sqrt\Lambda+\sqrt\Delta)$ for every
+$\delta\in[\Delta,\Lambda]$. This is a linear-model spectral statement.
+\end{corollary}
+\begin{proof}
+Sum $\delta_j\mathbb E x_j^2/2$ and expand the denominators.
+For the last statement put $q=(\sqrt\Lambda-\sqrt\Delta)/
+(\sqrt\Lambda+\sqrt\Delta)$. Then $\mu_*=q^2$ and
+$1+\mu_*-\rho_*(1-\mu_*)\delta$ ranges from $2q$ to $-2q$.
+All roots therefore have modulus $q$, including the repeated endpoint roots.
+No diagonalizability or global accelerated QR guarantee is inferred.
+\end{proof}
+
+\subsection{An invariant neighborhood for the actual rank-one QR momentum map}
+\label{app:rankone-nonlinear}
+
+\begin{theorem}[Nonlinear local convergence with an explicit Lyapunov radius]
+\label{thm:rankone-QR-Lyapunov}
+Let $r=1$, $C=\operatorname{Diag}(\lambda_1,\ldots,\lambda_d)$,
+$\delta_j=\lambda_1-\lambda_j>0$ for $j>1$, and
+$\Lambda=\lambda_1-\lambda_d$. Use the deterministic implemented tracker
+\begin{align}
+ H_+&=\mu(I-uu^\top)H+(1-\mu)(I-uu^\top)Cu,\\
+ u_+&=\frac{u+\rho H_+}{\|u+\rho H_+\|},\qquad0\le\mu<1.
+ \label{eq:rankone-actual-map}
+\end{align}
+In the positive first-coordinate chart
+$u(x)=(1,x^\top)^\top/\sqrt{1+\|x\|^2}$, put $z=(x,H)$ and write its
+full state map as $F(z)$. Suppose
+$0<\rho(1-\mu)\Lambda<2(1+\mu)$.
+Its derivative $A=DF(0)$ consists, up to permutation, of the blocks
+$T_{\delta_j}$ and one zero block for the first component of $H$.
+Let
+\begin{align}
+ P&=\sum_{k=0}^{\infty}(A^\top)^kA^k,&A^\top PA-P&=-I,\\
+ c_H&=\mu/2+\tfrac32(1-\mu)\Lambda,&
+ c_L&=\mu+(1-\mu)\Lambda,\\
+ \epsilon_0&=\min\{1/4,(4\rho c_H)^{-1/2}\},\\
+ c_2&=c_H+2\rho\{\tfrac54c_H+
+                   \tfrac14(\tfrac12+\rho c_H)c_L\}.
+\end{align}
+Choose
+\begin{equation}
+ 0<\epsilon\le\min\left\{\epsilon_0,
+ \frac1{8\|A^\top P\|_{\rm op}c_2},
+ \frac1{2c_2\sqrt{\|P\|_{\rm op}}}\right\},
+ \label{eq:explicit-rankone-radius}
+\end{equation}
+where a zero denominator in the second entry imposes no restriction.
+Then the ellipsoid
+$\mathcal E=\{z:z^\top Pz\le\lambda_{\min}(P)\epsilon^2\}$
+is invariant and
+\begin{equation}
+ F(z)^\top PF(z)\le
+ \left(1-\frac1{2\lambda_{\max}(P)}\right)z^\top Pz
+                      \qquad(z\in\mathcal E).
+ \label{eq:rankone-local-contraction}
+\end{equation}
+Thus $u_t\to e_1$ and $H_t\to0$ geometrically in this neighborhood.
+\end{theorem}
+\begin{proof}
+A scalar shift of $C$ leaves the tracker unchanged; take
+$C'=C-\lambda_1I=\operatorname{Diag}(0,-D)$,
+$D=\operatorname{Diag}(\delta_2,\ldots,\delta_d)$.
+For $t=\|z\|\le1/4$,
+\begin{align}
+ \|u(x)-e_1-(0,x)^\top\|&\le\|x\|^2,\\
+ \|uu^\top-e_1e_1^\top\|_{\rm op}&\le\|x\|,\\
+ \|(I-uu^\top)C'u+(0,Dx)^\top\|
+ &\le\tfrac32\Lambda\|x\|^2.
+\end{align}
+Consequently, for $H_{\rm lin}=(0,\mu H_{2:d}-(1-\mu)Dx)^\top$,
+\begin{align}
+ \|H_+-H_{\rm lin}\|
+ &\le\mu\|x\|\|H\|+\tfrac32(1-\mu)\Lambda\|x\|^2
+ \le c_Ht^2,\\
+ \|H_{\rm lin}\|&\le c_Lt,\quad |(H_+)_1|\le c_Ht^2.
+\end{align}
+For $t\le\epsilon_0$, the new graph denominator
+$a=u_1+\rho(H_+)_1$ satisfies
+\begin{equation}
+ a\ge\frac1{\sqrt{1+t^2}}-\rho c_Ht^2>\frac12,\qquad
+ |1-a|\le(1/2+\rho c_H)t^2.
+\end{equation}
+The exact graph update is
+$x_+=x+\rho[(H_+)_{2:d}-x(H_+)_1]/a$. Hence
+\begin{align}
+ \|x_+-x-\rho(H_{\rm lin})_{2:d}\|
+ &\le2\rho\{\tfrac54c_H+
+                \tfrac14(\tfrac12+\rho c_H)c_L\}t^2,\\
+ F(z)&=Az+r(z),\qquad\|r(z)\|\le c_2\|z\|^2.
+\end{align}
+Differentiating the linear terms gives $A$ and its stated modal blocks.
+They are Schur stable by \eqref{eq:modal-schur}, so $P$ converges and
+$P\succeq I$. For $V(z)=z^\top Pz$,
+\begin{align}
+ V(F(z))-V(z)
+ &=-\|z\|^2+2\langle Az,Pr(z)\rangle+r(z)^\top Pr(z)\\
+ &\le-\{1-2\|A^\top P\|_{\rm op}c_2\|z\|
+                -\|P\|_{\rm op}c_2^2\|z\|^2\}\|z\|^2\\
+ &\le-\tfrac12\|z\|^2
+ \le-\frac{V(z)}{2\lambda_{\max}(P)}.
+\end{align}
+Condition~\eqref{eq:explicit-rankone-radius} bounds the two positive
+corrections by $1/4$ each. If $z\in\mathcal E$, then $\|z\|\le\epsilon$;
+the inequality keeps $F(z)$ in the same ellipsoid. Induction proves
+invariance and geometric convergence. This theorem is for rank one;
+within-subspace gauge directions for $r>1$ require an orbital analysis.
+\end{proof}

@@ -1,0 +1,144 @@
+{
+  "hp": {
+    "lr": 0.01,
+    "residual_ratio": 100.0
+  },
+  "criterion": "final validation primary metric; fresh formal initialization; one final test evaluation",
+  "candidates": [
+    {
+      "hp": {
+        "lr": 0.001,
+        "residual_ratio": 1.0
+      },
+      "status": "complete",
+      "validation": {
+        "score": 0.07797230780124664,
+        "mse": 0.07797230780124664,
+        "full_image_mse": 0.03889856114983559,
+        "psnr": 14.100664628450822,
+        "n": 765
+      },
+      "error": null
+    },
+    {
+      "hp": {
+        "lr": 0.001,
+        "residual_ratio": 10.0
+      },
+      "status": "complete",
+      "validation": {
+        "score": 0.07781528681516647,
+        "mse": 0.07781528681516647,
+        "full_image_mse": 0.03882022947072983,
+        "psnr": 14.109419017766829,
+        "n": 765
+      },
+      "error": null
+    },
+    {
+      "hp": {
+        "lr": 0.001,
+        "residual_ratio": 100.0
+      },
+      "status": "complete",
+      "validation": {
+        "score": 0.07679066807031631,
+        "mse": 0.07679066807031631,
+        "full_image_mse": 0.03830907121300697,
+        "psnr": 14.16698377172642,
+        "n": 765
+      },
+      "error": null
+    },
+    {
+      "hp": {
+        "lr": 0.003,
+        "residual_ratio": 1.0
+      },
+      "status": "complete",
+      "validation": {
+        "score": 0.0742763951420784,
+        "mse": 0.0742763951420784,
+        "full_image_mse": 0.03705475851893425,
+        "psnr": 14.31156012628926,
+        "n": 765
+      },
+      "error": null
+    },
+    {
+      "hp": {
+        "lr": 0.003,
+        "residual_ratio": 10.0
+      },
+      "status": "complete",
+      "validation": {
+        "score": 0.0742739737033844,
+        "mse": 0.0742739737033844,
+        "full_image_mse": 0.03705355152487755,
+        "psnr": 14.311701592437455,
+        "n": 765
+      },
+      "error": null
+    },
+    {
+      "hp": {
+        "lr": 0.003,
+        "residual_ratio": 100.0
+      },
+      "status": "complete",
+      "validation": {
+        "score": 0.0742567703127861,
+        "mse": 0.0742567703127861,
+        "full_image_mse": 0.037044964730739594,
+        "psnr": 14.312708143584898,
+        "n": 765
+      },
+      "error": null
+    },
+    {
+      "hp": {
+        "lr": 0.01,
+        "residual_ratio": 1.0
+      },
+      "status": "complete",
+      "validation": {
+        "score": 0.07395176589488983,
+        "mse": 0.07395176589488983,
+        "full_image_mse": 0.036892808973789215,
+        "psnr": 14.330582768584879,
+        "n": 765
+      },
+      "error": null
+    },
+    {
+      "hp": {
+        "lr": 0.01,
+        "residual_ratio": 10.0
+      },
+      "status": "complete",
+      "validation": {
+        "score": 0.07397199422121048,
+        "mse": 0.07397199422121048,
+        "full_image_mse": 0.03690289705991745,
+        "psnr": 14.329395382380119,
+        "n": 765
+      },
+      "error": null
+    },
+    {
+      "hp": {
+        "lr": 0.01,
+        "residual_ratio": 100.0
+      },
+      "status": "complete",
+      "validation": {
+        "score": 0.0737527459859848,
+        "mse": 0.0737527459859848,
+        "full_image_mse": 0.03679352253675461,
+        "psnr": 14.34228631711095,
+        "n": 765
+      },
+      "error": null
+    }
+  ]
+}

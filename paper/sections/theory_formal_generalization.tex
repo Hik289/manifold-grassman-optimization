@@ -1,0 +1,445 @@
+\subsection{An explicit sensitivity matrix for every stored state}
+\label{app:explicit-state-matrix}
+The following construction replaces unspecified composition constants by
+finite algebraic expressions. Norms compare stored QR frames, not merely
+projectors. We specify one routed matrix; further routed layers or fallback
+states require additional rows and columns. Moment states start at zero,
+so fresh bias-corrected first moments are bounded by $G_0$ as in
+Lemma~\ref{lem:actual-invariants}. Let $e_W,e_U,e_M,e_A,e_H,e_g$ be the coordinate row vectors of
+$\mathbb R^6$ and
+\begin{equation}
+ d=(\delta W,\delta U,\delta M,\delta A,\delta H,\delta g)^{\top}\ge0,
+ \qquad\|G-G'\|\le L_g\delta W+\delta g.
+\end{equation}
+For a common example $\delta g=0$; for one replaced example at a common
+state $\delta g\le2G_0$. Assume all reachable gradients are bounded by
+$G_0$, all raw first moments and root second moments by $G_0$, and all
+tracker momenta by $H_0$. The QR comparison segments have minimum singular
+value at least $s_Q>0$; Procrustes inputs have minimum singular value at
+least $s_R>0$. Define $\kappa_Q=\sqrt3/s_Q$,
+$\kappa_R=1/s_R$, and the following nonnegative rows:
+\begin{align}
+ k_G&=L_ge_W+e_g,\\
+ k_Z&=k_G+G_0e_U, & k_E&=k_G+2G_0e_U,\\
+ k_M&=\beta_1e_M+(1-\beta_1)k_Z,\\
+ k_A&=\sqrt{\beta_2}e_A+\sqrt{1-\beta_2}k_Z,\\
+ k_D&=\frac{\varepsilon_a^{-1}}{1-\beta_1^t}k_M
+       +\frac{G_0\varepsilon_a^{-2}}{\sqrt{1-\beta_2^t}}k_A
+       +G_0\varepsilon_a^{-1}e_U,\\
+ k_{\rm res}&=(s_{\max}+G_0^2\varepsilon_r^{-2})k_E
+                          +G_0\varepsilon_r^{-1}k_G,\\
+ k_Q&=4e_U+2\varepsilon_c^{-1/2}k_G,\\
+ k_H&=\mu_He_H+2\mu_HH_0e_U+(1-\mu_H)k_Q,\\
+ k_{U+}&=\kappa_Q(e_U+\rho_t k_H),\\
+ k_R&=\kappa_R(k_{U+}+e_U),\\
+ k_{M+}&=k_M+G_0k_R,& k_{A+}&=k_A+G_0k_R,\\
+ k_{W+}&=|1-\eta_t\lambda_{\rm wd}|e_W
+                         +\eta_t k_D+\eta_{\perp,t} k_{\rm res}.
+ \label{eq:all-state-rows}
+\end{align}
+Here $k_{W+},k_{U+},k_{M+},k_{A+},k_H$ are stacked into
+$\mathbb K_t\in\mathbb R_+^{5\times6}$; write
+$\mathbb K_t=(K_t\mid v_t)$.
+
+\begin{proposition}[Constructive full-state Lipschitz and injection constants]
+\label{prop:explicit-state-constants}
+Under the preceding bounds, the one-step state differences obey
+\begin{equation}
+ \begin{pmatrix}\delta W_+\\\delta U_+\\\delta M_+\\\delta A_+\\\delta H_+\end{pmatrix}
+ \le K_t\begin{pmatrix}\delta W\\\delta U\\\delta M\\\delta A\\\delta H\end{pmatrix}
+                       +v_t\delta g.\label{eq:matrix-state-bound}
+\end{equation}
+For $\omega=(1,\omega_U,\omega_M,\omega_A,\omega_H)>0$,
+valid constants in Assumption~\ref{ass:stability} are
+\begin{equation}
+ L_t=\max_j\frac{\sum_i\omega_i(K_t)_{ij}}{\omega_j},\qquad
+ b_t=2G_0\sum_i\omega_i(v_t)_i.\label{eq:explicit-L-b}
+\end{equation}
+In particular, identical input states and identical examples imply zero
+output difference exactly.
+\end{proposition}
+\begin{proof}
+The routed and residual gradient estimates are
+\begin{align}
+ \|GU-G'U'\|&\le\|G-G'\|+G_0\|U-U'\|,\\
+ \|G(I-P)-G'(I-P')\|
+ &\le\|G-G'\|+2G_0\|U-U'\|.
+\end{align}
+The first-moment EMA gives $k_M$. Reverse triangle inequalities for the
+coordinatewise two-dimensional Euclidean norms give $k_A$. Bias correction
+and \eqref{eq:adam-lipschitz}, followed by lifting, give $k_D$.
+For $n=\|G\|$, $e=\|G(I-P)\|$, scalar clipping is nonexpansive, so
+\begin{align}
+ |s-s'|&\le\varepsilon_r^{-1}|n-n'|
+                        +G_0\varepsilon_r^{-2}|e-e'|,\\
+ \|sE-s'E'\|&\le s_{\max}\|E-E'\|+G_0|s-s'|.
+\end{align}
+These are precisely the coefficients in $k_{\rm res}$.
+Lemma~\ref{lem:building-blocks} gives $k_Q$, while
+\begin{equation}
+ \|(I-P)H-(I-P')H'\|\le\|H-H'\|+2H_0\|U-U'\|
+\end{equation}
+gives $k_H$. Lemma~\ref{lem:qr-frame} gives $k_{U+}$.
+The polar perturbation inequality gives
+\begin{equation}
+ \|R-R'\|\le s_R^{-1}
+ \|U_+^\top U-U_+'{}^\top U'\|
+ \le\kappa_R(\delta U_++\delta U).
+\end{equation}
+Finally,
+\begin{align}
+ \|\widetilde MR^\top-\widetilde M'R'^\top\|
+ &\le\|\widetilde M-\widetilde M'\|+G_0\|R-R'\|,\\
+ \|\sqrt{\widetilde A^{\odot2}(R^\top)^{\odot2}}
+       -\sqrt{\widetilde A'{}^{\odot2}(R'^\top)^{\odot2}}\|
+ &\le\|\widetilde A-\widetilde A'\|+G_0\|R-R'\|.
+\end{align}
+The second inequality follows by writing each output amplitude as the norm
+of a row weighted by a column of the rotation, then using its orthogonality.
+These prove every row of \eqref{eq:all-state-rows}. Multiplying
+\eqref{eq:matrix-state-bound} by $\omega^\top$ yields
+\eqref{eq:explicit-L-b}. All operations are deterministic functions of
+states and examples; there is no sample-independent additive error.
+\end{proof}
+
+\begin{corollary}[Matrix-valued replacement stability]
+For independent uniform sampling with replacement and common data-independent
+initialization, define
+$u_t=\mathbb E(\delta W_t,\delta U_t,\delta M_t,\delta A_t,\delta H_t)^\top$.
+If the constants above are uniform over the two coupled runs, then
+\begin{align}
+ u_{t+1}&\le K_tu_t+\frac{2G_0}{n}v_t,\\
+ u_T&\le\frac{2G_0}{n}\sum_{t=0}^{T-1}
+                  K_{T-1}\cdots K_{t+1}v_t,\label{eq:matrix-stability-product}\\
+ |\mathbb E[L(W_T)-\widehat L_S(W_T)]|
+ &\le\frac{2L_\ell G_0}{n}
+ e_W^{(5)}\sum_{t=0}^{T-1}K_{T-1}\cdots K_{t+1}v_t.
+\end{align}
+Here $e_W^{(5)}=(1,0,0,0,0)$ and an empty product is the identity.
+\end{corollary}
+\begin{proof}
+The probability of drawing the replaced example is $1/n$; iterate
+\eqref{eq:matrix-state-bound} from $u_0=0$ and use the ghost-sample
+identity in Theorem~\ref{thm:generalization}.
+\end{proof}
+
+\subsection{Spectral sensitivity, feedback, and a verifiable contractive specialization}
+\label{app:spectral-stability}
+
+\begin{proposition}[Optimal weights and the Schur feedback condition]
+\label{prop:spectral-feedback}
+For a nonnegative time-independent sensitivity matrix $K$,
+\begin{equation}
+ \inf_{\omega>0}\|D_\omega KD_\omega^{-1}\|_1
+ =\operatorname{spr}(K).\label{eq:perron-weights}
+\end{equation}
+Partition a valid sensitivity bound as
+\begin{equation}
+ K=\begin{pmatrix}k&b^\top\\c&A\end{pmatrix},\qquad
+ k\ge0,\quad A,b,c\ge0,\quad\operatorname{spr}(A)<1.
+\end{equation}
+Then
+\begin{equation}
+ \operatorname{spr}(K)<1
+ \quad\Longleftrightarrow\quad
+ k+b^\top(I-A)^{-1}c<1.\label{eq:schur-feedback}
+\end{equation}
+For an injection $h=(h_W,h_S)^\top\ge0$ and
+$u_{t+1}\le Ku_t+h/n$, $u_0=0$, the resulting uniform parameter sensitivity
+satisfies
+\begin{equation}
+ \sup_T(u_T)_W
+ \le\frac{h_W+b^\top(I-A)^{-1}h_S}
+ {n\{1-k-b^\top(I-A)^{-1}c\}}.\label{eq:schur-stability}
+\end{equation}
+The triangle-inequality construction \eqref{eq:all-state-rows} usually has
+$k\ge1$ when weight decay is absent. It does not by itself establish
+\eqref{eq:schur-feedback}; that requires a sharper signed contraction
+estimate for the parameter transition.
+\end{proposition}
+\begin{proof}
+Every induced norm bounds the spectral radius from below. For any
+$q>\operatorname{spr}(K)$,
+\begin{align}
+ \omega&=(qI-K^\top)^{-1}\mathbf1
+       =\sum_{j=0}^{\infty}q^{-j-1}(K^\top)^j\mathbf1>0,\\
+ K^\top\omega&=q\omega-\mathbf1<q\omega.
+\end{align}
+Hence the norm in \eqref{eq:perron-weights} is less than $q$;
+let $q$ decrease to $\operatorname{spr}(K)$.
+If \eqref{eq:schur-feedback} holds, choose
+\begin{equation}
+ x=\binom{1}{(I-A)^{-1}c+\epsilon(I-A)^{-1}\mathbf1},\quad\epsilon>0.
+\end{equation}
+For sufficiently small $\epsilon$, $Kx<x$, proving
+$\operatorname{spr}(K)<1$. Conversely, if $\operatorname{spr}(K)<1$,
+then $(I-K)^{-1}=\sum_{j\ge0}K^j\ge0$. Its top-left entry, computed by
+Schur complementation, is
+$[1-k-b^\top(I-A)^{-1}c]^{-1}$ and is positive, proving the converse.
+Finally $u_T\le n^{-1}\sum_{j=0}^{T-1}K^jh\le n^{-1}(I-K)^{-1}h$;
+the top component is \eqref{eq:schur-stability}.
+\end{proof}
+
+\begin{proposition}[A signed, frozen-metric quadratic specialization]
+\label{prop:quadratic-stability}
+Let
+$\ell(w,z)=w^\top H w/2-b_z^\top w$, $H\succ0$, $\|b_z\|\le B_z$,
+and use a fixed positive metric $B\succ0$ and momentum $\beta\in[0,1)$:
+\begin{equation}
+ m_t=\beta m_{t-1}+(1-\beta)(Hw_t-b_{I_t}),\qquad
+ w_{t+1}=w_t-\eta Bm_t.
+\end{equation}
+Set $\widetilde H=B^{1/2}HB^{1/2}$, with eigenvalues
+$0<\gamma_{\min}\le\gamma_j\le\gamma_{\max}$.
+The signed two-state transition is asymptotically stable if
+\begin{equation}
+ 0<\eta<\frac{2(1+\beta)}{(1-\beta)\gamma_{\max}}.\label{eq:quadratic-schur}
+\end{equation}
+For any $q\in(\max_j\operatorname{spr}(T_{\gamma_j}),1)$ there is a
+finite $C_q$ such that the neighboring-data parameter difference obeys
+\begin{equation}
+ \sup_T\mathbb E\|w_T-w_T'\|
+ \le\frac{2C_q(1-\beta)B_z\|B^{1/2}\|_{\rm op}^2
+                           \sqrt{1+\eta^2}}
+                         {n(1-q)}.\label{eq:quadratic-generalization}
+\end{equation}
+This is a frozen-metric specialization, not a contraction theorem for
+unrestricted Adam or a moving routing basis.
+\end{proposition}
+\begin{proof}
+Use coordinates $x=B^{-1/2}w$, $y=B^{1/2}m$ and diagonalize
+$\widetilde H$. Each eigencoordinate has transition
+\begin{equation}
+ T_\gamma=\begin{pmatrix}
+ 1-\eta(1-\beta)\gamma&-\eta\beta\\
+ (1-\beta)\gamma&\beta
+ \end{pmatrix},\qquad
+ \det(zI-T_\gamma)=z^2-[1+\beta-\eta(1-\beta)\gamma]z+\beta.
+\end{equation}
+The real second-order Schur conditions reduce to
+\begin{align}
+ 1-\beta&>0,\\
+ 1-[1+\beta-\eta(1-\beta)\gamma]+\beta
+ &=\eta(1-\beta)\gamma>0,\\
+ 1+[1+\beta-\eta(1-\beta)\gamma]+\beta
+ &=2(1+\beta)-\eta(1-\beta)\gamma>0.
+\end{align}
+These prove \eqref{eq:quadratic-schur}. In finite dimension,
+$\|T^k\|\le C_qq^k$ for any $q$ strictly larger than its spectral radius,
+including nondiagonalizable blocks. A replaced example injects a vector
+of norm at most
+$2(1-\beta)B_z\|B^{1/2}\|_{\rm op}\sqrt{1+\eta^2}$ into $(x,y)$
+with probability $1/n$. Sum the geometric response and multiply by
+$\|B^{1/2}\|_{\rm op}$ to return to $w$.
+\end{proof}
+
+\subsection{Validation selection is a separate statistical operation}
+\label{app:validation-selection}
+\begin{theorem}[Finite-candidate validation selection]
+Let $\theta_1(S),\ldots,\theta_K(S)$ be any predictors constructed without
+access to an independent validation set $V$ of size $n_v$. For losses in
+$[0,1]$, let $\widehat k\in\arg\min_k\widehat L_V(\theta_k)$.
+With probability at least $1-\delta$ over $V$, conditional on $S$ and all
+candidate-generation randomness,
+\begin{align}
+ \max_{k\le K}|L(\theta_k)-\widehat L_V(\theta_k)|
+ &\le\epsilon_v:=\sqrt{\frac{\log(2K/\delta)}{2n_v}},\\
+ L(\theta_{\widehat k})&\le\min_{k\le K}L(\theta_k)+2\epsilon_v.
+ \label{eq:validation-oracle}
+\end{align}
+Every inspected checkpoint, learning rate, rank, and restart must be
+included among the candidates. Repeated adaptive use of $V$ to generate
+new candidates requires a different argument.
+\end{theorem}
+\begin{proof}
+Conditional on the candidates, Hoeffding and the union bound yield
+\begin{equation}
+ \Pr\!\left(\max_k|L_k-\widehat L_{V,k}|>u\mid S,\Omega\right)
+ \le2K e^{-2n_vu^2}.
+\end{equation}
+On its complementary event, for every $k$,
+\begin{equation}
+ L_{\widehat k}\le\widehat L_{V,\widehat k}+\epsilon_v
+ \le\widehat L_{V,k}+\epsilon_v\le L_k+2\epsilon_v.
+\end{equation}
+This proof neither assumes nor transfers training-set stability of the
+selected learning-rate map.
+\end{proof}
+
+\subsection{PAC-Bayes: anisotropic posterior optimization and a margin specialization}
+\label{app:pacbayes-derivations}
+Let $\Pi$ be data independent and $\ell\in[0,1]$. For fixed $\lambda>0$,
+Hoeffding's lemma and independence imply
+\begin{align}
+ \mathbb E_S\exp\{\lambda[L(\theta)-\widehat L_S(\theta)]\}
+ &\le e^{\lambda^2/(8n)},\\
+ \mathbb E_S\mathbb E_{\theta\sim\Pi}
+ \exp\{\lambda[L(\theta)-\widehat L_S(\theta)]-\lambda^2/(8n)\}
+ &\le1.\label{eq:pb-mgf-explicit}
+\end{align}
+Markov's inequality and the Gibbs--Donsker--Varadhan variational principle
+\cite{donsker1975asymptotic} give,
+on a single event of probability at least $1-\delta$, simultaneously for
+all $Q\ll\Pi$,
+\begin{equation}
+ L(Q)\le\widehat L_S(Q)+
+ \frac{\operatorname{KL}(Q\|\Pi)+\log(1/\delta)}{\lambda}
+                     +\frac{\lambda}{8n}.\label{eq:pb-uniform-Q}
+\end{equation}
+Indeed, for $F=\lambda(L-\widehat L_S)$,
+\begin{align}
+ \mathbb E_QF-\operatorname{KL}(Q\|\Pi)
+ &=\mathbb E_Q\log\left(e^F\frac{d\Pi}{dQ}\right)
+ \le\log\mathbb E_\Pi e^F.
+\end{align}
+For a countable data-independent set $\{\lambda_j\}$ with masses
+$\pi_j>0$, $\sum_j\pi_j=1$, replace $\log(1/\delta)$ by
+$\log[1/(\delta\pi_j)]$ to obtain simultaneous validity and permit
+selection of $j$ after training.
+
+\begin{proposition}[Optimal two-variance Gaussian certificate]
+\label{prop:optimal-posterior}
+Let $P=UU^\top$ be any data-dependent rank-$r$ projector, $0<r<d$, and
+$\Pi=\mathcal N(\operatorname{vec}W_0,s_0^2I_{md})$, with $W_0,s_0$
+data independent. Let
+\begin{equation}
+ Q=\mathcal N(\operatorname{vec}W,
+          I_m\otimes[s_\parallel^2P+s_\perp^2(I-P)]),
+ \quad s_\parallel,s_\perp>0,
+\end{equation}
+using row-wise vectorization. Suppose for all $E$ and $u\in[0,1]$,
+\begin{equation}
+ \langle E,\nabla^2\widehat L_S(W+uE)[E]\rangle
+ \le h_\parallel\|EP\|^2+h_\perp\|E(I-P)\|^2,
+ \quad h_\parallel,h_\perp\ge0.\label{eq:posterior-hessian}
+\end{equation}
+Then the variances minimizing the sum of the quadratic empirical-loss
+upper bound and $\operatorname{KL}/\lambda$ are
+\begin{equation}
+ s_\parallel^2=(s_0^{-2}+\lambda h_\parallel)^{-1},\qquad
+ s_\perp^2=(s_0^{-2}+\lambda h_\perp)^{-1}.\label{eq:optimal-variances}
+\end{equation}
+On the event \eqref{eq:pb-uniform-Q}, this posterior satisfies
+\begin{align}
+ L(Q)\le\widehat L_S(W)
+ &+\frac{\|W-W_0\|^2}{2\lambda s_0^2}
+ +\frac{m}{2\lambda}\{r\log(1+\lambda h_\parallel s_0^2)
+                 +(d-r)\log(1+\lambda h_\perp s_0^2)\}\notag\\
+ &+\frac{\log(1/\delta)}{\lambda}+\frac{\lambda}{8n}.
+ \label{eq:optimized-pb}
+\end{align}
+No derivative of the learned projector with respect to the sample is
+needed for this PAC-Bayes statement; the prior must remain data independent.
+\end{proposition}
+\begin{proof}
+Put $\Sigma=s_\parallel^2P+s_\perp^2(I-P)$. Its eigenvalues and determinant
+are
+\begin{align}
+ \operatorname{spec}\Sigma
+ &=\{s_\parallel^2\ (r\text{ times}),s_\perp^2\ (d-r\text{ times})\},\\
+ \operatorname{tr}\Sigma&=rs_\parallel^2+(d-r)s_\perp^2,\\
+ \log\det\Sigma&=r\log s_\parallel^2+(d-r)\log s_\perp^2.
+\end{align}
+The Gaussian density ratio integrates to
+\begin{align}
+ 2\operatorname{KL}(Q\|\Pi)
+ &=s_0^{-2}\|W-W_0\|^2
+   +m\{s_0^{-2}\operatorname{tr}\Sigma-d
+                         +d\log s_0^2-\log\det\Sigma\}\\
+ &=s_0^{-2}\|W-W_0\|^2
+   +mr\,k(s_\parallel^2/s_0^2)
+   +m(d-r)k(s_\perp^2/s_0^2),\quad k(x)=x-1-\log x.
+\end{align}
+Taylor's integral formula and $\mathbb E E=0$ imply
+\begin{align}
+ \widehat L_S(Q)
+ &\le\widehat L_S(W)+\tfrac12m
+                    [rh_\parallel s_\parallel^2+(d-r)h_\perp s_\perp^2].
+\end{align}
+For a subspace of multiplicity $p$, minimize over $v>0$:
+\begin{align}
+ \phi_h(v)&=\tfrac{mp}{2}\{hv+\lambda^{-1}k(v/s_0^2)\},\\
+ \phi_h'(v)&=\tfrac{mp}{2}\{h+\lambda^{-1}(s_0^{-2}-v^{-1})\},\\
+ \phi_h''(v)&=\frac{mp}{2\lambda v^2}>0,\\
+ \min_{v>0}\phi_h(v)&=\frac{mp}{2\lambda}\log(1+\lambda hs_0^2).
+\end{align}
+Apply this separately to $p=r,d-r$ and substitute into
+\eqref{eq:pb-uniform-Q}. The Hessian condition is global along Gaussian
+perturbation segments; a local empirical Hessian estimate alone does not
+verify it for an untruncated Gaussian posterior.
+\end{proof}
+
+\begin{corollary}[A deterministic center under a loss Lipschitz condition]
+If $\ell(\cdot,z)$ is $L_\ell$-Lipschitz for every $z$, then
+\begin{equation}
+ L(W)\le L(Q)+L_\ell
+         \sqrt{m[rs_\parallel^2+(d-r)s_\perp^2]}.\label{eq:pb-center}
+\end{equation}
+\end{corollary}
+\begin{proof}
+$L(W)-L(Q)\le L_\ell\mathbb E_Q\|W-\widetilde W\|
+\le L_\ell\sqrt{\mathbb E_Q\|W-\widetilde W\|^2}$.
+\end{proof}
+
+\begin{proposition}[Gaussian conditioning and a sharp center-to-Gibbs conversion]
+\label{prop:pb-margin}
+Let $x=\phi(z)\ne0$ be a feature map fixed before observing $S$, and
+let $W\in\mathbb R^{m\times d}$, $m\ge2$, be a multiclass linear head.
+Use the row-independent Gaussian posterior
+$Q=\mathcal N(\operatorname{vec}W,I_m\otimes\Sigma)$, $\Sigma\succ0$,
+and a legal data-independent prior $\Pi$. Write $\varphi,\Phi$ for the
+standard normal density and distribution function. For each training pair,
+\begin{align}
+ \nu_i^2&=x_i^\top\Sigma x_i,&
+ \Delta_{ij}&=(Wx_i)_{y_i}-(Wx_i)_j,\\
+ p_i&=\int_{\mathbb R}\varphi(t)
+       \left[1-\prod_{j\ne y_i}\Phi(t+\Delta_{ij}/\nu_i)\right]dt,&
+ p_Q&=n^{-1}\sum_i p_i.
+\end{align}
+The empirical Gibbs classification error is exactly $p_Q$. With
+probability at least $1-\delta$,
+\begin{equation}
+ L_{0/1}(W)\le\min\left\{1,
+ 2\operatorname{kl}^{-1}_+\left(p_Q,
+      \frac{\operatorname{KL}(Q\|\Pi)+\log(\Xi_n/\delta)}n\right)\right\}.
+ \label{eq:pb-margin}
+\end{equation}
+For a simpler empirical margin summary, define
+\begin{align}
+ \widehat L_\gamma(W)&=n^{-1}\sum_i
+                  \mathbf1\{\min_{j\ne y_i}\Delta_{ij}\le\gamma\},\\
+ B_m(h)&=\int_{\mathbb R}\varphi(t)[1-\Phi(t+h)^{m-1}]\,dt,
+ \qquad\nu_{\max}=\max_{i\le n}\nu_i.
+\end{align}
+For $\gamma>0$, $p_Q$ in \eqref{eq:pb-margin} may be replaced by
+\begin{equation}
+ \overline p_\gamma=\widehat L_\gamma(W)
+       +(1-\widehat L_\gamma(W))B_m(\gamma/\nu_{\max}).
+\end{equation}
+In particular $B_2(h)=1-\Phi(h/\sqrt2)$, and
+$B_m(h)\le\min\{1,(m-1)[1-\Phi(h/\sqrt2)]\}$ for $h\ge0$.
+No global feature-norm bound is needed for this empirical summary.
+\end{proposition}
+\begin{proof}
+Conditional on the true-class perturbation $E_{y_i}x_i=\nu_it$, the other
+logit perturbations are independent $\mathcal N(0,\nu_i^2)$. The conditional
+probability of correct classification is
+$\prod_{j\ne y_i}\Phi(t+\Delta_{ij}/\nu_i)$; integrate to get $p_i$.
+If all mean margins exceed $\gamma$, monotonicity gives
+$p_i\le B_m(\gamma/\nu_i)\le B_m(\gamma/\nu_{\max})$.
+For bad-margin examples use $p_i\le1$, retaining the exact fraction of good
+examples. The binary and pairwise bounds use
+$E_jx-E_yx\sim\mathcal N(0,2\nu(x)^2)$ and the union bound; no
+coordinatewise-infinity-norm relaxation is needed.
+
+For every test input misclassified by $W$, select a competitor with mean
+logit at least the true-class logit. Its centered symmetric Gaussian logit
+difference makes a Gibbs error with probability at least $1/2$. Hence
+$L_{0/1}(W)\le2L_{0/1}(Q)$. This factor two is attained by a binary
+zero-mean-margin example when ties are counted as center errors.
+Theorem~\ref{thm:Seeger-Maurer} and monotonicity of the upper KL inverse
+prove \eqref{eq:pb-margin}. The identities use an independent fixed feature
+map; an encoder learned from $S$ must be included in the hypothesis space
+and prior construction. Numerical evaluation of the integrals requires a
+controlled quadrature error if used for a certificate.
+\end{proof}

@@ -1,0 +1,89 @@
+{
+  "task": "text_20news",
+  "method": "AdamW",
+  "hp": {
+    "lr": 0.003
+  },
+  "epochs": 1000,
+  "seed": 42,
+  "formal": true,
+  "routed_layers": [
+    {
+      "name": "fc1.weight",
+      "shape": [
+        64,
+        2048
+      ],
+      "rank": 8
+    },
+    {
+      "name": "out.weight",
+      "shape": [
+        20,
+        64
+      ],
+      "rank": 8
+    }
+  ],
+  "data": {
+    "family": "text",
+    "metric": "macro_f1",
+    "higher": true,
+    "source": "https://scikit-learn.org/stable/modules/generated/sklearn.datasets.fetch_20newsgroups.html",
+    "n_raw": 18846,
+    "split": "20% stratified validation from by-date training; official by-date test",
+    "preprocessing": "remove headers/footers/quotes; train-only TF-IDF; vocabulary <=2048",
+    "empty_training_documents": 237,
+    "test_text_overlap_train": 226,
+    "overlap_note": "official corpus retained; no claim of exact-text independence across its predefined split",
+    "name": "text_20news",
+    "seed": 42,
+    "shape": [
+      [
+        9051,
+        2048
+      ],
+      [
+        2263,
+        2048
+      ],
+      [
+        7532,
+        2048
+      ]
+    ],
+    "preprocessing_fit_split": "training only",
+    "file_sha256": {
+      "x_train.npz": "7c564a61df9bb78d598222b7aeba7cc6070967354117eabd87cef1a98907cce5",
+      "y_train.npy": "f4cb548d97d3c88dee671199ed60a4ea4b3fcbea957b8fe4458c32bee08a4a79",
+      "x_val.npz": "13862a42b1aa449433fc2aaf79c9d1ca73705d88e2b35a0e9281142014679759",
+      "y_val.npy": "43ef9a32fcd17a6b0db34976282db7037a021457dedb385791db24ba4059d1f9",
+      "x_test.npz": "a5654af0b990323f0480803b04ea1284d2a01cb7b8f68deabb555a4dd05a2d92",
+      "y_test.npy": "595719634cb28915baef371a1a606f5d98405f08abe0039ec84972ed32f627d0",
+      "indices_train.npy": "1703aad83368227a8e9fd76b8e92825a66255d9bd20856d12968eb4d20a1eeb5",
+      "indices_val.npy": "e87efb2be3cc7497010373872a154c94abc36c3e355c54defe89e61881e800ce",
+      "indices_test.npy": "685e4ee1061cadd8817ceaaa7dd44d9750b834e8a4a824d74efa8276cc8a6ea7"
+    },
+    "preparation_source_sha256": "3c91b1ef9023d7775d4a9d85bb8928dd7746dcda26526c32f8c5730c729f7309"
+  },
+  "protocol_sha256": "f79744557aae2f3e5a51fb9db8734d40728a460b9666edfe87151a3162dedddf",
+  "status": "complete",
+  "n_epochs": 1000,
+  "validation": {
+    "accuracy": 0.5788775961113566,
+    "macro_f1": 0.5775109505702728,
+    "cross_entropy": 1.9610458612442017,
+    "n": 2263,
+    "score": 0.5775109505702728
+  },
+  "test": {
+    "accuracy": 0.5165958576739246,
+    "macro_f1": 0.5094626133872385,
+    "cross_entropy": 2.40004563331604,
+    "n": 7532,
+    "score": 0.5094626133872385
+  },
+  "state_bytes": 1059504,
+  "final_train_loss": 0.11117003113031387,
+  "wall_s": 75.3178698848933
+}

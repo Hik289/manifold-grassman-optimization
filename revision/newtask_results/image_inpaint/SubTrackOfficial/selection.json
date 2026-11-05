@@ -1,0 +1,144 @@
+{
+  "hp": {
+    "lr": 0.01,
+    "rho": 0.1
+  },
+  "criterion": "final validation primary metric; fresh formal initialization; one final test evaluation",
+  "candidates": [
+    {
+      "hp": {
+        "lr": 0.001,
+        "rho": 0.1
+      },
+      "status": "complete",
+      "validation": {
+        "score": 0.0706254169344902,
+        "mse": 0.0706254169344902,
+        "full_image_mse": 0.03523337095975876,
+        "psnr": 14.530458036201772,
+        "n": 765
+      },
+      "error": null
+    },
+    {
+      "hp": {
+        "lr": 0.001,
+        "rho": 1.0
+      },
+      "status": "complete",
+      "validation": {
+        "score": 0.07062537968158722,
+        "mse": 0.07062537968158722,
+        "full_image_mse": 0.035233352333307266,
+        "psnr": 14.530460332140827,
+        "n": 765
+      },
+      "error": null
+    },
+    {
+      "hp": {
+        "lr": 0.001,
+        "rho": 3.0
+      },
+      "status": "complete",
+      "validation": {
+        "score": 0.07062529772520065,
+        "mse": 0.07062529772520065,
+        "full_image_mse": 0.035233307629823685,
+        "psnr": 14.530465842399508,
+        "n": 765
+      },
+      "error": null
+    },
+    {
+      "hp": {
+        "lr": 0.003,
+        "rho": 0.1
+      },
+      "status": "complete",
+      "validation": {
+        "score": 0.06753279268741608,
+        "mse": 0.06753279268741608,
+        "full_image_mse": 0.03369053080677986,
+        "psnr": 14.724921464947055,
+        "n": 765
+      },
+      "error": null
+    },
+    {
+      "hp": {
+        "lr": 0.003,
+        "rho": 1.0
+      },
+      "status": "complete",
+      "validation": {
+        "score": 0.06749333441257477,
+        "mse": 0.06749333441257477,
+        "full_image_mse": 0.03367085009813309,
+        "psnr": 14.727459187093965,
+        "n": 765
+      },
+      "error": null
+    },
+    {
+      "hp": {
+        "lr": 0.003,
+        "rho": 3.0
+      },
+      "status": "complete",
+      "validation": {
+        "score": 0.06752920895814896,
+        "mse": 0.06752920895814896,
+        "full_image_mse": 0.0336887426674366,
+        "psnr": 14.72515197471951,
+        "n": 765
+      },
+      "error": null
+    },
+    {
+      "hp": {
+        "lr": 0.01,
+        "rho": 0.1
+      },
+      "status": "complete",
+      "validation": {
+        "score": 0.05013896897435188,
+        "mse": 0.05013896897435188,
+        "full_image_mse": 0.025013159960508347,
+        "psnr": 16.018314395481006,
+        "n": 765
+      },
+      "error": null
+    },
+    {
+      "hp": {
+        "lr": 0.01,
+        "rho": 1.0
+      },
+      "status": "complete",
+      "validation": {
+        "score": 0.0501394160091877,
+        "mse": 0.0501394160091877,
+        "full_image_mse": 0.025013383477926254,
+        "psnr": 16.018275587130663,
+        "n": 765
+      },
+      "error": null
+    },
+    {
+      "hp": {
+        "lr": 0.01,
+        "rho": 3.0
+      },
+      "status": "complete",
+      "validation": {
+        "score": 0.05014035850763321,
+        "mse": 0.05014035850763321,
+        "full_image_mse": 0.02501385286450386,
+        "psnr": 16.01819409072373,
+        "n": 765
+      },
+      "error": null
+    }
+  ]
+}

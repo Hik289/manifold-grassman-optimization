@@ -1,0 +1,23 @@
+% WWW table style: three rules, bold headers, reference green highlight.
+\begin{table}[t]
+\centering
+\small
+\caption{\textbf{T2: Goal Status Summary (G1--G6).} Honest assessment with evidence and boundary conditions.}
+\label{tab:goal_status}
+\reviewfit{\begin{tabular}{clp{5cm}p{4cm}}
+\toprule {\bfseries \textbf{Goal}} & {\bfseries \textbf{Status}} & {\bfseries \textbf{Evidence}} & {\bfseries \textbf{Honest Boundary}}\\
+\midrule
+G1  &  \textcolor{green}{\checkmark} Achieved  &  B5$>$AdamW in $\geq$2 families: SciML (+82\%), Cora (+2.2pp), CNN-partial (+0.2pp), continual (+3.6pp)  &  CNN-partial has no memory saving; RecSys SGD dominates \\
+\midrule
+G2  &  \textcolor{orange}{$\sim$} Partial  &  SciML: B5 1.97e-3 vs tuned-B4 3.27e-3 (40\% gap). Full-model efficiency: QR 2.9--4.8$\times$ faster  &  Only 1 clean family; Cora (static spectrum) B5$\approx$B4; continual (discrete jumps) B5$<$B4 \\
+\midrule
+G3  &  \textcolor{green}{\checkmark} Achieved  &  SciML 84\%, Graph 84\%, MLP 93\% memory saving; always co-reported with per-step slowdown  &  CNN-full 90\% save but $-12$pp acc; ViT 88\% save but 4$\times$ slower \\
+\midrule
+G4  &  \textcolor{green}{\checkmark} Achieved  &  Theorems 1--4 verified: win-map (T1), tracking dynamics (T2), rank-tail (T3), V-reset divergence (T4). 22/24 anchor-4 configs pass  &  All verifications single seed; curvature proxy not full quantitative match \\
+\midrule
+G5  &  \textcolor{green}{\checkmark} Achieved  &  SciML: B5 advantage grows from 6\% at ep100 to 30\% at ep1999  &  Non-monotonic: brief B4 lead near ep1000; only one family \\
+\midrule
+G6  &  \textcolor{green}{\checkmark} Achieved  &  Four theorems proved; proof path from Courant--Fischer to Robbins--Siegmund to Hardt--Recht--Singer; Theorem 4 V-reset prediction falsifiable and confirmed  &  Curvature constants layerwise; global constant claim would be mathematically false \\
+\bottomrule
+\end{tabular}}
+\end{table}

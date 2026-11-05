@@ -1,0 +1,33 @@
+% WWW table style: three rules, bold headers, reference green highlight.
+\section{Related Work}
+\begin{table*}[t]
+\centering
+\caption{\textbf{Mechanisms in memory-efficient adaptive optimization.} Keywords identify the subspace rule and the use of gradient information outside it. \yes: explicitly present; \no: absent from the specified design; --: not a coordinate-alignment operation. ``No refresh SVD'' excludes initialization and refers only to a full-gradient SVD, not a small tangent decomposition. Alignment checks denote projection-aware \emph{approximations}, not exact covariance transport. EF denotes generalized error feedback; it differs from an immediate residual branch.}
+\label{tab:related-mechanisms}
+\setlength{\tabcolsep}{3.2pt}
+\renewcommand{\arraystretch}{1.24}
+\small
+\reviewfit{\begin{tabular}{@{}l l l c c@{}}
+\toprule {\bfseries Method} & {\bfseries Subspace rule} & {\bfseries Outside subspace} & {\bfseries Moment} & {\bfseries No refresh}\\{\bfseries } & {\bfseries } & {\bfseries } & {\bfseries alignment} & {\bfseries SVD}\\
+\midrule
+GaLore~\cite{zhao2024galore}  &  Periodic SVD  &  Discarded  &  \no  &  \no\\
+Fira~\cite{chen2024fira}  &  Periodic SVD  &  Scaled residual \yes  &  \no  &  \no\\
+APOLLO~\cite{zhu2024apollo}  &  Random / SVD  &  Full-gradient scaling  &  --  &  \yes$^{a}$\\
+LDAdam~\cite{robert2024ldadam}  &  Block power + QR  &  Generalized EF  &  \yes  &  \yes\\
+SubTrack++~\cite{rajabi2025subtrackpp}  &  Grassmann geodesic  &  Scaled residual \yes  &  \yes  &  \yes\\
+\rowcolor{oursbg}
+\textbf{GrassRoute}  &  \textbf{Grassmann QR}  &  \textbf{Norm-matched residual \yes}  &  \yes  &  \yes\\
+\bottomrule
+\end{tabular}}
+\par\vspace{3pt}
+\begin{minipage}{\linewidth}\footnotesize
+$^{a}$Random-projection APOLLO; its SVD variant uses refresh decompositions.
+GrassRoute's additional analysis covers the normalized-covariance landscape, moving-target tracking, adaptive parameter convergence, and conditional full-state stability/PAC-Bayes generalization. These are separate statements with explicit hypotheses, rather than a universal superiority claim.
+\end{minipage}
+\end{table*}
+
+Low-rank optimizer state has become a major strategy for reducing training memory. GaLore projects gradients onto periodically recomputed low-rank subspaces \cite{zhao2024galore}, while FLoRA, Fira, APOLLO, OSD, LDAdam, and related methods refine projection, residual, or adaptive-state design \cite{hao2024flora,chen2024fira,zhu2024apollo,liang2024osd,robert2024ldadam,he2024golore,su2025galore2,mo2025loro}. These methods differ in projector updates, error feedback, and adaptive coordinate handling. GrassRoute studies one online Grassmann routing design and explicitly documents both successful and unfavorable regimes.
+
+Grassmann geometry identifies bases related by right orthogonal rotations \cite{edelman1998geometry,absil2008optimization,boumal2014manopt}. GROUSE and related streaming algorithms study online subspace estimation \cite{balzano2011grouse,balzano2018streaming}. SubTrack++ is the closest optimizer-side work, combining Grassmann geodesic updates, projection-aware Adam, and recovery scaling \cite{rajabi2025subtrackpp}. GrassRoute instead uses a right-sided QR tracker and a specified normalized residual rule. Online manifold tracking and moment-coordinate handling are established ingredients; our analysis makes their assumptions and approximation errors explicit and the non-LLM experiments examine their empirical trade-offs.
+
+Theoretical ingredients include Rayleigh-quotient geometry \cite{alimisis2024geodesic}, spectral perturbation \cite{yu2015useful}, adaptive-direction analysis \cite{reddi2018adam,chen2019adamtype}, and stability \cite{bousquet2002stability,hardt2016stability}. Our analysis composes these tools while distinguishing normalized population covariance, basis-dependent Adam states, and residual-preserving parameter updates. The angular PL dependence is related to existing eigenproblem theory; captured energy is not a substitute for its eigengap and oracle-angle hypotheses. Generalization is treated through full-state stability and a separate PAC-Bayes argument, retaining the Seeger--Maurer binary-KL form \cite{seeger2002pacbayes,maurer2004note}. The spectral and statistical bridges use the separated Davis--Kahan theorem and variance-sensitive matrix concentration \cite{davis1970rotation,tropp2012user}; these classical tools are cited at their exact use in the proofs.

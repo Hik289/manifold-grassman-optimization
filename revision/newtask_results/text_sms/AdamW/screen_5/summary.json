@@ -1,0 +1,76 @@
+{
+  "task": "text_sms",
+  "method": "AdamW",
+  "hp": {
+    "lr": 0.005
+  },
+  "epochs": 200,
+  "seed": 42,
+  "formal": false,
+  "routed_layers": [
+    {
+      "name": "fc1.weight",
+      "shape": [
+        64,
+        2048
+      ],
+      "rank": 8
+    }
+  ],
+  "data": {
+    "family": "text",
+    "metric": "macro_f1",
+    "higher": true,
+    "source": "https://archive.ics.uci.edu/dataset/228/sms+spam+collection",
+    "source_sha256": "1587ea43e58e82b14ff1f5425c88e17f8496bfcdb67a583dbff9eefaf9963ce3",
+    "n_raw": 5574,
+    "n_unique": 5160,
+    "conflicting_messages_removed": 0,
+    "duplicate_policy": "exact stripped message deduplication before stratified 70/15/15 split",
+    "preprocessing": "train-only TF-IDF; max_features=2048; min_df=2; max_df=.95; sublinear_tf; L2 norm",
+    "name": "text_sms",
+    "seed": 42,
+    "shape": [
+      [
+        3612,
+        2048
+      ],
+      [
+        774,
+        2048
+      ],
+      [
+        774,
+        2048
+      ]
+    ],
+    "preprocessing_fit_split": "training only",
+    "file_sha256": {
+      "x_train.npz": "0b90036c0d3a4c80ce95a9504b15063d80ae44db0c9e72728d32a17abf6c138f",
+      "y_train.npy": "27e75409f91000ff4f046e228a5e5390ebddf02a2dd9ea6c5e61a094f578cfd2",
+      "x_val.npz": "b11108c76f3210dfbeeead127d5a4d573f84667cdf79f213b750f7dc2b021d4e",
+      "y_val.npy": "31bd4b9f270fd92eab3560aa5cb140b2ad7369ffabbd22e401022e1d0c45eac2",
+      "x_test.npz": "893af2c9a6b1fe4730db0e33624476d5044a74ef3bb7b0228118c6e7d8182944",
+      "y_test.npy": "94e3fa3b275da94a84dcd9a1d5cbaa9f3e29c67acef2a02f5d81472a5654d43f",
+      "indices_train.npy": "25ef481a343c9c75d7aaa065d6cec1edec89f7ac8af4aaa7563ed881fd0df788",
+      "indices_val.npy": "bd5643ef6331405fc824fcc533be83b005d87a9543ccb7b6cbfda205539fa461",
+      "indices_test.npy": "d1d4083bbfd88285bd2a9861aee9d0d23faa97b919051bf59001a4e9eee6fce7"
+    },
+    "preparation_source_sha256": "3c91b1ef9023d7775d4a9d85bb8928dd7746dcda26526c32f8c5730c729f7309"
+  },
+  "protocol_sha256": "f79744557aae2f3e5a51fb9db8734d40728a460b9666edfe87151a3162dedddf",
+  "status": "complete",
+  "n_epochs": 200,
+  "validation": {
+    "accuracy": 0.9832041343669251,
+    "macro_f1": 0.9593334599700114,
+    "cross_entropy": 0.0710020661354065,
+    "n": 774,
+    "auroc": 0.9857270157325467,
+    "score": 0.9593334599700114
+  },
+  "test": null,
+  "state_bytes": 1050144,
+  "final_train_loss": 0.001589267048984766,
+  "wall_s": 4.953381983563304
+}

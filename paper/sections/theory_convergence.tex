@@ -1,0 +1,361 @@
+\subsection{Parameter convergence: retaining the adaptive-direction defect}
+\label{app:convergence}
+
+Unlike the routing variable, the parameter is updated in Euclidean space.
+The appropriate smoothness inequality is always valid for an Adam direction;
+what is not automatic is a positive conditional alignment between that
+direction and the population gradient. We make this distinction explicit.
+Let $f$ be the objective under analysis, either empirical risk on a fixed
+training set or population risk. Those objectives must not be interchanged
+when claiming unbiasedness.
+
+\begin{assumption}[Smooth objective and a predictable comparison metric]
+\label{ass:parameter}
+$f$ is $L$-smooth and bounded below by $f_\star$.
+$g_t=\nabla f(W_t)$ and
+$\mathbb E_tG_t=g_t$,
+$\mathbb E_t\|G_t-g_t\|^2\le\sigma_G^2$.
+An $\mathcal F_t$-measurable self-adjoint linear map
+$\mathcal B_t$ on matrix parameters satisfies
+\begin{equation}
+ a\|X\|^2\le\langle X,\mathcal B_tX\rangle,
+ \qquad\|\mathcal B_tX\|\le b\|X\|,
+ \qquad 0<a\le b<\infty.\label{eq:metric-bounds}
+\end{equation}
+The implemented parameter direction is decomposed \emph{exactly} as
+\begin{equation}
+ D_t=\mathcal B_tG_t+e_t,\qquad
+ \mathbb E_t\|e_t\|^2\le E_t^2.\label{eq:parameter-defect}
+\end{equation}
+The learning rates are deterministic, positive, and
+$\eta_t\le a/(4Lb^2)$.
+\end{assumption}
+
+This assumption isolates a measurable error budget rather than presuming
+that Adam is a fresh gradient step. For example, row $i$ can use the
+predictable operator
+\begin{equation}
+ \mathcal B_{t,i}=U_t A_{t,i}U_t^\top+\gamma_t(I-P_t),
+ \quad aI_r\preceq A_{t,i}\preceq bI_r,
+ \quad a\le\gamma_t\le b.\label{eq:routed-metric}
+\end{equation}
+Here $A_{t,i}$ may be a clipped inverse square root of the \emph{previous}
+second moment. It is not the denominator formed from the current batch.
+The actual direction minus this comparison direction defines $e_t$; this
+difference includes moment lag, same-batch denominator dependence,
+diagonal-transport approximation, and sampled residual normalization. With
+weight decay, its direction is included in $e_t$ when $f$ is unregularized;
+alternatively one can formulate the objective and comparison update for the
+regularized problem. A decoupled decay term must not simply disappear from
+the proof.
+
+\begin{theorem}[Nonconvex convergence with explicit adaptive defects]
+\label{thm:convergence}
+Under Assumption~\ref{ass:parameter}, let
+$S_T=\sum_{t<T}\eta_t$ and draw $\tau\in\{0,\ldots,T-1\}$ with
+$\Pr(\tau=t)=\eta_t/S_T$. For
+$W_{t+1}=W_t-\eta_tD_t$,
+\begin{align}
+ \mathbb E\|\nabla f(W_\tau)\|^2
+ &\le\frac{4(f(W_0)-f_\star)}{aS_T}
+       +\frac{2}{a^2S_T}\sum_{t<T}\eta_t\mathbb E E_t^2\notag\\
+ &\quad+\frac{4L}{aS_T}\sum_{t<T}\eta_t^2
+                         (b^2\sigma_G^2+\mathbb EE_t^2).
+ \label{eq:parameter-convergence}
+\end{align}
+For $\eta_t=\eta_0/\sqrt T$, the noise and initial-suboptimality terms
+are $O(T^{-1/2})$. The same stationarity rate follows if
+$T^{-1}\sum_{t<T}\mathbb EE_t^2=O(T^{-1/2})$.
+For an arbitrary actual Adam run the displayed defect terms remain in the
+bound; unbiased raw gradients alone do not make them vanish.
+\end{theorem}
+
+\begin{proof}
+Predictability is needed at precisely the following step:
+\begin{equation}
+ \mathbb E_t\langle g_t,\mathcal B_tG_t\rangle
+ =\langle g_t,\mathcal B_tg_t\rangle\ge a\|g_t\|^2.
+\end{equation}
+Using Cauchy--Schwarz and Young on the remaining term gives
+\begin{align}
+ \mathbb E_t\langle g_t,D_t\rangle
+ &\ge a\|g_t\|^2-\|g_t\|\sqrt{\mathbb E_t\|e_t\|^2}\\
+ &\ge\tfrac a2\|g_t\|^2-\tfrac{E_t^2}{2a}.
+ \label{eq:alignment-bound}
+\end{align}
+Furthermore,
+\begin{equation}
+ \mathbb E_t\|D_t\|^2
+ \le2b^2(\|g_t\|^2+\sigma_G^2)+2E_t^2.
+ \label{eq:direction-bound}
+\end{equation}
+Smoothness applied to the actual update yields
+\begin{align}
+ \mathbb E_tf(W_{t+1})
+ &\le f(W_t)-\eta_t\mathbb E_t\langle g_t,D_t\rangle
+                   +\tfrac L2\eta_t^2\mathbb E_t\|D_t\|^2\\
+ &\le f(W_t)-\tfrac a4\eta_t\|g_t\|^2
+      +\tfrac{\eta_tE_t^2}{2a}
+      +L\eta_t^2(b^2\sigma_G^2+E_t^2).
+\end{align}
+The last line uses $L\eta_tb^2\le a/4$.
+Taking expectation, summing, and using $f(W_T)\ge f_\star$ proves
+\eqref{eq:parameter-convergence}. Weighted output sampling gives its
+left side exactly. Substituting the constant-in-horizon step proves the
+rate statements.
+\end{proof}
+
+\begin{corollary}[A deterministic guarantee for the implemented Adam branch]
+\label{cor:deterministic-adam}
+Consider full-gradient GrassRoute without weight decay, with zero initial
+first moments, Procrustes first-moment alignment, and fixed
+$\beta_1\in[0,1)$. Assume $\|\nabla f(W_t)\|\le G_0$, the
+bias-corrected routed inverse denominators have eigenvalues in $[a,b]$,
+and the actual residual gain is in the same interval, $a>0$.
+Suppose $\|D_t\|\le D_0$, $\|H_t\|\le H_0$, and the horizon-dependent
+steps $\eta,\rho$ are constant within the run and satisfy the small-step
+conditions above. Then the actual first-moment contribution to the
+direction defect satisfies
+\begin{equation}
+ E_t\le \frac{b\beta_1}{1-\beta_1}
+                 (LD_0\eta+2G_0H_0\rho).\label{eq:deterministic-lag}
+\end{equation}
+Consequently $\eta,\rho=\Theta(T^{-1/2})$ give
+\begin{equation}
+ \frac1T\sum_{t<T}\|\nabla f(W_t)\|^2=O(T^{-1/2}).
+\end{equation}
+The second moments may depend on the current full gradient: no
+predictability assumption is needed in this deterministic specialization.
+This is a guarantee for the actual Adam first-moment update under bounded
+gains, not a claim for arbitrary stochastic Adam.
+\end{corollary}
+\begin{proof}
+Let $m_t=M_tU_t^\top$ denote the ambient first moment immediately after
+its EMA update and before transport. Norm preservation of Procrustes
+alignment and $\|G_tU_t\|\le G_0$ give
+$\|M_t\|\le(1-\beta_1^t)G_0$ by induction.
+Write $\delta_{t-1}=d_{\mathrm{Gr}}(U_t,U_{t-1})$.
+The aligned frame mismatch has operator norm
+$2\sin(\theta_{\max}/2)\le\delta_{t-1}$, so the preceding moment's
+ambient transport error is at most
+$(1-\beta_1^{t-1})G_0\delta_{t-1}$.
+Also
+\begin{equation}
+ \|g_tP_t-g_{t-1}P_{t-1}\|
+ \le LD_0\eta+G_0\delta_{t-1}.
+\end{equation}
+For $r_t=\|m_t-(1-\beta_1^t)g_tP_t\|$, subtract the target from the
+EMA recursion and use these two inequalities:
+\begin{equation}
+ r_t\le\beta_1r_{t-1}
+ +\beta_1(1-\beta_1^{t-1})(LD_0\eta+2G_0\delta_{t-1}).
+\end{equation}
+Lemma~\ref{lem:qr} gives $\delta_{t-1}\le\rho H_0$.
+Starting from $r_1=0$, summing the geometric recursion and dividing by
+$1-\beta_1^t$ bounds the bias-corrected ambient moment error by
+$\beta_1(LD_0\eta+2G_0H_0\rho)/(1-\beta_1)$.
+Lifting is isometric in the routed coordinates; multiplication by the
+current inverse denominator has norm at most $b$. This proves
+\eqref{eq:deterministic-lag}. Choose the comparison metric using that
+current denominator and the actual residual gain. Pathwise positive
+definiteness gives the alignment step in the proof of
+Theorem~\ref{thm:convergence}, without a stochastic conditional
+expectation. The resulting bound with $\sigma_G=0$ has terms
+$O((\eta T)^{-1})+O((\eta+\rho)^2)$, proving the stated rate.
+\end{proof}
+
+The gain restrictions have concrete interpretations. A positive Adam
+denominator offset bounds inverse gains above; bounded corrected second
+moments bound them below. With normalized covariance samples, tangency
+projection is nonexpansive and $\|\widehat Q_t\|\le1$, so zero-initialized
+Grassmann EMA has $H_0\le1$. A positive residual clipping lower bound
+ensures residual coercivity. If the implementation instead permits its
+gain to approach zero, that uniform lower-bound assumption has not been
+verified. The result therefore applies to its bounded-gain regime or a
+specified positive-floor configuration, not automatically to every run.
+
+\paragraph{A rigorous specialization and a counterexample.}
+The theorem applies without an adaptive defect to a predictable, bounded
+routed preconditioner with a positive residual branch. In deterministic
+training it also applies directly to a current-gradient positive definite
+preconditioner, using pathwise alignment instead of predictability and the
+corresponding elementary descent argument. These are genuine sufficient
+conditions. Standard Adam with exponential moments and a same-batch
+denominator is more delicate \cite{reddi2018adam,chen2019adamtype}.
+For a simple illustration, take a scalar unbiased gradient with
+$G=10$ with probability $0.1$ and $G=-1$ otherwise. Then
+$\mathbb EG=0.1>0$, but a fresh zero-history Adam step with negligible
+$\varepsilon$ has $\mathbb E\operatorname{sign}(G)=-0.8$.
+The expected direction is uphill for this positive population gradient.
+Unbiasedness of $G$ therefore cannot justify the cancellation used above
+for a denominator depending on $G$. Momentum can also temporarily point
+uphill after a gradient sign change. These examples explain why
+\eqref{eq:parameter-defect} is retained for the implemented algorithm.
+
+\subsection{How tracking, moment transport, and rank tails enter convergence}
+
+The theorem can be connected to the routing analysis without conflating
+their covariances. Let $\mathcal B_t^\star$ be an ideal predictable metric
+constructed in a chosen oracle subspace, with the same positive bounds as
+\eqref{eq:metric-bounds}, and write
+\begin{equation}
+ D_t=\mathcal B_t^\star G_t+
+       (\mathcal B_t-\mathcal B_t^\star)G_t+e_t^{\rm state}.
+\end{equation}
+If, after consistent coordinate alignment,
+\begin{equation}
+ \|\mathcal B_t-\mathcal B_t^\star\|_{\rm op}
+ \le K_P\|P_t-P_t^\star\|_{\rm op}+d_t^{\rm metric},
+ \label{eq:metric-perturbation}
+\end{equation}
+and $\mathbb E_t\|G_t\|^2\le G_0^2$, then
+\begin{align}
+ \mathbb E_t\|e_t\|^2
+ \le 3G_0^2K_P^2\sin^2\theta_{\max,t}
+       +3G_0^2(d_t^{\rm metric})^2
+       +3\mathbb E_t\|e_t^{\rm state}\|^2.
+ \label{eq:tracking-to-convergence}
+\end{align}
+The projector perturbation term is geometric; the metric term is separate
+because different coordinatewise diagonal preconditioners can act
+differently in the \emph{same} subspace. Equation
+\eqref{eq:metric-perturbation} is an extra operator-consistency condition,
+not a consequence of matching projectors.
+If its oracle is the leading eigenspace of the normalized covariance,
+Theorem~\ref{thm:tracking} controls the first term. If the oracle instead
+uses $S_t$, normalization mismatch adds another projector perturbation,
+which can be bounded by Davis--Kahan only when the corresponding raw
+covariance gap is available.
+
+\begin{proposition}[Residual preservation removes a mandatory rank-tail floor]
+\label{prop:no-tail-floor}
+For the metric \eqref{eq:routed-metric} with $\gamma_t\ge a>0$,
+\eqref{eq:parameter-convergence} contains no obligatory
+$\overline{\tau_r}$ term. Even rank zero reduces to a scaled full-gradient
+method and can converge. If the residual is deliberately removed,
+the missing population-gradient energy can be bounded by
+\begin{equation}
+ \|g_t(I-P_t)\|^2
+ \le\mathbb E_t\|G_t(I-P_t)\|^2
+ =\tau_r(S_t)+2h_{S_t}(U_t).\label{eq:dropped-tail}
+\end{equation}
+Consequently a rank-tail floor is a valid upper-bound contribution for a
+\emph{projection-only} analysis, not an impossibility theorem for full
+GrassRoute.
+\end{proposition}
+\begin{proof}
+Orthogonality of the two branches gives
+\begin{equation}
+ \langle X,\mathcal B_tX\rangle
+ =\sum_i\langle X_iU_t,A_{t,i}X_iU_t\rangle
+       +\gamma_t\|X(I-P_t)\|^2\ge a\|X\|^2.
+\end{equation}
+The comparison direction is therefore coercive on the full parameter
+space, regardless of $r$ and its covariance tail. Jensen's inequality for
+the projected gradient, followed by Lemma~\ref{lem:decomposition}, proves
+\eqref{eq:dropped-tail} when the residual is omitted.
+\end{proof}
+
+For a scalar routed gain $a_t$ and residual gain $\gamma_t$, there is an
+even simpler identity:
+\begin{equation}
+ D_t=a_tG_t+(\gamma_t-a_t)G_t(I-P_t),\qquad
+ \mathbb E_t\|D_t-a_tG_t\|^2
+ =(\gamma_t-a_t)^2\{\tau_r(S_t)+2h_{S_t}(U_t)\}.
+ \label{eq:tail-gain}
+\end{equation}
+Here a heavy tail increases the discrepancy from an isotropic reference
+only when the branch gains differ. Large residual energy can hurt an
+optimization mechanism empirically, but cannot by itself establish an
+irreducible stationarity error for a method that retains it.
+
+\paragraph{Bounding moment-induced defects.}
+The scalar map $a\mapsto1/(a+\varepsilon)$ on $a\ge0$ is
+$\varepsilon^{-2}$-Lipschitz. Working with the root-amplitude state
+$A=\sqrt V$ therefore avoids an unjustified derivative bound for
+$V\mapsto V^{-1/2}$ near zero. For bounded $\|M\|\le M_0$,
+\begin{equation}
+ \left\|\frac{M}{A+\varepsilon}-
+              \frac{M'}{A'+\varepsilon}\right\|
+ \le\varepsilon^{-1}\|M-M'\|
+        +M_0\varepsilon^{-2}\|A-A'\|.\label{eq:adam-lipschitz}
+\end{equation}
+Bias correction contributes its explicit finite factors
+$(1-\beta_1^t)^{-1}$ and $(1-\beta_2^t)^{-1/2}$.
+For a fixed-coordinate momentum EMA,
+\begin{equation}
+ M_t=(1-\beta_1)\sum_{k=0}^{t-1}\beta_1^k Z_{t-k},
+\end{equation}
+and thus
+\begin{equation}
+ \|M_t-(1-\beta_1^t)Z_t\|
+ \le(1-\beta_1)\sum_{k<t}\beta_1^k\|Z_{t-k}-Z_t\|.
+\end{equation}
+If consecutive aligned coordinates change by at most $D_Z$, the
+right side is at most $\beta_1D_Z/(1-\beta_1)$.
+Moving coordinates additionally contribute the first-moment projection
+error and second-moment covariance error in Lemma~\ref{lem:moments}.
+Combining these bounds with \eqref{eq:adam-lipschitz} gives explicit
+state contributions to $E_t$ once their magnitudes are controlled.
+It does not establish that those magnitudes vanish in arbitrary neural
+training. Resetting a denominator may increase its reciprocal toward
+$1/\varepsilon$ and amplify precisely these terms.
+
+\begin{proposition}[Gradient norm matching does not balance branch steps]
+\label{prop:branch-scale}
+Consider prescribed nonzero gradient histories $G_1,\ldots,G_t$ and
+$cG_1,\ldots,cG_t$, $c>0$, with identical initial basis and zero moments.
+In the zero-offset idealization of normalized covariance routing, diagonal
+moment transport, and residual norm matching, the two basis histories agree,
+their first and second moments scale by $c$ and $c^2$, respectively, and
+\begin{equation}
+ D_{t,c}^{\parallel}=D_t^{\parallel},\qquad
+ D_{t,c}^{\perp}=cD_t^{\perp}.
+ \label{eq:branch-scaling}
+\end{equation}
+The statement applies to coordinates with nonzero second moments, and a
+zero residual remains zero. For a fixed branch learning-rate ratio, the
+routed-to-residual update norm ratio consequently scales as $1/c$.
+With positive offsets this is an approximate statement in the regime where
+the corresponding scaled norms dominate the offsets.
+\end{proposition}
+\begin{proof}
+Normalized covariance samples are invariant under positive scaling of $G$,
+so the tangent directions, subspace momentum, QR bases, and Procrustes
+rotations are the same. Induction in the moment updates gives
+$M_{t,c}=cM_t$ and $V_{t,c}=c^2V_t$; diagonal covariance transport is
+homogeneous and preserves these relations. Bias correction has identical
+factors. Thus $c\widehat M_t/\sqrt{c^2\widehat V_t}
+=\widehat M_t/\sqrt{\widehat V_t}$ coordinatewise.
+The norm ratio $\|G\|/\|G^\perp\|$, including its fixed clipping limits,
+is scale invariant, whereas its product with $G^\perp$ scales by $c$.
+This proves \eqref{eq:branch-scaling}.
+\end{proof}
+
+For an unclipped, negligible-offset residual rule,
+$\|D_t^\perp\|\simeq\|G_t\|$, while the routed Adam direction can
+remain approximately scale invariant. A small gradient therefore does not
+make the two branch \emph{update} norms comparable. This provides an
+additional finite-budget failure mechanism beyond subspace tracking:
+residual directions can be updated too slowly relative to the adaptive
+branch even while their gradient is preserved. In particular, identical
+normalized eigengaps, captured-energy fractions, and principal angles do
+not determine the entire parameter dynamics. This observation does not
+establish a nonzero asymptotic error floor, nor identify the sole cause of
+any benchmark outcome; measuring actual branch step norms would be needed
+for that causal claim. It is consistent with the importance of recovery
+scaling studied in related optimizers \cite{chen2024fira,rajabi2025subtrackpp}.
+
+\paragraph{Iteration and time complexity.}
+When the theorem's defect condition holds, a target
+$\mathbb E\|\nabla f\|^2\le\epsilon$ requires
+$O(\epsilon^{-2})$ iterations for the stated stochastic schedule, with
+constants depending on $a,b,L,\sigma_G$. This is a stationarity statement,
+not global optimality or a test-accuracy guarantee. Routing costs
+$O(mdr)$ for $GU$, $G^\top(GU)$, and lifting, plus $O(dr^2+r^3)$ for QR
+and the small Procrustes polar factor. No $d\times d$ covariance need be
+formed by the optimizer. Persistent routed tensors $M,V,U,H$ use exactly
+$2mr+2dr$ scalar entries, before fallback states. Temporary full gradients,
+activations, and parameter memory are additional. A step-complexity
+advantage must therefore be multiplied by actual per-step time before
+making a wall-clock claim.

@@ -1,0 +1,32 @@
+% WWW table style: three rules, bold headers, reference green highlight.
+{\scriptsize\setlength{\tabcolsep}{3pt}
+\begin{longtable}{llrrrrr}
+\caption{All classification secondary endpoints and state costs in the new suite. Text configurations were selected by macro-F1 and tabular configurations by AUROC, never by the secondary test metrics. Accuracy, F1 and AUC are percentages; cross-entropy is unscaled; persistent state is decimal MB. -- means unfinished or inapplicable.}\label{tab:newtasks-secondary}\\
+\toprule {\bfseries Task} & {\bfseries Method} & {\bfseries Accuracy} & {\bfseries Macro-F1} & {\bfseries AUROC} & {\bfseries CE} & {\bfseries State MB}\\\midrule\endfirsthead
+\toprule {\bfseries Task} & {\bfseries Method} & {\bfseries Accuracy} & {\bfseries Macro-F1} & {\bfseries AUROC} & {\bfseries CE} & {\bfseries State MB}\\\midrule\endhead
+Spambase / MLP & SGD-M & 93.34 & 93.02 & 97.87 & 0.3269 & 0.063\\
+Spambase / MLP & AdamW & 94.07 & 93.76 & 97.62 & 0.5338 & 0.127\\
+Spambase / MLP & Fixed & 94.07 & 93.78 & 97.41 & 0.4692 & 0.021\\
+Spambase / MLP & Thin SVD & 93.63 & 93.34 & 97.58 & 0.3465 & 0.021\\
+\rowcolor{oursbg}Spambase / MLP & \textbf{GrassRoute} & 92.19 & 91.81 & 97.55 & 0.3459 & 0.027\\
+Spambase / MLP & SubTrack++ & 93.34 & 93.02 & 97.80 & 0.4853 & 0.056\\
+Adult / MLP & SGD-M & 84.15 & 77.23 & 89.29 & 0.4159 & 0.089\\
+Adult / MLP & AdamW & 84.14 & 76.98 & 88.91 & 0.3993 & 0.179\\
+Adult / MLP & Fixed & 85.25 & 78.59 & 90.75 & 0.3185 & 0.022\\
+Adult / MLP & Thin SVD & 85.58 & 79.16 & 91.23 & 0.3067 & 0.022\\
+\rowcolor{oursbg}Adult / MLP & \textbf{GrassRoute} & 84.86 & 78.31 & 90.27 & 0.3408 & 0.030\\
+Adult / MLP & SubTrack++ & 83.71 & 76.94 & 89.14 & 0.4541 & 0.093\\
+SMS / TF-IDF MLP & SGD-M & 98.06 & 95.48 & 99.30 & 0.0799 & 0.525\\
+SMS / TF-IDF MLP & AdamW & 98.06 & 95.48 & 98.28 & 0.1752 & 1.050\\
+SMS / TF-IDF MLP & Fixed & 87.60 & 46.69 & 64.97 & 0.3601 & 0.071\\
+SMS / TF-IDF MLP & Thin SVD & 97.67 & 94.29 & 99.02 & 0.0952 & 0.071\\
+\rowcolor{oursbg}SMS / TF-IDF MLP & \textbf{GrassRoute} & 97.80 & 94.63 & 99.08 & 0.0931 & 0.137\\
+SMS / TF-IDF MLP & SubTrack++ & 98.06 & 95.40 & 97.50 & 0.1415 & 0.153\\
+20 News / TF-IDF MLP & SGD-M & 55.12 & 54.33 & -- & 2.1272 & 0.530\\
+20 News / TF-IDF MLP & AdamW & 51.66 & 50.95 & -- & 2.4000 & 1.060\\
+20 News / TF-IDF MLP & Fixed & 54.25 & 52.96 & -- & 1.4909 & 0.074\\
+20 News / TF-IDF MLP & Thin SVD & 54.30 & 53.49 & -- & 1.6752 & 0.074\\
+\rowcolor{oursbg}20 News / TF-IDF MLP & \textbf{GrassRoute} & 53.21 & 52.31 & -- & 1.7997 & 0.141\\
+20 News / TF-IDF MLP & SubTrack++ & 50.94 & 50.38 & -- & 5.9154 & 0.159\\
+\bottomrule\end{longtable}
+}

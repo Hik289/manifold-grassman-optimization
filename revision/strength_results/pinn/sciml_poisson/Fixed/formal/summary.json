@@ -1,0 +1,41 @@
+{
+  "status": "complete",
+  "task": "sciml_poisson",
+  "method": "Fixed",
+  "hp": {
+    "lr": 0.01,
+    "residual_ratio": 0.3
+  },
+  "formal": true,
+  "epochs": 2000,
+  "n_epochs": 2000,
+  "seed": 42,
+  "validation": {
+    "score": 0.0001861833588918671,
+    "pde_residual_l2": 0.035264063626527786
+  },
+  "test": {
+    "score": 0.00019654948846437037,
+    "pde_residual_l2": 0.03471909463405609
+  },
+  "state_bytes": 37896,
+  "routed_layers": [
+    {
+      "name": "net.2.weight",
+      "shape": [
+        128,
+        128
+      ],
+      "rank": 8
+    },
+    {
+      "name": "net.4.weight",
+      "shape": [
+        128,
+        128
+      ],
+      "rank": 8
+    }
+  ],
+  "wall_s": 8.242463666
+}

@@ -1,0 +1,347 @@
+\subsection{Compatibility of spectral tracking and parameter stationarity}
+\label{app:deep-coupling}
+Set $\mathcal F_t$ before sampling, $g_t=\mathbb E_tG_t$, and
+$\mathcal C_\epsilon(X)=X^\top X/(\|X\|^2+\epsilon)$, $\epsilon>0$.
+All derivatives below use the Frobenius metric.
+The symbol $\|\cdot\|_*$ denotes the nuclear norm.
+
+\begin{lemma}[Householder compression; sharp normalized-covariance envelope]
+\label{lem:covariance-second-differential}
+For $s=\|X\|_F^2+\epsilon$, $a=\langle X,E\rangle$,
+\begin{align}
+ D\mathcal C_\epsilon(X)[E]
+ &=\frac{X^\top E+E^\top X}{s}-\frac{2aX^\top X}{s^2},\\
+ D^2\mathcal C_\epsilon(X)[E,E]
+ &=\frac{2E^\top E}{s}-\frac{4a(X^\top E+E^\top X)}{s^2}
+   -\frac{2\|E\|_F^2X^\top X}{s^2}
+   +\frac{8a^2X^\top X}{s^3}.
+\end{align}
+Uniformly in $X,E$,
+\begin{align}
+ \|D\mathcal C_\epsilon(X)[E]\|_{\rm op}
+ &\le\epsilon^{-1/2}\|E\|_F,\\
+ \|D^2\mathcal C_\epsilon(X)[E,E]\|_{\rm op}
+ &\le\frac2\epsilon\|E\|_F^2.
+ \label{eq:covariance-second-bound}
+\end{align}
+The second constant is attained at $X=0$ and a rank-one $E$.
+\end{lemma}
+\begin{proof}
+The differential identities follow by the quotient rule. To avoid bounding
+its four terms separately, fix a unit $v\in\mathbb R^d$, augment
+$y=(\operatorname{vec}X,\sqrt\epsilon)$, and define the orthogonal projector
+$B_v=\operatorname{Diag}(I_m\otimes vv^\top,0)$. Then
+\begin{equation}
+ f_v(X)=v^\top\mathcal C_\epsilon(X)v
+       =\frac{y^\top B_vy}{y^\top y}.
+\end{equation}
+For the Rayleigh quotient $R_B(y)$, the Householder involution
+$H_y=I-2yy^\top/\|y\|^2$ gives the exact identity
+\begin{equation}
+ \nabla_y^2R_B(y)=\frac2{\|y\|^2}
+                   H_y(B-R_B(y)I)H_y.
+ \label{eq:Householder-Rayleigh-Hessian}
+\end{equation}
+This follows by differentiation and $y^\top(B-R_BI)y=0$;
+$H_y^\top H_y=I$ is the standard Householder identity
+\cite{golub2013matrix}. Rayleigh--Ritz gives $0\le R_{B_v}\le1$, so
+$\|\nabla_y^2R_{B_v}\|_{\rm op}\le2/\|y\|^2\le2/\epsilon$.
+Compression to directions $(\operatorname{vec}E,0)$ and supremum over $v$
+prove the second bound. Also, since $B_v^2=B_v$,
+\begin{equation}
+ \|\nabla_yR_{B_v}\|^2
+ =\frac4{\|y\|^2}R_{B_v}(1-R_{B_v})\le\frac1\epsilon,
+\end{equation}
+which proves the first bound by the same compression. For $X=0$,
+$D^2\mathcal C_\epsilon(0)[E,E]=2E^\top E/\epsilon$.
+\end{proof}
+
+\begin{theorem}[Spectral-gap collapse under spherical gradient noise]
+\label{thm:gap-collapse}
+Conditional on $\mathcal F_t$, suppose $G_t=g_t+\xi_t$ and
+$\operatorname{vec}\xi_t$ is spherically symmetric, including the point mass
+at zero. No density or radial monotonicity is required. For
+$C_t=\mathbb E_t\mathcal C_{\varepsilon_c}(G_t)$, define
+\begin{equation}
+ a_t=\frac1d\mathbb E_t\frac{\|\xi_t\|^2}{\|\xi_t\|^2+\varepsilon_c}.
+\end{equation}
+For every $1\le r<d$,
+\begin{align}
+ \|C_t-a_tI_d\|_{\rm op}&\le\min\{1,\|g_t\|^2/\varepsilon_c\},\label{eq:covariance-isotropy-limit}\\
+ 0\le\Delta_{r,t}&:=\lambda_r(C_t)-\lambda_{r+1}(C_t)
+                     \le\min\{r^{-1},2\|g_t\|^2/\varepsilon_c\},\label{eq:gap-collapse}\\
+ 0\le h_{C_t}(U)&\le\min\{1/2,\|g_t\|^2/\varepsilon_c\}
+                 \qquad\text{for every }U^\top U=I.\label{eq:energy-without-angle}
+\end{align}
+Consequently a fixed $\varepsilon_c>0$ and a uniform gap
+$\Delta_{r,t}\ge\Delta_0>0$ imply
+\begin{equation}
+ \frac1T\sum_{t=1}^T\mathbb E\|g_t\|^2
+                         \ge\frac{\varepsilon_c\Delta_0}{2}.
+ \label{eq:gap-stationarity-incompatibility}
+\end{equation}
+Thus the positive-floor, vanishing-stationarity conclusion of
+Theorem~\ref{thm:actual-adam} cannot simultaneously be combined with a
+fixed positive eigengap throughout an unbounded horizon under its spherical
+noise hypothesis. The parameter theorem itself requires no eigengap.
+\end{theorem}
+\begin{proof}
+Spherical symmetry implies right orthogonal invariance, whence
+\begin{align}
+ \mathbb E_t\mathcal C_{\varepsilon_c}(\xi_t)&=a_tI_d,\\
+ D\mathcal C_{\varepsilon_c}(-X)[E]&=-D\mathcal C_{\varepsilon_c}(X)[E],\\
+ \mathbb E_tD\mathcal C_{\varepsilon_c}(\xi_t)[g_t]&=0.
+\end{align}
+The derivatives are uniformly bounded for positive $\varepsilon_c$, so
+expectation and the integral remainder may be interchanged:
+\begin{align}
+ C_t-a_tI_d
+ &=\mathbb E_t\int_0^1(1-u)
+       D^2\mathcal C_{\varepsilon_c}(\xi_t+ug_t)[g_t,g_t]\,du,\\
+ \|C_t-a_tI_d\|_{\rm op}&\le\int_0^1(1-u)\frac{2\|g_t\|^2}{\varepsilon_c}\,du.
+\end{align}
+Weyl's inequality bounds the difference between any two eigenvalues by
+$2\|C_t-a_tI\|_{\rm op}$, proving \eqref{eq:gap-collapse}.
+For the energy, use the traceless test matrix $B=P_t^\star-P$,
+$\|B\|_{\rm op}\le1$. Its augmented Rayleigh matrix has spectrum in
+$[-1,1]$, so \eqref{eq:Householder-Rayleigh-Hessian} bounds its Hessian
+by $4/\varepsilon_c$. The isotropic and linear Taylor terms cancel, giving
+\begin{equation}
+ h_{C_t}(P)=\tfrac12\mathbb E_t\operatorname{tr}
+                 [B\mathcal C_{\varepsilon_c}(g_t+\xi_t)]
+                         \le\|g_t\|^2/\varepsilon_c.
+\end{equation}
+Finally $\operatorname{tr}C_t\le1$ gives
+$\Delta_{r,t}\le1/r$ and $h_{C_t}\le1/2$; the operator deviation is also
+at most one.
+The coefficient $1/\varepsilon_c$ in \eqref{eq:covariance-isotropy-limit}
+is sharp: take $m=1$, zero noise, and $g=av^\top$, then let $a\downarrow0$.
+This proves \eqref{eq:energy-without-angle}. Average the pointwise lower
+bound obtained from \eqref{eq:gap-collapse} to prove
+\eqref{eq:gap-stationarity-incompatibility}.
+\end{proof}
+
+\begin{proposition}[Exact covariance structure under spherical noise]
+\label{prop:axial-covariance}
+Fix a nonzero $g\in\mathbb R^{m\times d}$, let $D=md>1$,
+$e=\operatorname{vec}(g)/\|g\|$, $x=\operatorname{vec}(g+\xi)$,
+and let $\xi$ be spherically symmetric. Put
+\begin{align}
+ t_\parallel&=\mathbb E\frac{(e^\top x)^2}{\|x\|^2+\varepsilon_c},\\
+ \alpha&=\frac1{D-1}\mathbb E
+       \frac{\|x\|^2-(e^\top x)^2}{\|x\|^2+\varepsilon_c},\qquad
+ \beta=\frac{t_\parallel-\alpha}{\|g\|^2}.
+\end{align}
+Then the normalized matrix covariance and raw covariance satisfy
+\begin{align}
+ C(g)&=m\alpha I_d+\beta g^\top g,\label{eq:axial-C}\\
+ S(g)&=g^\top g+m\sigma_\xi^2I_d,
+ \qquad \sigma_\xi^2=D^{-1}\mathbb E\|\xi\|^2,
+ \label{eq:axial-S}
+\end{align}
+where the second equality requires a finite second moment.
+For zero noise,
+\begin{equation}
+ \Delta_r(C(g))=
+ \frac{\sigma_r(g)^2-\sigma_{r+1}(g)^2}{\|g\|^2+\varepsilon_c}
+ \le\frac{\|g\|^2}{r\varepsilon_c}.\label{eq:deterministic-gap-collapse}
+\end{equation}
+\end{proposition}
+\begin{proof}
+Every orthogonal map $O$ fixing $e$ preserves the law of $x$ and therefore
+commutes with $J=\mathbb E[xx^\top/(\|x\|^2+\varepsilon_c)]$.
+The invariant splitting $\mathbb R^D=\operatorname{span}(e)\oplus e^\perp$
+gives $J=\alpha I_D+(t_\parallel-\alpha)ee^\top$.
+Summing its $m$ diagonal $d\times d$ blocks gives \eqref{eq:axial-C}.
+Similarly $\mathbb E\xi=0$ and
+$\mathbb E[\operatorname{vec}\xi\operatorname{vec}\xi^\top]=\sigma_\xi^2I_D$
+give \eqref{eq:axial-S}. For zero noise, diagonalize $g^\top g$ and use
+$r\sigma_r(g)^2\le\|g\|^2$. Formula~\eqref{eq:axial-C} does not presume a
+sign for $\beta$; eigenspace ordering must be checked separately.
+\end{proof}
+
+\begin{proposition}[Exact Gaussian normalization integrals and the collapse coefficient]
+\label{prop:Gaussian-covariance-integrals}
+Let $\operatorname{vec}\xi\sim\mathcal N(0,\sigma^2I_D)$, $\sigma>0$, $D=md$,
+$N=\|g\|^2$, and define, for $u\ge0$,
+\begin{align}
+ s_u&=1+2\sigma^2u,&
+ M_u&=s_u^{-D/2}\exp(-uN/s_u),\\
+ \alpha(g)&=\int_0^\infty e^{-\varepsilon_cu}M_u
+                                      \frac{\sigma^2}{s_u}\,du,&
+ \beta(g)&=\int_0^\infty e^{-\varepsilon_cu}M_u s_u^{-2}\,du.
+\end{align}
+Then $C(g)=m\alpha(g)I_d+\beta(g)g^\top g$, with
+\begin{align}
+ 0<\beta(g)&\le\min\{\varepsilon_c^{-1},[\sigma^2(D+2)]^{-1}\},\\
+ \Delta_r(C(g))&=\beta(g)[\sigma_r(g)^2-\sigma_{r+1}(g)^2].
+\end{align}
+For any fixed $g_0$ and $a\downarrow0$,
+\begin{equation}
+ \frac{\Delta_r(C(ag_0))}{a^2}\longrightarrow
+ [\sigma_r(g_0)^2-\sigma_{r+1}(g_0)^2]
+ \int_0^\infty e^{-\varepsilon_cu}(1+2\sigma^2u)^{-D/2-2}\,du.
+ \label{eq:Gaussian-gap-coefficient}
+\end{equation}
+For nonzero Gaussian noise, the integral also extends to $\varepsilon_c=0$;
+then its small-signal coefficient is exactly
+$\beta(0)=1/[\sigma^2(D+2)]$. Thus fixed isotropic Gaussian noise alone can
+collapse the normalized gap quadratically, even without an offset.
+This covariance calculation does not invoke the bounded-gradient hypothesis
+of Theorem~\ref{thm:actual-adam}; untruncated Gaussian gradients do not meet it.
+\end{proposition}
+\begin{proof}
+Use $1/(\|x\|^2+\varepsilon_c)=
+\int_0^\infty e^{-u(\|x\|^2+\varepsilon_c)}\,du$.
+For the Gaussian density $\varphi_{h,V}$, completing the square gives
+\begin{equation}
+ e^{-u\|x\|^2}\varphi_{\operatorname{vec}g,\sigma^2I_D}(x)
+ =M_u\varphi_{\operatorname{vec}g/s_u,(\sigma^2/s_u)I_D}(x).
+\end{equation}
+Consequently,
+\begin{align}
+ \mathbb E e^{-u\|x\|^2}&=M_u,\\
+ \mathbb E[xx^\top e^{-u\|x\|^2}]
+ &=M_u\left(\frac{\sigma^2}{s_u}I_D+
+                    \frac{\operatorname{vec}(g)\operatorname{vec}(g)^\top}{s_u^2}\right).
+\end{align}
+Integrate and sum the diagonal row blocks. The integrand for $\beta$ is
+strictly positive and bounded both by $e^{-\varepsilon_cu}$ and by
+$(1+2\sigma^2u)^{-D/2-2}$. Their integrals give the two envelopes.
+Diagonalization of
+$g^\top g$ gives the gap identity, and dominated convergence proves
+\eqref{eq:Gaussian-gap-coefficient}.
+\end{proof}
+
+\subsection{A stopped-process guarantee for staying inside the tracking basin}
+\label{app:basin-exit}
+
+\begin{theorem}[Finite-horizon basin certificate]
+\label{thm:basin-certificate}
+Fix $T$, $R\in(0,\pi/2)$, $\delta\in(0,1)$, and a predictable covariance sequence with
+$0\preceq C_t\preceq C_0I$, gap at least $\Delta_0>0$, and
+$\|C_{t+1}-C_t\|\le v$ for $0\le t<T$.
+Let $h_t=h_{C_t}(U_t)$ and
+$\tau=\inf\{t:\theta_{\max}(U_t,U_t^\star)\ge R\}$.
+Before $\tau$, suppose the actual QR update has the representation
+\eqref{eq:tracking-update}, with
+\begin{equation}
+ \mathbb E_t\zeta_t=0,\quad\|\zeta_t\|\le\sigma,\quad
+ \|b_t\|\le B,\quad\|\operatorname{grad}\Phi_t(U_t)\|\le\Gamma,\quad
+ \mathbb E_t\langle\operatorname{grad}\Phi_t(U_t),\zeta_t\rangle^2\le\nu_0.
+\end{equation}
+Here $\nu_0$ is a deterministic directional-variance budget;
+$\nu_0=\Gamma^2\sigma^2$ is always valid.
+Use the sharp QR pullback constant $L_R$, a constant step $\rho$, and set
+\begin{align}
+ \mu_R&=\Delta_0\cos^2R,\qquad\alpha=\rho\mu_R,\\
+ q&=(1+\alpha/2)(1-\alpha),\qquad\ell=\log(T/\delta),\\
+ A_\rho&=2(1+\alpha/2)(L_R\rho^2\sigma^2+\rho B^2)
+                +(1/(2\alpha)+1/4)v^2/\Delta_0,\\
+ S_\rho&=(1+\alpha/2)\rho\Gamma\sigma,\qquad
+ H_R=\tfrac12\Delta_0\sin^2R,\\
+ V_\rho&=\frac{(1+\alpha/2)^2\rho^2\nu_0}{1-q^2},\\
+ Z_\rho&=\min\left\{S_\rho\sqrt{\frac{2\ell}{1-q^2}},
+ \frac{S_\rho\ell}{3}+\sqrt{2V_\rho\ell+\frac{S_\rho^2\ell^2}{9}}\right\}.
+\end{align}
+If $L_R\rho\le1/4$, $\alpha\le1/2$, and
+\begin{equation}
+ h_0+\frac{A_\rho}{1-q}
+  +Z_\rho<H_R,
+ \label{eq:basin-quantitative-condition}
+\end{equation}
+then $\Pr(\tau\le T)\le\delta$. Moreover,
+\begin{equation}
+ \mathbb E h_T\le q^Th_0+\frac{A_\rho(1-q^T)}{1-q}
+                                      +\frac{rC_0}{2}\delta.
+ \label{eq:tracking-no-assumed-basin}
+\end{equation}
+This theorem supplies a sufficient neighborhood-invariance condition,
+rather than assuming it. Its gap condition is finite-horizon and is subject
+to Theorem~\ref{thm:gap-collapse} when the noise is spherical.
+\end{theorem}
+\begin{proof}
+The pathwise smoothness and excess-drift estimates used in
+Theorem~\ref{thm:tracking}, applied before $\tau$, give
+\begin{equation}
+ h_{t+1}\le qh_t+A_\rho+M_t,\qquad
+ M_t=-(1+\alpha/2)\rho
+       \langle\operatorname{grad}\Phi_t(U_t),\zeta_t\rangle.
+ \label{eq:pre-exit-recursion}
+\end{equation}
+The stopped increment $\widetilde M_t=\mathbf1\{t<\tau\}M_t$ obeys
+$\mathbb E_t\widetilde M_t=0$, $|\widetilde M_t|\le S_\rho$.
+For each fixed $1\le j\le T$, conditional Hoeffding and Chernoff give
+\begin{align}
+ \Pr\left(\sum_{t<j}q^{j-1-t}\widetilde M_t>u\right)
+ &\le\exp\left(-\frac{u^2}{2S_\rho^2\sum_{t<j}q^{2(j-1-t)}}\right)\\
+ &\le\exp\left(-\frac{(1-q^2)u^2}{2S_\rho^2}\right).
+\end{align}
+For the same weighted, stopped martingale, predictable quadratic
+variation is at most $V_\rho$ and every increment is at most $S_\rho$.
+Freedman's Bernstein inequality \cite{freedman1975tail,tropp2011freedman}
+therefore gives the second tail estimate
+\begin{equation}
+ \Pr\left(\sum_{t<j}q^{j-1-t}\widetilde M_t>u\right)
+ \le\exp\left[-\frac{u^2}{2(V_\rho+S_\rho u/3)}\right].
+\end{equation}
+Solving its quadratic exponent at $\ell$ gives the second term defining
+$Z_\rho$. The first is the preceding Azuma--Hoeffding threshold. All
+quantities are deterministic, so choose the smaller threshold before
+observing the process. A union bound over $j\le T$ then fails with
+probability at most $\delta$.
+On $\{\tau=j\le T\}$, unroll \eqref{eq:pre-exit-recursion} only to $j$:
+\begin{align}
+ h_j&\le q^jh_0+A_\rho\sum_{k<j}q^k
+                   +\sum_{t<j}q^{j-1-t}\widetilde M_t<H_R,\\
+ h_j&\ge\tfrac12\Delta_0\|\sin\Theta_j\|^2
+                   \ge\tfrac12\Delta_0\sin^2R=H_R,
+\end{align}
+a contradiction. Finally, positivity and conditional expectation imply
+\begin{equation}
+ \mathbb E[h_{t+1}\mathbf1\{\tau>t+1\}]
+ \le q\mathbb E[h_t\mathbf1\{\tau>t\}]+A_\rho.
+\end{equation}
+Unroll this killed-process bound and use
+$0\le h_T\le rC_0/2$ on $\{\tau\le T\}$ to obtain
+\eqref{eq:tracking-no-assumed-basin}. The zero-noise case follows by the
+same deterministic argument with $S_\rho=0$.
+\end{proof}
+
+\begin{corollary}[Explicit coupling budget for the implemented tracker]
+For normalized covariance samples and zero-initialized tracker momentum,
+$\|H_t\|,\|\widehat Q_t\|,\|Q_t\|\le1$. Its descent representation has
+\begin{align}
+ \zeta_t&=-(1-\mu_H)(\widehat Q_t-Q_t),\\
+ b_t&=-\mu_H(\Pi_{U_t}H_{t-1}-Q_t),&
+ \|\zeta_t\|&\le2(1-\mu_H),\quad\|b_t\|\le2\mu_H.
+\end{align}
+For equal branch step $\eta$, bounded corrected gradients and moments,
+\begin{equation}
+ v\le L_C\eta D_0,\qquad
+ D_0=G_0\sqrt{\varepsilon_a^{-2}+s_{\max}^2}.
+\end{equation}
+Consequently, with $\chi_\alpha=(1+\alpha/2)/(1+\alpha)$,
+\begin{equation}
+ \frac{A_\rho}{1-q}
+ \le\chi_\alpha\left[
+       \frac{16L_R\rho(1-\mu_H)^2}{\mu_R}
+       +\frac{16\mu_H^2}{\mu_R}
+       +\frac{L_C^2\eta^2D_0^2}{\rho^2\mu_R^2\Delta_0}\right].
+ \label{eq:implemented-basin-budget}
+\end{equation}
+Dropping $\chi_\alpha\le1$ gives an envelope of the form
+$A\rho+B_*+D\eta^2/\rho^2$. Its unconstrained optimum is
+$\rho_*=(2D\eta^2/A)^{1/3}$. It must also satisfy
+\eqref{eq:basin-quantitative-condition} and the step constraints. The
+$\mu_H^2$ term is a conservative bias budget, not a lower bound on the
+fixed-momentum tracker error.
+\end{corollary}
+\begin{proof}
+Insert the implemented momentum into $-H_t=g_t+\zeta_t+b_t$.
+Orthogonal branch supports give
+$\|D_t\|^2\le\varepsilon_a^{-2}G_0^2+s_{\max}^2G_0^2$;
+Lipschitz continuity of $C(W)$ gives the drift bound. Substitute
+$\sigma=2(1-\mu_H)$, $B=2\mu_H$, and
+$1-q=\alpha(1+\alpha)/2$.
+\end{proof}

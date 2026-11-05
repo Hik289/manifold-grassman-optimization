@@ -1,0 +1,26 @@
+% WWW table style: three rules, bold headers, reference green highlight.
+\begin{table*}[t]
+\centering\footnotesize
+\caption{\textbf{One GrassRoute iteration.} The parameter branch preserves the full orthogonal residual; the routing branch changes the basis and aligns stored coordinates. Second-moment transport is a diagonal approximation. Elementwise operations use $\oslash$ and $\odot$.}
+\label{tab:method-update}
+\setlength{\tabcolsep}{5pt}
+\reviewfit{\begin{tabular}{@{}p{.17\linewidth}p{.62\linewidth}p{.14\linewidth}@{}}
+\toprule {\bfseries Stage} & {\bfseries Update} & {\bfseries Stored state}\\
+\midrule
+Project gradient  &  $Z_t=G_tU_t,\quad G_t^\perp=G_t-Z_tU_t^\top$  &  $U_t\in\mathbb R^{d\times r}$\\
+Adaptive moments  &  $M_t=\beta_1M_{t-1}+(1-\beta_1)Z_t,\quad V_t=\beta_2V_{t-1}+(1-\beta_2)Z_t^{\odot2}$  &  $2mr$ entries\\
+Bias correction  &  $\widehat M_t=M_t/(1-\beta_1^t),\quad\widehat V_t=V_t/(1-\beta_2^t)$  &  Moment ages\\
+Adaptive branch  &  $D_t^\parallel=\widehat M_t\oslash(\sqrt{\widehat V_t}+\varepsilon)$  &  No $m\times d$ moments\\
+Residual branch  &  $s_t=\operatorname{clip}(\|G_t\|_F/(\|G_t^\perp\|_F+\varepsilon_r);s_{\min},s_{\max})$  &  Stateless\\
+\rowcolor{oursbg}
+Parameter update  &  $W_{t+1}=(1-\eta_t\lambda_{\rm wd})W_t-\eta_tD_t^\parallel U_t^\top-\eta_{\perp,t}s_tG_t^\perp$  &  Full $W_t$\\
+\midrule
+Horizontal direction  &  $Q_t=(I-U_tU_t^\top)G_t^\top Z_t/(\|G_t\|_F^2+\varepsilon_c)$  &  No full covariance\\
+Transported momentum  &  $H_t=\mu_H\Pi_{U_t}H_{t-1}+(1-\mu_H)Q_t$  &  $dr$ entries\\
+\rowcolor{oursbg}
+Grassmann update  &  $U_{t+1}=\operatorname{qf}(U_t+\rho_tH_t)$  &  $dr$ basis entries\\
+Coordinate alignment  &  $R_t=\operatorname{Polar}(U_{t+1}^\top U_t),\quad M_t\leftarrow M_tR_t^\top$  &  $r\times r$ rotation\\
+Diagonal transport  &  $V_t\leftarrow V_t(R_t^\top)^{\odot2}$  &  Same moment age\\
+\bottomrule
+\end{tabular}}
+\end{table*}

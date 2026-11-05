@@ -1,0 +1,15 @@
+% WWW table style: three rules, bold headers, reference green highlight.
+\begin{table*}[t]\centering\footnotesize
+\caption{\textbf{Tracking implementation resources.} Mean CPU optimizer-call time across all four drift rates at 128 gradient rows, including diagnostics; persistent state is decimal kB. Shared implementation timing is reported separately from task accuracy.}
+\label{tab:tracking-resources}
+\setlength{\tabcolsep}{5pt}
+\reviewfit{\begin{tabular}{lrr}
+\toprule {\bfseries Method} & {\bfseries CPU call / ms} & {\bfseries State / kB}\\\midrule
+\rowcolor{oursbg}\textbf{GrassRoute} &  0.1497  &  6.14\\
+NoMomentum  &  0.1354  &  6.14\\
+Fixed  &  0.1428  &  6.14\\
+Periodic5  &  0.09495  &  6.14\\
+Periodic25  &  0.0632  &  6.14\\
+Periodic100  &  0.05768  &  6.14\\
+\bottomrule\end{tabular}}
+\end{table*}

@@ -1,0 +1,13 @@
+% WWW table style: three rules, bold headers, reference green highlight.
+\begin{table}[t]\centering\footnotesize
+\caption{\textbf{Neighboring-data probe at epoch 1000.} Frozen random ResNet-18 features on CIFAR-100; one replacement in 2048 training examples and a 1000-image test probe. Sensitivity uses cross-entropy clipped at 10 and divided by 10. These measurements are conditional on the specified dataset pair.}
+\label{tab:stability-checks}
+\setlength{\tabcolsep}{5pt}
+\reviewfit{\begin{tabular}{lrrrrr}
+\toprule {\bfseries Method} & {\bfseries Train CE} & {\bfseries Test acc.} & {\bfseries Parameter distance} & {\bfseries Mean sensitivity} & {\bfseries Max. sensitivity}\\\midrule
+AdamW  &  0.05073  &  9.00  &  2.336  &  0.003923  &  0.2061\\
+\rowcolor{oursbg}\textbf{GrassRoute} &  2.812  &  9.00  &  0.8386  &  0.002825  &  0.1039\\
+HardReset  &  371.6  &  2.40  &  461.1  &  0.1107  &  1\\
+Fixed  &  3.663  &  5.40  &  0.5005  &  $5.33\times10^{-4}$  &  0.03581\\
+\bottomrule\end{tabular}}
+\end{table}

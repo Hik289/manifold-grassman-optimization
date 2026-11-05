@@ -1,0 +1,9 @@
+% WWW table style: three rules, bold headers, reference green highlight.
+\begin{table}[htbp]\centering\scriptsize\setlength{\tabcolsep}{3pt}
+\caption{Independent Planetoid follow-up: nine 100-epoch validation candidates per method, then 1000 fresh formal epochs, seed 42. All accuracies are final public-test percentages; -- indicates unfinished training. The periodic method now transports both moments. SubTrack++ is the same pinned official implementation. These are transductive graph experiments.}
+\label{tab:graph-strength}
+\reviewfit{\begin{tabular}{lrrrrrr}\toprule {\bfseries Task} & {\bfseries SGD-M} & {\bfseries AdamW} & {\bfseries Fixed} & {\bfseries PeriodicDiag} & \cellcolor{oursbg}{\bfseries GrassRoute} & {\bfseries SubTrack++}\\\midrule
+Cora / SAGE  &  \textbf{79.70}  &  77.50  &  39.10  &  77.70  &  \cellcolor{oursbg}78.60 &  77.30\\
+CiteSeer / SAGE  &  68.80  &  67.40  &  36.90  &  \textbf{69.10}  &  \cellcolor{oursbg}68.40 &  64.90\\
+PubMed / SAGE  &  \textbf{76.90}  &  74.80  &  53.90  &  76.80  &  \cellcolor{oursbg}76.60 &  76.20\\
+\bottomrule\end{tabular}}\end{table}

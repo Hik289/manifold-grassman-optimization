@@ -1,0 +1,24 @@
+% WWW table style: three rules, bold headers, reference green highlight.
+\begin{table*}[t]
+\centering
+\small
+\caption{\textbf{T1: Fair Comparison Table (Main Results).} Each method uses its own best HP (seed=42, single run). SciML metric: train loss $\downarrow$; Cora/ogbn/MLP/CNN: accuracy $\uparrow$; RecSys: Recall@20 $\uparrow$; Continual: avg-acc $\uparrow$. \textbf{Bold} = task-family best. $\dagger$ = CNN partial routing (fc+1x1conv only). $\ddagger$ = best HP from separate sweep (sciml\_g2.json / cg2.json). $\star$ = ViT 100ep short run; full 1000ep not completed (4$\times$ slower per step).}
+\label{tab:main_results}
+\reviewfit{\begin{tabular}{llcccccc}
+\toprule {\bfseries \textbf{Task}} & {\bfseries \textbf{Metric}} & {\bfseries \textbf{B1 SGD}} & {\bfseries \textbf{B2 AdamW}} & {\bfseries \textbf{B4 Periodic-SVD}} & \cellcolor{oursbg}{\bfseries \textbf{B5 GrassRoute}} & {\bfseries \textbf{B6 SubTrack++}} & {\bfseries \textbf{B5 vs B2}}\\
+\midrule
+SciML (PINN)        &  loss$\downarrow$  &  0.098        &  0.011        &  0.0033$^\ddagger$    &  \cellcolor{oursbg}\textbf{0.00197}$^\ddagger$ &  0.0096       &  $+82\%$ \\
+Cora GCN            &  acc$\uparrow$     &  $\sim$0.55   &  0.783        &  \textbf{0.804}       &  \cellcolor{oursbg}0.800 &  ---          &  $+2.2$pp \\
+ogbn-arxiv SAGE     &  acc$\uparrow$     &  0.548        &  \textbf{0.551}   &  0.534            &  \cellcolor{oursbg}0.510 &  0.499        &  $-4.1$pp \\
+MLP MNIST           &  acc$\uparrow$     &  \textbf{0.981}  &  0.985       &  0.984                &  \cellcolor{oursbg}0.983 &  ---          &  $-0.3$pp \\
+CNN CIFAR-100 (partial)$^\dagger$  &  acc$\uparrow$  &  0.731  &  0.714  &  0.656           &  \cellcolor{oursbg}\textbf{0.733} &  ---          &  $+0.2$pp \\
+CNN CIFAR-100 (full)    &  acc$\uparrow$  &  ---          &  0.714        &  0.656                &  \cellcolor{oursbg}0.595 &  ---          &  $-12$pp \\
+RecSys MF           &  R@20$\uparrow$    &  \textbf{0.170}  &  0.061     &  0.062                &  \cellcolor{oursbg}0.075 &  0.070        &  $+1.4$pp \\
+Continual RotMNIST  &  acc$\uparrow$     &  ---          &  \textbf{0.616}$^\ddagger$  &  0.597$^\ddagger$  &  \cellcolor{oursbg}0.582$^\ddagger$ &  0.535       &  $-3.4$pp \\
+\bottomrule
+\end{tabular}}
+\begin{tablenotes}
+\small
+\item \textit{Honest notes}: SciML is the only ``clean win'' family (B5 simultaneously beats AdamW and Periodic-SVD). Cora B5 beats AdamW ($+2.2$pp) but trails tuned B4 (tie). RecSys B5 beats AdamW (+1.4pp) but SGD dominates by $2.3\times$. CNN partial routing saves precision at the cost of near-zero memory savings. All results: single seed=42; no error bars.
+\end{tablenotes}
+\end{table*}

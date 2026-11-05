@@ -1,0 +1,41 @@
+{
+  "status": "complete",
+  "task": "sciml_burgers",
+  "method": "Fixed",
+  "hp": {
+    "lr": 0.01,
+    "residual_ratio": 0.3
+  },
+  "formal": true,
+  "epochs": 2000,
+  "n_epochs": 2000,
+  "seed": 42,
+  "validation": {
+    "score": 0.012516624294221401,
+    "pde_residual_l2": 0.015061465092003345
+  },
+  "test": {
+    "score": 0.012815468944609165,
+    "pde_residual_l2": 0.01643907092511654
+  },
+  "state_bytes": 38920,
+  "routed_layers": [
+    {
+      "name": "net.2.weight",
+      "shape": [
+        128,
+        128
+      ],
+      "rank": 8
+    },
+    {
+      "name": "net.4.weight",
+      "shape": [
+        128,
+        128
+      ],
+      "rank": 8
+    }
+  ],
+  "wall_s": 13.093471457999996
+}

@@ -1,0 +1,151 @@
+\subsection{Residual geometry instead of full perturbation norms}
+\label{app:sharp-spectral-tools}
+
+\begin{lemma}[Davis--Kahan via the Sylvester--Rosenblum integral]
+\label{lem:sharp-Davis-Kahan}
+Let $A,\widehat A=A+E$ be symmetric, let $U_\star$ span the leading
+$r$-space of $A$, and let $\widehat U$ span the leading $r$-space of
+$\widehat A$. Set $k_r=\min(r,d-r)$ and
+$\delta_{\rm mix}=\lambda_r(\widehat A)-\lambda_{r+1}(A)>0$. Then
+\begin{align}
+ \|\sin\Theta(\widehat U,U_\star)\|_F
+ &\le\frac{\|U_\perp^\top E\widehat U\|_F}{\delta_{\rm mix}}\\
+ &\le\frac{\min\{\|E\|_F,\sqrt{k_r}\|E\|_{\rm op}\}}
+                {\delta_{\rm mix}}.
+ \label{eq:sharp-Davis-Kahan}
+\end{align}
+If $A$ has gap $\Delta$ and $e=\|E\|_{\rm op}<\Delta$, the denominator
+may be replaced by $\Delta-e$. The residual prefactor one is optimal.
+\end{lemma}
+\begin{proof}
+This is the separated-cluster Davis--Kahan theorem
+\cite{davis1970rotation,yu2015useful}; its short integral proof also explains
+which perturbations matter. With $X=U_\perp^\top\widehat U$ and
+$R=U_\perp^\top E\widehat U$,
+\begin{align}
+ X\widehat\Lambda_1-\Lambda_2X&=R,\\
+ X&=\int_0^\infty e^{t\Lambda_2}R e^{-t\widehat\Lambda_1}\,dt,\\
+ \|X\|_F&\le\int_0^\infty e^{-t\delta_{\rm mix}}\|R\|_F\,dt
+              =\|R\|_F/\delta_{\rm mix}.
+\end{align}
+The integral is the ordered-self-adjoint case of the
+Sylvester--Rosenblum resolvent construction \cite{bhatia1997operator}.
+Compression gives $\|R\|_F\le\|E\|_F$ and
+$\|R\|_F\le\sqrt{k_r}\|E\|_{\rm op}$. Weyl gives
+$\delta_{\rm mix}\ge\Delta-e$. For a two-dimensional rank-one problem
+the Sylvester equation has one entry, so the first inequality is equality.
+\end{proof}
+
+\subsection{Concentrating the normalized covariance in two norms}
+\label{app:sharp-concentration}
+
+\begin{lemma}[McDiarmid--Tropp covariance envelopes]
+\label{lem:sharp-covariance-concentration}
+Let $X_1,\ldots,X_N$ be i.i.d. positive semidefinite $d\times d$ matrices
+with $\operatorname{tr}X_i\le1$, mean $M$, and $\widehat M=N^{-1}\sum_iX_i$.
+Define deterministic population variance budgets
+\begin{equation}
+ v_F\ge\mathbb E\|X_1-M\|_F^2,\qquad
+ v\ge\|\mathbb E(X_1-M)^2\|_{\rm op}.
+\end{equation}
+The universal choices $v_F=1$, $v=1/4$ are valid. Put
+\begin{align}
+ h_N(\delta;v_F)&=\sqrt{v_F/N}+\sqrt{\log(2/\delta)/N},\\
+ b_N(\delta;v)&=\frac{\ell_N}{3N}+
+             \sqrt{\frac{2v\ell_N}{N}+\frac{\ell_N^2}{9N^2}},
+ \qquad\ell_N=\log(4d/\delta).
+\end{align}
+With probability at least $1-\delta$, both
+\begin{equation}
+ \|\widehat M-M\|_F\le h_N(\delta;v_F),\qquad
+ \|\widehat M-M\|_{\rm op}\le b_N(\delta;v).
+ \label{eq:two-norm-concentration}
+\end{equation}
+Smaller verified population variance budgets may be used; empirical
+variances cannot be substituted without an empirical-Bernstein argument.
+\end{lemma}
+\begin{proof}
+Jensen and independence give
+$\mathbb E\|\widehat M-M\|_F\le\sqrt{v_F/N}$.
+For PSD trace-one contractions,
+\begin{equation}
+ \|X-X'\|_F^2=\operatorname{tr}X^2+\operatorname{tr}X'^2
+                         -2\operatorname{tr}(XX')\le2.
+\end{equation}
+Each bounded difference is therefore $\sqrt2/N$; McDiarmid's inequality
+\cite{mcdiarmid1989bounded} gives
+$\Pr(\|\widehat M-M\|_F>\sqrt{v_F/N}+t)\le e^{-Nt^2}$.
+For $Y_i=X_i-M$, $\|Y_i\|_{\rm op}\le1$ and
+\begin{equation}
+ \mathbb EY_i^2=\mathbb EX_i^2-M^2\preceq M-M^2\preceq\tfrac14I.
+\end{equation}
+Tropp's matrix Bernstein theorem \citep[Theorem 1.4]{tropp2012user} gives
+\begin{equation}
+ \Pr(\|\widehat M-M\|_{\rm op}>t)
+ \le2d\exp\left(-\frac{Nt^2}{2(v+t/3)}\right).
+\end{equation}
+Solve the quadratic exponent exactly at $\ell_N$ and allocate failure
+probability $\delta/2$ to each norm. This yields
+\eqref{eq:two-norm-concentration}, without a power-law dependence on
+$\delta^{-1}$.
+\end{proof}
+
+\subsection{Seeger--Maurer inversion instead of a quadratic loss relaxation}
+\label{app:sharp-PAC-kl}
+Write $\operatorname{kl}(p\|q)=p\log(p/q)+(1-p)\log[(1-p)/(1-q)]$,
+with the usual continuous endpoint conventions. Define
+\begin{align}
+ \Xi_n&=\sum_{k=0}^n\binom nk(k/n)^k(1-k/n)^{n-k},\qquad 0^0=1,\\
+ \operatorname{kl}^{-1}_+(p,c)
+ &=\sup\{q\in[p,1]:\operatorname{kl}(p\|q)\le c\}.
+\end{align}
+
+\begin{theorem}[Seeger--Maurer PAC-Bayes-kl]
+\label{thm:Seeger-Maurer}
+For i.i.d. data, loss in $[0,1]$, and a data-independent prior $\Pi$, with
+probability at least $1-\delta$, simultaneously for all $Q\ll\Pi$,
+\begin{align}
+ \operatorname{kl}(\widehat L_S(Q)\|L(Q))
+ &\le\frac{\operatorname{KL}(Q\|\Pi)+\log(\Xi_n/\delta)}n,\\
+ L(Q)&\le\operatorname{kl}^{-1}_+\left(\widehat L_S(Q),
+           \frac{\operatorname{KL}(Q\|\Pi)+\log(\Xi_n/\delta)}n\right).
+ \label{eq:PAC-kl-inverse}
+\end{align}
+For $n\ge8$, $\Xi_n\le2\sqrt n$. If $\widehat L_S(Q)=0$, the displayed
+inverse is exactly
+\begin{equation}
+ 1-\exp\left[-\frac{\operatorname{KL}(Q\|\Pi)+\log(\Xi_n/\delta)}n\right].
+ \label{eq:zero-loss-PAC-kl}
+\end{equation}
+This preserves the binary Chernoff geometry and has no temperature to tune.
+It is not claimed to dominate every separately prespecified-temperature
+bound at every empirical loss.
+\end{theorem}
+\begin{proof}
+Seeger's PAC-Bayes-kl argument and Maurer's convex-extremal moment bound
+\cite{seeger2002pacbayes,maurer2004note} give, for each fixed predictor,
+\begin{equation}
+ \mathbb E_S\exp\{n\operatorname{kl}(\widehat L_S(w)\|L(w))\}
+ \le\Xi_n.
+\end{equation}
+For a nondegenerate Bernoulli loss the expectation equals $\Xi_n$ exactly:
+its probability factor $p^k(1-p)^{n-k}$ cancels the denominator inside the
+exponential. For losses in $[0,1]$, the separately convex envelope used by
+Maurer reduces the exponential moment to the Bernoulli case.
+Fubini and Markov give, on one event,
+\begin{equation}
+ \log\mathbb E_\Pi e^{n\operatorname{kl}(\widehat L_S(w)\|L(w))}
+                        \le\log(\Xi_n/\delta).
+\end{equation}
+The Gibbs--Donsker--Varadhan entropy variational inequality
+\cite{donsker1975asymptotic}, followed by joint convexity of binary
+relative entropy yields
+\begin{align}
+ n\operatorname{kl}(\widehat L_S(Q)\|L(Q))
+ &\le n\mathbb E_Q\operatorname{kl}(\widehat L_S(w)\|L(w))\\
+ &\le\operatorname{KL}(Q\|\Pi)+\log(\Xi_n/\delta).
+\end{align}
+This is the standard change-of-measure step, not a new PAC-Bayes theorem.
+The inverse and its $p=0$ expression follow by monotonicity for $q\ge p$.
+Maurer's moment estimate supplies $\Xi_n\le2\sqrt n$ for $n\ge8$.
+\end{proof}

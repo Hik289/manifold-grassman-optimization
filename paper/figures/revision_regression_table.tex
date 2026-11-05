@@ -1,0 +1,18 @@
+% WWW table style: three rules, bold headers, reference green highlight.
+\begin{table}[htbp]
+\centering\scriptsize
+\setlength{\tabcolsep}{3pt}
+\caption{Generated regression extension at 2000 full epochs. Low-rank tasks have an explicitly planted rank-eight target matrix. The dimension in the task label is input dimension; output dimension is 32, with 2048 training and two independent 256-example validation/test sets. Covariance and observation-noise definitions are recorded in the configuration. -- denotes an unfinished formal comparison.}
+\label{tab:regression-extension}
+\reviewfit{\begin{tabular}{llrrrrrr}
+\toprule {\bfseries Task / model} & {\bfseries Metric} & {\bfseries SGD-M} & {\bfseries AdamW} & {\bfseries Fixed} & {\bfseries Periodic} & \cellcolor{oursbg}{\bfseries GrassRoute} & {\bfseries SubTrack++}\\
+\midrule
+Matrix reg. / 128  &  MSE $\downarrow$  &  {\boldmath $1.07\!\times\!10^{-4}$}  &  $1.07\!\times\!10^{-4}$  &  0.3347  &  $1.07\!\times\!10^{-4}$  &  \cellcolor{oursbg}0.4840 &  $1.07\!\times\!10^{-4}$ \\
+Matrix reg. / 256  &  MSE $\downarrow$  &  $1.12\!\times\!10^{-4}$  &  $1.12\!\times\!10^{-4}$  &  0.3410  &  {\boldmath $1.12\!\times\!10^{-4}$}  &  \cellcolor{oursbg}0.3413 &  $1.12\!\times\!10^{-4}$ \\
+Matrix reg. / 512  &  MSE $\downarrow$  &  $1.31\!\times\!10^{-4}$  &  $1.31\!\times\!10^{-4}$  &  0.3662  &  {\boldmath $1.31\!\times\!10^{-4}$}  &  \cellcolor{oursbg}0.3664 &  $1.31\!\times\!10^{-4}$ \\
+Low-rank reg. / 128  &  MSE $\downarrow$  &  {\boldmath $1.04\!\times\!10^{-4}$}  &  $1.04\!\times\!10^{-4}$  &  0.0734  &  $1.04\!\times\!10^{-4}$  &  \cellcolor{oursbg}0.0230 &  $1.04\!\times\!10^{-4}$ \\
+Low-rank reg. / 256  &  MSE $\downarrow$  &  $1.19\!\times\!10^{-4}$  &  $1.19\!\times\!10^{-4}$  &  0.0710  &  {\boldmath $1.19\!\times\!10^{-4}$}  &  \cellcolor{oursbg}$9.62\!\times\!10^{-3}$ &  $1.19\!\times\!10^{-4}$ \\
+Low-rank reg. / 512  &  MSE $\downarrow$  &  $1.45\!\times\!10^{-4}$  &  {\boldmath $1.32\!\times\!10^{-4}$}  &  0.0653  &  $1.32\!\times\!10^{-4}$  &  \cellcolor{oursbg}0.0194 &  $1.32\!\times\!10^{-4}$ \\
+\bottomrule
+\end{tabular}}
+\end{table}

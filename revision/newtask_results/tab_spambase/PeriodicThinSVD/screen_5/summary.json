@@ -1,0 +1,84 @@
+{
+  "task": "tab_spambase",
+  "method": "PeriodicThinSVD",
+  "hp": {
+    "lr": 0.003,
+    "residual_ratio": 100.0,
+    "period": 5
+  },
+  "epochs": 200,
+  "seed": 42,
+  "formal": false,
+  "routed_layers": [
+    {
+      "name": "0.weight",
+      "shape": [
+        128,
+        57
+      ],
+      "rank": 8
+    },
+    {
+      "name": "3.weight",
+      "shape": [
+        64,
+        128
+      ],
+      "rank": 8
+    }
+  ],
+  "data": {
+    "family": "tabular",
+    "metric": "auroc",
+    "higher": true,
+    "source": "https://archive.ics.uci.edu/dataset/94/spambase",
+    "source_sha256": "813ac1df8effac70463c09c9c4b11e8803eefcab54771af66150852bcdcd1636",
+    "split": "stratified 70/15/15",
+    "n_raw": 4601,
+    "preprocessing": "training mean and variance; no test clipping",
+    "name": "tab_spambase",
+    "seed": 42,
+    "shape": [
+      [
+        3220,
+        57
+      ],
+      [
+        690,
+        57
+      ],
+      [
+        691,
+        57
+      ]
+    ],
+    "preprocessing_fit_split": "training only",
+    "file_sha256": {
+      "x_train.npy": "11bbcfbd20ec6ccab397315a81dd39cded759a38e74f42bde8f9cea6c3d06df3",
+      "y_train.npy": "6bb0fa7b3253d6d507f20b1e8d81aec57683d2b43df0b7c492419a956ac35568",
+      "x_val.npy": "dbd2dba53b116d5c88f7e99714e8f658b4a3ccf148f678bd70797370fbf42a58",
+      "y_val.npy": "edbc038f380a3183eead700d42bb65cc913bfa9886171f0343a05fb7d293bdbe",
+      "x_test.npy": "056aabd05ec130913b4205447401fb0e8ec116d282e8e929b8ab7eb95d2d3dcd",
+      "y_test.npy": "577cba7f5e8541a09f1a2f64ba6f8097fed8cbf18b07d7d7b3f064b64b13f997",
+      "indices_train.npy": "fdc8a216931a38df0fc2b2a3a475a2e6b4ece88b3a9b4a8d732e1531f050763c",
+      "indices_val.npy": "d3c4cbb7af2aa0f801ff3009861f14ce1b76fe8595d66b0eb984cbd776aeb681",
+      "indices_test.npy": "392a7fe4b33ade8e7d3c29ab4e023c62c05403dff686b5197ac199b1f82c294c"
+    },
+    "preparation_source_sha256": "3c91b1ef9023d7775d4a9d85bb8928dd7746dcda26526c32f8c5730c729f7309"
+  },
+  "protocol_sha256": "f79744557aae2f3e5a51fb9db8734d40728a460b9666edfe87151a3162dedddf",
+  "status": "complete",
+  "n_epochs": 200,
+  "validation": {
+    "accuracy": 0.936231884057971,
+    "macro_f1": 0.933068783068783,
+    "cross_entropy": 0.1748601645231247,
+    "n": 690,
+    "auroc": 0.979805797917253,
+    "score": 0.979805797917253
+  },
+  "test": null,
+  "state_bytes": 20784,
+  "final_train_loss": 0.12511175870895386,
+  "wall_s": 1.8861345946788788
+}

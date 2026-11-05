@@ -1,0 +1,304 @@
+\subsection{Explicit differential calculus, graph coordinates, and discrete contraction}
+\label{app:formal-geometry}
+Throughout this subsection $C=C^\top$, $\Delta>0$, and $\|\cdot\|=\|\cdot\|_F$.
+
+\begin{proposition}[Two-plane QR calculus; sharp pullback constant]
+\label{prop:qr-calculus}
+Let $C=C^\top$, $\Lambda_C=\lambda_1(C)-\lambda_d(C)$, and $U^\top\xi=0$.
+For $P=UU^\top$,
+\begin{align}
+ T_P\mathrm{Gr}&=\{J=J^\top:PJ+JP=J\},\\
+ J&=\xi U^\top+U\xi^\top,&\|J\|_F^2&=2\|\xi\|_F^2,\\
+ \mathcal P_P(A)&=[P,[P,A]],&\dot P&=[P,[P,C]].
+ \label{eq:double-bracket}
+\end{align}
+The QR pullback $F_U(s)=\Phi(\mathrm{qf}(U+s\xi))$ obeys, for all real $s$,
+\begin{align}
+ |F_U''(s)|&\le\Lambda_C\|\xi\|_F^2,\\
+ \Phi(\mathrm{qf}(U+\xi))
+ &\le\Phi(U)+\langle\operatorname{grad}\Phi(U),\xi\rangle
+                                  +\tfrac12\Lambda_C\|\xi\|_F^2.
+ \label{eq:explicit-pullback}
+\end{align}
+The constant $\Lambda_C$ is optimal uniformly over $U,\xi$.
+\end{proposition}
+\begin{proof}
+The projector identities follow from $D(P^2-P)[J]=PJ+JP-J$.
+For the quantitative bound use the singular-vector/CS decomposition
+\citep[Chapters 2 and 8]{golub2013matrix}. After a right orthogonal change,
+write $\xi_i=\sigma_iv_i$, with $(u_i,v_i)$ orthonormal for each
+$\sigma_i>0$. Its QR span has the orthonormal polar representative
+\begin{equation}
+ q_i(s)=\frac{u_i+s\sigma_iv_i}{\sqrt{1+s^2\sigma_i^2}}.
+\end{equation}
+Zero singular values contribute constant columns.
+Put $a_i=u_i^\top Cu_i$, $b_i=u_i^\top Cv_i$, $c_i=v_i^\top Cv_i$.
+Poincar\'e separation for the $2\times2$ compression of $C$ gives
+\begin{equation}
+ \sqrt{(a_i-c_i)^2+4b_i^2}\le\Lambda_C.
+\end{equation}
+The trace is a sum of scalar Rayleigh quotients:
+\begin{align}
+ F_U(s)&=-\frac12\sum_i
+       \frac{a_i+2s\sigma_ib_i+s^2\sigma_i^2c_i}{1+s^2\sigma_i^2},\\
+ F_{U,i}''(s)&=\sigma_i^2
+ \frac{(a_i-c_i)(1-3z_i^2)+2b_i z_i(3-z_i^2)}{(1+z_i^2)^3},
+ \qquad z_i=s\sigma_i.
+\end{align}
+The cancellation
+\begin{equation}
+ (1-3z^2)^2+z^2(3-z^2)^2=(1+z^2)^3
+\end{equation}
+yields $|F_{U,i}''(s)|\le
+\Lambda_C\sigma_i^2/(1+z_i^2)^{3/2}\le\Lambda_C\sigma_i^2$.
+Sum and integrate the second derivative. At $s=0$, take $r=1$,
+$u$ a lowest eigenvector and $\xi$ a unit highest eigenvector;
+$F_U''(0)=-\Lambda_C$. Interchanging them gives $+\Lambda_C$.
+Thus both the absolute and upper pullback constants are attained.
+\end{proof}
+
+\begin{lemma}[Stored QR frames and aligned moment transport]
+\label{lem:qr-frame}
+Let $U^\top\xi=0$, let $Q(s)R(s)=U+s\xi$ be the thin QR decomposition
+with positive diagonal in $R(s)$, and put $U_+=Q(1)$,
+$O=\operatorname{Polar}(U_+^\top U)$. Then
+\begin{align}
+ \sigma_{\min}(U+s\xi)&\ge1, &\|U_+-U\|&\le\sqrt3\|\xi\|,\\
+ \|O-I\|&\le2\sqrt3\|\xi\|, &
+ \|U_+O-U\|_{\rm op}&=2\sin(\theta_{\max}/2)
+                      \le d_{\rm Gr}(U_+,U)\le\|\xi\|.\label{eq:frame-bounds}
+\end{align}
+The row-vector transport $\mathcal T(XU^\top)=XO^\top U_+^\top$ is an
+isometry on the old routed space and satisfies
+\begin{equation}
+ \|\mathcal T(XU^\top)-XU^\top\|\le\|X\|\,\|\xi\|.\label{eq:transport-near-identity}
+\end{equation}
+On a segment of full-rank matrices with $\sigma_{\min}\ge s_0>0$,
+\begin{equation}
+ \|\mathrm{qf}(A)-\mathrm{qf}(B)\|
+       \le\frac{\sqrt3}{s_0}\|A-B\|.\label{eq:qr-explicit-lip}
+\end{equation}
+\end{lemma}
+\begin{proof}
+Differentiate $A=QR$ and set $K=Q^\top\dot A R^{-1}$:
+\begin{align}
+ \dot Q&=(I-QQ^\top)\dot A R^{-1}+Q\Omega,\\
+ \Omega&=Q^\top\dot Q=-\Omega^\top,\qquad
+ \operatorname{strictlower}(\Omega)=\operatorname{strictlower}(K),\\
+ \|\Omega\|^2&=2\|\operatorname{strictlower}(K)\|^2\le2\|K\|^2,\\
+ \|\dot Q\|^2
+ &\le3\|\dot A R^{-1}\|^2
+ \le\frac{3\|\dot A\|^2}{\sigma_{\min}(A)^2}.
+\end{align}
+Integrate along $U+s\xi$ or the stipulated segment. For $B=U_+^\top U$,
+\begin{equation}
+ \|\operatorname{Polar}(B)-I\|
+ \le\frac{2\|B-I\|}{\sigma_{\min}(B)+1}
+ \le2\|U_+-U\|.
+\end{equation}
+This polar perturbation inequality follows from the Sylvester equation for
+the polar differential, or its integrated two-point form. Singular-value
+decomposition of $U_+^\top U$ gives the aligned-frame singular values
+$2\sin(\theta_i/2)$; Lemma~\ref{lem:qr} gives
+$\theta_i=\arctan\sigma_i(\xi)$. Isometry and
+\eqref{eq:transport-near-identity} follow by right multiplication.
+\end{proof}
+
+\begin{proposition}[An exact graph flow and contraction of the implemented QR step]
+\label{prop:graph-flow}
+Let $E=(E_1,E_2)$ diagonalize $C$, with blocks
+$\Lambda_1=\operatorname{Diag}(\lambda_1,\ldots,\lambda_r)$ and
+$\Lambda_2=\operatorname{Diag}(\lambda_{r+1},\ldots,\lambda_d)$.
+For $K\in\mathbb R^{(d-r)\times r}$ define
+\begin{align}
+ S_K&=I+K^\top K,&B_K&=S_K^{-1/2},\\
+ U(K)&=(E_1+E_2K)B_K,&P(K)&=U(K)U(K)^\top.
+\end{align}
+Then
+\begin{align}
+ \tan\theta_i&=\sigma_i(K),&
+ h_C(K)&=\tfrac12\operatorname{tr}
+  \big[(\Lambda_1K^\top K-K^\top\Lambda_2K)S_K^{-1}\big].\label{eq:graph-excess}
+\end{align}
+The exact continuous Grassmann ascent flow and its solution are
+\begin{align}
+ \dot K&=\Lambda_2K-K\Lambda_1=:\mathcal L K,\\
+ K(t)&=e^{t\Lambda_2}K(0)e^{-t\Lambda_1},&
+ \|K(t)\|&\le e^{-\Delta t}\|K(0)\|.\label{eq:exact-graph-flow}
+\end{align}
+For the discrete update
+$U_+=\mathrm{qf}(U+\rho(I-P)CU)$, set
+\begin{equation}
+ A=U^\top CU,\quad T=B_KAB_K^{-1},\quad
+ J=I+\rho(\Lambda_1-T),\quad L_J=\|\Lambda_1-T\|_{\rm op}.
+\end{equation}
+Whenever $\rho L_J<1$,
+\begin{align}
+ K_+&=K+\rho\mathcal LK J^{-1},\label{eq:exact-graph-qr}\\
+ \|K_+-(K+\rho\mathcal LK)\|
+ &\le\frac{\rho^2\Lambda L_J}{1-\rho L_J}\|K\|.
+\end{align}
+Consequently, if $\rho\Lambda\le1$, $\rho L_J\le1/2$,
+and $\rho\le\Delta/(4\Lambda L_J)$, then
+\begin{equation}
+ \|K_+\|\le(1-\rho\Delta/2)\|K\|.\label{eq:qr-chart-contraction}
+\end{equation}
+For $\|K\|_{\rm op}\le k_0$ one may take
+$L_J\le C_0(1+\sqrt{1+k_0^2})$ after a fixed scalar shift with
+$\|C\|_{\rm op}\le C_0$.
+\end{proposition}
+\begin{proof}
+\begin{align}
+ E_1^\top U(K)&=B_K,&E_2^\top U(K)&=KB_K,\\
+ \operatorname{tr}(U^\top CU)
+ &=\operatorname{tr}[(\Lambda_1+K^\top\Lambda_2K)S_K^{-1}].
+\end{align}
+Subtract from $\operatorname{tr}(\Lambda_1)$ to obtain
+\eqref{eq:graph-excess}. The solution of $\dot X=CX$ is
+$X(t)=e^{tC}X(0)$; its span satisfies \eqref{eq:double-bracket}.
+Taking the lower-to-upper coordinate ratio gives
+\eqref{eq:exact-graph-flow}. Entrywise,
+\begin{equation}
+ K_{ji}(t)=e^{-(\lambda_i-\lambda_{r+j})t}K_{ji}(0),\qquad
+ \frac{d}{dt}\|K\|^2
+ =-2\sum_{ji}(\lambda_i-\lambda_{r+j})K_{ji}^2
+ \le-2\Delta\|K\|^2.
+\end{equation}
+For the discrete step, QR does not change the span, and
+\begin{align}
+ E_1^\top(U+\rho Q)&=JB_K,\\
+ E_2^\top(U+\rho Q)&=(KJ+\rho\mathcal LK)B_K.
+\end{align}
+Division yields \eqref{eq:exact-graph-qr}. The Neumann bound gives
+$\|J^{-1}-I\|_{\rm op}\le\rho L_J/(1-\rho L_J)$.
+Also
+\begin{align}
+ \|\mathcal LK\|&\le\Lambda\|K\|,\\
+ \|K+\rho\mathcal LK\|^2
+ &=\sum_{ji}[1-\rho(\lambda_i-\lambda_{r+j})]^2K_{ji}^2
+ \le(1-\rho\Delta)^2\|K\|^2.
+\end{align}
+Thus the additional remainder is at most
+$2\rho^2\Lambda L_J\|K\|\le\rho\Delta\|K\|/2$.
+Finally $\|B_K\|_{\rm op}\le1$ and
+$\|B_K^{-1}\|_{\rm op}\le\sqrt{1+k_0^2}$.
+\end{proof}
+
+\subsection{Covariance normalization, eigenspace derivatives, and probabilistic tracking}
+\label{app:formal-tracking}
+
+\begin{lemma}[Normalization mismatch and the Sylvester derivative]
+Let $N=\|G\|^2$, $\bar N=\mathbb EN$, $S=\mathbb E[G^\top G]$,
+$\widetilde S=S/(\bar N+\varepsilon_c)$, and
+$C=\mathbb E[G^\top G/(N+\varepsilon_c)]$. Then
+\begin{align}
+ C-\widetilde S
+ &=\mathbb E\frac{(\bar N-N)G^\top G}
+                  {(N+\varepsilon_c)(\bar N+\varepsilon_c)},\\
+ \|C-\widetilde S\|
+ &\le\frac{\mathbb E|N-\bar N|}{\bar N+\varepsilon_c}
+ \le\frac{\sqrt{\operatorname{Var}N}}{\bar N+\varepsilon_c}.\label{eq:normalization-mismatch}
+\end{align}
+For a differentiable symmetric path $C(s)$ with gap $\Delta(s)>0$,
+a horizontal leading-eigenspace derivative satisfies
+\begin{align}
+ \dot U_\star&=U_\perp K,&
+ K\Lambda_1-\Lambda_2K&=U_\perp^\top\dot C U_\star,\\
+ K_{ji}&=\frac{u_{r+j}^\top\dot C u_i}{\lambda_i-\lambda_{r+j}},&
+ \|\dot U_\star\|&\le\frac{\|U_\perp^\top\dot C U_\star\|}{\Delta},\\
+ \|\dot P_\star\|&\le\frac{\sqrt2\|\dot C\|}{\Delta}.\label{eq:sylvester-eigenspace}
+\end{align}
+\end{lemma}
+\begin{proof}
+Use $\|G^\top G\|\le\|G\|^2=N$ and $N/(N+\varepsilon_c)\le1$.
+Differentiate $CU_\star=U_\star\Lambda_1$ and left multiply by
+$U_\perp^\top$:
+\begin{equation}
+ U_\perp^\top\dot C U_\star+\Lambda_2K=K\Lambda_1.
+\end{equation}
+The entrywise solution and the projector tangent norm give the result.
+\end{proof}
+
+\begin{corollary}[Finite normalization perturbation with a mixed gap]
+If $\widetilde S$ has gap $\delta>0$ and
+$e=\|C-\widetilde S\|_{\rm op}<\delta$, then
+\begin{align}
+ \|\sin\Theta(U_C,U_S)\|_F
+ &\le\frac{\min\{\|C-\widetilde S\|_F,\sqrt{\min(r,d-r)}e\}}
+                  {\delta-e}\\
+ &\le\frac{\sqrt{\operatorname{Var}N}}
+                {(\delta-e)(\bar N+\varepsilon_c)}.
+ \label{eq:normalization-angle}
+\end{align}
+\end{corollary}
+\begin{proof}
+Combine the normalized-covariance mismatch with the mixed-gap
+Davis--Kahan bound of Lemma~\ref{lem:sharp-Davis-Kahan}.
+\end{proof}
+
+\begin{theorem}[High-probability frozen-target tracking and almost-sure consistency]
+\label{thm:tracking-probability}
+Suppose $C_t=C$, $\theta_{\max}(U_t,U_\star)\le R_0<\pi/2$,
+$\mu=\Delta\cos^2R_0$, $g_t=\operatorname{grad}\Phi(U_t)$, and
+\begin{equation}
+ U_{t+1}=\mathrm{qf}\{U_t-\rho(g_t+\zeta_t+b_t)\},\quad
+ \mathbb E_t\zeta_t=0,\quad\|\zeta_t\|\le\sigma,\quad
+ \|b_t\|\le B,\quad\|g_t\|\le\Gamma.
+\end{equation}
+All three tangent terms are horizontal at $U_t$. Let
+$L_R=\Lambda_C=\lambda_1(C)-\lambda_d(C)$,
+$L_R\rho\le1/4$, $\mu\rho\le1$, and $q=1-\mu\rho$.
+For any fixed $T$ and $\delta\in(0,1)$, with probability at least $1-\delta$,
+\begin{align}
+ h_T\le q^Th_0
+ &+\frac{2L_R\rho^2\sigma^2+2\rho B^2}{1-q}(1-q^T)\notag\\
+ &+\rho\Gamma\sigma
+ \sqrt{\frac{2(1-q^{2T})\log(1/\delta)}{1-q^2}}.\label{eq:tracking-highprob}
+\end{align}
+If instead $\rho_t$ varies, $\sum_t\rho_t=\infty$,
+$\sum_t\rho_t^2\sigma_t^2<\infty$,
+$\sum_t\rho_t B_t^2<\infty$, and the same neighborhood and step
+conditions hold almost surely, then
+\begin{equation}
+ h_t\longrightarrow0\quad\text{a.s.},\qquad
+ d_{\rm Gr}(U_t,U_\star)\longrightarrow0\quad\text{a.s.}\label{eq:tracking-as}
+\end{equation}
+\end{theorem}
+\begin{proof}
+The pathwise pullback inequality and Young's inequality give
+\begin{align}
+ h_{t+1}
+ &\le h_t-\rho\|g_t\|^2-\rho\langle g_t,b_t\rangle
+       -\rho\langle g_t,\zeta_t\rangle
+       +\tfrac12L_R\rho^2\|g_t+b_t+\zeta_t\|^2\\
+ &\le h_t-\tfrac12\rho\|g_t\|^2
+       +2L_R\rho^2\sigma^2+2\rho B^2+\mathfrak m_t\\
+ &\le qh_t+a+\mathfrak m_t,
+ \quad a=2L_R\rho^2\sigma^2+2\rho B^2,
+ \quad\mathfrak m_t=-\rho\langle g_t,\zeta_t\rangle.
+\end{align}
+Now $\mathbb E_t\mathfrak m_t=0$, $|\mathfrak m_t|\le\rho\Gamma\sigma$,
+and iteration yields
+\begin{equation}
+ h_T\le q^Th_0+a\sum_{k=0}^{T-1}q^k+
+             \sum_{t=0}^{T-1}q^{T-1-t}\mathfrak m_t.
+\end{equation}
+Conditional Hoeffding bounds imply, for every $u>0$,
+\begin{equation}
+ \mathbb E\exp\left(u\sum_tq^{T-1-t}\mathfrak m_t\right)
+ \le\exp\left(\frac{u^2\rho^2\Gamma^2\sigma^2}{2}
+                        \sum_tq^{2(T-1-t)}\right).
+\end{equation}
+Chernoff minimization proves \eqref{eq:tracking-highprob}.
+For varying steps, the conditional expectation recurrence is
+\begin{equation}
+ \mathbb E_t h_{t+1}\le h_t-\mu\rho_t h_t+a_t,\qquad
+ \sum_ta_t<\infty.
+\end{equation}
+The Robbins--Siegmund almost-supermartingale theorem
+\cite{robbins1971convergence} gives convergence of
+$h_t$ and $\sum_t\rho_t h_t<\infty$ almost surely. A positive limiting
+$h_t$ would contradict $\sum_t\rho_t=\infty$. Quadratic growth then
+proves \eqref{eq:tracking-as}. The neighborhood is a stated hypothesis;
+this argument does not silently assert invariance of that neighborhood.
+\end{proof}
