@@ -1,106 +1,173 @@
-"""Draw the GrassRoute README intuition graphic as a high-resolution PNG."""
+"""Draw the GrassRoute README method figure as a high-resolution PNG."""
+
 from pathlib import Path
 
 import matplotlib
+
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
-from matplotlib.patches import FancyArrowPatch, FancyBboxPatch, Circle
+from matplotlib.patches import FancyArrowPatch, FancyBboxPatch, Rectangle
 
 
-NAVY = "#14233b"
-MUTED = "#64748b"
-BLUE = "#2563eb"
-BLUE_BG = "#eaf2ff"
-TEAL = "#0f8b79"
-TEAL_BG = "#e9f8f4"
-AMBER = "#bc6c17"
-AMBER_BG = "#fff4df"
-LINE = "#dce5ee"
+INK = "#17263b"
+MUTED = "#5e7084"
+LINE = "#dce5ef"
+BG = "#f7f9fc"
+BLUE = "#2870c7"
+BLUE_BG = "#edf5ff"
+ORANGE = "#df7842"
+ORANGE_BG = "#fff2e9"
+TEAL = "#168b88"
+TEAL_BG = "#eaf8f6"
+GREEN = "#2c9972"
+GREEN_BG = "#edf8f2"
+PURPLE = "#8655b6"
+PURPLE_BG = "#f5effc"
 
 
-def card(ax, x, y, w, h, face="white", edge=LINE, radius=.18):
-    patch = FancyBboxPatch((x, y), w, h,
-                           boxstyle=f"round,pad=0.015,rounding_size={radius}",
-                           facecolor=face, edgecolor=edge, linewidth=1.3)
-    ax.add_patch(patch)
-    return patch
+def box(ax, x, y, w, h, border, fill="white", radius=.14, lw=1.7):
+    shape = FancyBboxPatch(
+        (x, y), w, h,
+        boxstyle=f"round,pad=0.01,rounding_size={radius}",
+        facecolor=fill, edgecolor=border, linewidth=lw,
+    )
+    ax.add_patch(shape)
 
 
-def arrow(ax, start, end, color=BLUE, width=2.2, size=15, curve=0):
-    ax.add_patch(FancyArrowPatch(start, end, arrowstyle="-|>",
-                                 mutation_scale=size, linewidth=width,
-                                 color=color, connectionstyle=f"arc3,rad={curve}",
-                                 shrinkA=0, shrinkB=0))
+def text(ax, x, y, value, size=16, color=INK, weight="normal", ha="left"):
+    ax.text(x, y, value, fontsize=size, color=color, fontweight=weight,
+            ha=ha, va="center")
 
 
-def label(ax, x, y, text, size=13, color=NAVY, weight="normal", **kwargs):
-    ax.text(x, y, text, fontsize=size, color=color, fontweight=weight,
-            va="center", **kwargs)
+def arrow(ax, a, b, color=BLUE, width=2.3, scale=18):
+    ax.add_patch(FancyArrowPatch(a, b, arrowstyle="-|>", mutation_scale=scale,
+                                 linewidth=width, color=color, shrinkA=0, shrinkB=0))
 
 
-def main():
-    out = Path(__file__).with_name("grassroute_intuition.png")
+def matrix(ax, x, y, rows, cols, color, label, dims, cell=.23):
+    width, height = cols * cell, rows * cell
+    left, bottom = x - width / 2, y - height / 2
+    text(ax, x, bottom + height + .23, label, 16, ha="center")
+    for i in range(rows):
+        for j in range(cols):
+            alpha = (.13, .23, .35, .47)[(3 * i + 2 * j) % 4]
+            ax.add_patch(Rectangle((left + j * cell, bottom + (rows - 1 - i) * cell),
+                                   cell, cell, facecolor=color, edgecolor=color,
+                                   linewidth=.7, alpha=alpha))
+    ax.add_patch(Rectangle((left, bottom), width, height, facecolor="none",
+                           edgecolor=color, linewidth=1.55))
+    text(ax, x, bottom - .25, dims, 12.5, MUTED, ha="center")
+
+
+def header(ax, x, y, w, number, title, color):
+    box(ax, x + .23, y + .23, .43, .40, color, color, radius=.18, lw=0)
+    text(ax, x + .445, y + .43, str(number), 12, "white", "bold", "center")
+    text(ax, x + .79, y + .43, title, 17, INK, "bold")
+    ax.plot([x + .23, x + w - .23], [y + .23, y + .23], color=LINE, lw=1)
+
+
+def draw():
+    output = Path(__file__).with_name("grassroute_intuition.png")
     with plt.rc_context({"font.family": "DejaVu Sans", "mathtext.fontset": "dejavusans",
-                         "savefig.facecolor": "#f7f9fc"}):
-        fig, ax = plt.subplots(figsize=(14.8, 6.1), dpi=220)
-        fig.patch.set_facecolor("#f7f9fc")
-        ax.set_facecolor("#f7f9fc")
-        ax.set_xlim(0, 14.8)
-        ax.set_ylim(0, 6.1)
+                         "savefig.facecolor": BG}):
+        fig, ax = plt.subplots(figsize=(19.5, 8.5), dpi=190)
+        fig.patch.set_facecolor(BG)
+        ax.set_facecolor(BG)
+        ax.set_xlim(0, 19.5)
+        ax.set_ylim(0, 8.5)
         ax.axis("off")
 
-        label(ax, .35, 5.73, "GrassRoute", 23, NAVY, "bold")
-        label(ax, 3.40, 5.73, "Online adaptive updates in a learned subspace", 13.5, MUTED)
-        ax.plot([.35, 14.45], [5.38, 5.38], color=LINE, linewidth=1)
+        text(ax, .35, 8.16, "GrassRoute", 24, INK, "bold")
+        text(ax, 3.43, 8.16, "Online routing of gradients through a learned Grassmann subspace",
+             15, MUTED)
+        ax.plot([.35, 19.15], [7.86, 7.86], color=LINE, lw=1.1)
 
-        # Input and decomposition.
-        card(ax, .35, 1.55, 3.45, 3.46)
-        ax.add_patch(Circle((.72, 4.59), .15, facecolor=BLUE, edgecolor="none"))
-        label(ax, .72, 4.59, "1", 10, "white", "bold", ha="center")
-        label(ax, 1.02, 4.59, "Route the gradient", 15, NAVY, "bold")
-        label(ax, .65, 3.84, r"$G_t \in \mathbb{R}^{m\times d}$", 19)
-        label(ax, .65, 3.34, r"$U_t \in \mathrm{Gr}(r,d)$", 18)
-        ax.plot([.65, 3.45], [2.98, 2.98], color=LINE, linewidth=1)
-        label(ax, .65, 2.55, r"$Z_t = G_tU_t$", 17, BLUE, "bold")
-        label(ax, .65, 2.04, r"$G_t^{\perp}=G_t-Z_tU_t^{\top}$", 16, TEAL)
+        top_y, top_h, top_w = 4.35, 3.17, 4.40
+        xs = [.35, 5.15, 9.95, 14.75]
+        for k, (x, color, title) in enumerate(zip(
+            xs, [ORANGE, TEAL, BLUE, PURPLE],
+            ["Gradient + basis", "Orthogonal routing",
+             "Adaptive coordinates", "Lift + residual step"],
+        ), 1):
+            box(ax, x, top_y, top_w, top_h, color)
+            header(ax, x, top_y + top_h - .79, top_w, k, title, color)
+        for x in [4.75, 9.55, 14.35]:
+            arrow(ax, (x, 5.91), (x + .39, 5.91), BLUE, 2.6, 19)
 
-        # Two paths and their update rules.
-        arrow(ax, (3.8, 3.7), (4.22, 3.7), BLUE)
-        arrow(ax, (3.8, 2.3), (4.22, 2.3), TEAL)
-        card(ax, 4.25, 3.05, 5.72, 1.95, BLUE_BG, "#c6d8fa")
-        label(ax, 4.58, 4.61, "LOW-RANK ADAPTIVE BRANCH", 10.5, BLUE, "bold")
-        label(ax, 4.58, 4.03, r"$\mathrm{Adam}(Z_t)\;\rightarrow\; D_t^{\parallel}$", 20)
-        label(ax, 4.58, 3.43, r"$\Delta W_{\parallel}=-\eta_{\parallel}D_t^{\parallel}U_t^{\top}$", 17)
+        matrix(ax, 1.45, 5.95, 4, 3, ORANGE, r"$G_t$", r"$m\times d$")
+        matrix(ax, 3.25, 5.95, 4, 2, BLUE, r"$U_t$", r"$d\times r$")
+        box(ax, .59, 4.48, 3.92, .55, ORANGE, ORANGE_BG, radius=.09, lw=.9)
+        text(ax, 2.55, 4.755, r"$G_t=\nabla_W\ell_t,\quad U_t^{\top}U_t=I_r$",
+             15, INK, ha="center")
 
-        card(ax, 4.25, 1.35, 5.72, 1.45, TEAL_BG, "#b9e9db")
-        label(ax, 4.58, 2.47, "ORTHOGONAL RESIDUAL BRANCH", 10.5, TEAL, "bold")
-        label(ax, 4.58, 1.87, r"$\Delta W_{\perp}=-\eta_{\perp}s_tG_t^{\perp}$", 18)
+        matrix(ax, 6.22, 5.95, 4, 2, TEAL, r"$Z_t=G_tU_t$", r"$m\times r$")
+        matrix(ax, 8.17, 5.95, 4, 3, GREEN, r"$G_t^{\perp}$", r"$m\times d$")
+        box(ax, 5.39, 4.48, 3.92, .55, TEAL, TEAL_BG, radius=.09, lw=.9)
+        text(ax, 7.35, 4.755, r"$G_t^{\perp}=G_t-Z_tU_t^{\top}$",
+             15.5, INK, ha="center")
 
-        # Merge, weight update, and feedback.
-        arrow(ax, (9.97, 3.91), (10.48, 3.47), BLUE)
-        arrow(ax, (9.97, 2.08), (10.48, 2.73), TEAL)
-        card(ax, 10.52, 1.55, 3.93, 3.46)
-        ax.add_patch(Circle((10.89, 4.59), .15, facecolor=AMBER, edgecolor="none"))
-        label(ax, 10.89, 4.59, "2", 10, "white", "bold", ha="center")
-        label(ax, 11.19, 4.59, "Merge and track", 15, NAVY, "bold")
-        label(ax, 10.84, 3.82, r"$W_{t+1}=W_t+\Delta W_{\parallel}$", 16)
-        label(ax, 11.62, 3.35, r"$+\Delta W_{\perp}$", 16)
-        ax.plot([10.84, 14.1], [3.0, 3.0], color=LINE, linewidth=1)
-        label(ax, 10.84, 2.56, r"$Q_t=(I-U_tU_t^{\top})G_t^{\top}Z_t$", 14.2, AMBER)
-        label(ax, 10.84, 2.05, r"$U_{t+1}=\mathrm{qf}(U_t+\rho H_t)$", 14.5)
+        matrix(ax, 11.02, 5.95, 3, 2, TEAL, r"$M_t$", r"$m\times r$")
+        matrix(ax, 12.40, 5.95, 3, 2, TEAL, r"$V_t$", r"$m\times r$")
+        matrix(ax, 13.76, 5.95, 3, 2, BLUE, r"$D_t^{\parallel}$", r"$m\times r$")
+        box(ax, 10.19, 4.48, 3.92, .55, BLUE, BLUE_BG, radius=.09, lw=.9)
+        text(ax, 12.15, 4.755, r"$D_t^{\parallel}=\mathrm{Adam}(Z_t;M_t,V_t)$",
+             14.7, INK, ha="center")
 
-        card(ax, .35, .35, 14.1, .67, AMBER_BG, "#f1d5a8", radius=.12)
-        label(ax, .64, .69, "ONLINE GEOMETRY", 10, AMBER, "bold")
-        label(ax, 3.0, .69,
-              r"Track the changing gradient subspace on $\mathrm{Gr}(r,d)$; align stored moments by Procrustes rotation.",
-              11.2, NAVY)
-        arrow(ax, (12.4, 1.53), (12.4, 1.05), AMBER, 1.8, 12)
-        arrow(ax, (2.1, 1.05), (2.1, 1.51), AMBER, 1.8, 12)
+        matrix(ax, 16.02, 5.95, 4, 3, PURPLE, r"$W_t$", r"$m\times d$")
+        matrix(ax, 18.00, 5.95, 4, 3, PURPLE, r"$W_{t+1}$", r"$m\times d$")
+        arrow(ax, (16.68, 6.02), (17.32, 6.02), PURPLE, 2.2, 16)
+        box(ax, 14.99, 4.48, 3.92, .55, PURPLE, PURPLE_BG, radius=.09, lw=.9)
+        text(ax, 16.95, 4.755,
+             r"$\Delta W_t=-\eta_{\parallel}D_t^{\parallel}U_t^{\top}-\eta_{\perp}s_tG_t^{\perp}$",
+             12.8, INK, ha="center")
 
-        fig.savefig(out, dpi=220, bbox_inches="tight", pad_inches=.12)
+        for x, color, title in [
+            (.35, TEAL, "Grassmann ascent"),
+            (6.82, BLUE, "Momentum + QR retraction"),
+            (13.29, GREEN, "Procrustes state alignment"),
+        ]:
+            box(ax, x, .78, 5.86, 3.18, color)
+            text(ax, x + .27, 3.58, title, 17, INK, "bold")
+            ax.plot([x + .25, x + 5.61], [3.30, 3.30], color=LINE, lw=1)
+
+        text(ax, .68, 2.81, r"$C_tU_t=G_t^{\top}(G_tU_t)$", 18)
+        text(ax, .68, 2.25,
+             r"$Q_t=\frac{(I-U_tU_t^{\top})G_t^{\top}Z_t}{\|G_t\|_F^2+\varepsilon}$",
+             18, TEAL)
+        box(ax, .66, 1.18, 5.18, .56, TEAL, TEAL_BG, radius=.08, lw=.8)
+        text(ax, 3.25, 1.46, r"$U_t^{\top}Q_t=0$; no $d\times d$ covariance",
+             13.5, INK, ha="center")
+
+        text(ax, 7.15, 2.83,
+             r"$H_t=\Pi_{U_t}\!\left(\mu H_{t-1}+(1-\mu)Q_t\right)$", 16)
+        text(ax, 7.15, 2.19, r"$U_{t+1}=\mathrm{qf}(U_t+\rho H_t)$",
+             18, BLUE)
+        box(ax, 7.13, 1.18, 5.18, .56, BLUE, BLUE_BG, radius=.08, lw=.8)
+        text(ax, 9.72, 1.46, r"$U_{t+1}^{\top}U_{t+1}=I_r$", 14.3, INK, ha="center")
+
+        text(ax, 13.62, 2.83,
+             r"$R_t=\mathrm{Polar}(U_{t+1}^{\top}U_t)$", 16)
+        text(ax, 13.62, 2.20, r"$M_t\leftarrow M_tR_t^{\top}$", 17, GREEN)
+        text(ax, 16.01, 2.20, r"$V_t\leftarrow V_t(R_t^{\top})^{\odot 2}$",
+             15, GREEN)
+        box(ax, 13.60, 1.18, 5.18, .56, GREEN, GREEN_BG, radius=.08, lw=.8)
+        text(ax, 16.19, 1.46, "Persistent state follows the moving frame",
+             13, INK, ha="center")
+
+        arrow(ax, (6.21, 2.43), (6.81, 2.43), TEAL, 2.3, 18)
+        arrow(ax, (12.68, 2.43), (13.28, 2.43), BLUE, 2.3, 18)
+        arrow(ax, (5.70, 4.34), (5.70, 3.98), TEAL, 2.0, 15)
+        arrow(ax, (16.95, 4.33), (16.95, 3.98), PURPLE, 2.0, 15)
+
+        ax.plot([16.2, 16.2, 3.2], [.75, .20, .20], color=PURPLE, lw=1.7)
+        arrow(ax, (3.2, .20), (3.2, .77), PURPLE, 1.7, 13)
+        text(ax, 9.78, .52, "aligned state feeds the next iteration",
+             11.5, PURPLE, ha="center")
+
+        fig.savefig(output, dpi=190, bbox_inches="tight", pad_inches=.10)
         plt.close(fig)
-    print(out)
+    print(output)
 
 
 if __name__ == "__main__":
-    main()
+    draw()

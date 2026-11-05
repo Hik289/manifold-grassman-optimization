@@ -1,20 +1,17 @@
-<div align="center">
+<h1 align="center">GrassRoute</h1>
 
-# GrassRoute
-
-### Online Gradient Routing on the Grassmann Manifold
-
-Research code for memory-efficient, geometry-aware optimization.
-
-[![Paper](https://img.shields.io/badge/Paper-PDF-264c77?style=for-the-badge)](paper/main.pdf)
-[![Method](https://img.shields.io/badge/Method-Overview-0f8b79?style=for-the-badge)](#method-at-a-glance)
-[![Experiments](https://img.shields.io/badge/Experiments-Reproduce-bc6c17?style=for-the-badge)](#reproducing-experiments)
-[![Code](https://img.shields.io/badge/Python-Source-374151?style=for-the-badge)](#repository-map)
-
-</div>
+<p align="center"><strong>Online Gradient Routing on the Grassmann Manifold</strong><br />
+Research code for memory-efficient, geometry-aware optimization.</p>
 
 <p align="center">
-  <img src="assets/grassroute_intuition.png" alt="GrassRoute routes the current gradient into a low-rank adaptive branch and a stateless orthogonal residual branch, then tracks the subspace on the Grassmann manifold." width="100%" />
+  <a href="paper/main.pdf"><img alt="Paper PDF" src="https://img.shields.io/badge/Paper-PDF-b31b1b.svg" /></a>
+  <a href="#method-at-a-glance"><img alt="PyTorch optimizer" src="https://img.shields.io/badge/PyTorch-Optimizer-ee4c2c.svg" /></a>
+  <a href="#reproducing-experiments"><img alt="Experiment code" src="https://img.shields.io/badge/Experiments-Code-168b88.svg" /></a>
+  <a href="assets/grassroute_intuition.png"><img alt="Method figure PNG" src="https://img.shields.io/badge/Figure-PNG-8655b6.svg" /></a>
+</p>
+
+<p align="center">
+  <img src="assets/grassroute_intuition.png" alt="Detailed GrassRoute update schematic: orthogonal gradient routing, low-rank adaptive coordinates, residual weight update, Grassmann tracking, and Procrustes state alignment." width="96%" />
 </p>
 
 <div align="center"><sub>The diagram is a PNG; its drawing code is in <a href="assets/draw_intuition.py">assets/draw_intuition.py</a>.</sub></div>
