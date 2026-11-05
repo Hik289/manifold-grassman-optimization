@@ -3,7 +3,7 @@
 <p align="center"><strong>Online Gradient Routing on the Grassmann Manifold</strong></p>
 
 <p align="center">
-  <a href="#license"><img alt="License unspecified" src="https://img.shields.io/badge/License-Unspecified-lightgrey.svg" /></a>
+  <a href="LICENSE"><img alt="MIT License" src="https://img.shields.io/badge/License-MIT-green.svg" /></a>
   <a href="requirements.txt"><img alt="Python 3" src="https://img.shields.io/badge/Python-3-3776AB.svg" /></a>
 </p>
 
@@ -88,4 +88,4 @@ The repository contains a working draft. The included LaTeX source currently use
 
 ## License
 
-A license has not yet been selected for this repository.
+The project code is licensed under the [MIT License](LICENSE). Third-party files retain their existing license notices.
