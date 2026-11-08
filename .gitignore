@@ -40,6 +40,7 @@ revision/focused_results/*
 revision/newtask_results/*/*/screen_*/*
 !revision/newtask_results/*/*/screen_*/summary.json
 revision/newtask_results/*/*/failed.json
+revision/newtask_results_bundled/
 revision/strength_results/graph/
 revision/strength_results/tracking/
 revision/strength_results/tracking_extended/

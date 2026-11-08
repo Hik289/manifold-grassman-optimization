@@ -1,8 +1,8 @@
-"""Draw the detailed GrassRoute overview; run with Python + Matplotlib + NumPy.
+"""Draw the GrassRoute method diagram with Matplotlib and NumPy.
 
-Five upper panels, three lower panels, condensed headings, STIX mathematics,
-shaded matrix glyphs, saturated outlines, and the outer state-feedback path.
-Arial Narrow is used when installed; DejaVu Sans is the portable fallback.
+The top row shows the weight update. The bottom row shows how the basis and
+stored Adam statistics change. Arial Narrow is used when installed;
+otherwise, the diagram uses DejaVu Sans.
 """
 from pathlib import Path
 import argparse
@@ -93,11 +93,11 @@ def draw(preview=None):
             ax.add_patch(a)
 
         # Upper row: same five-panel proportions as the local reference figure.
-        panel(19,11,381,339,BLUE,'Current gradient & basis',DARKBLUE)
-        panel(415,11,403,339,ORANGE,'Orthogonal gradient routing',DARKRED)
-        panel(830,11,383,339,BLUE,'Low-dimensional Adam',DARKBLUE)
-        panel(1225,11,348,339,GREEN,'Lift + residual update',DARKGREEN)
-        panel(1585,11,331,339,PURPLE,'Updated parameters & state',DARKPURPLE)
+        panel(19,11,381,339,BLUE,'Current weights, gradient & basis',DARKBLUE)
+        panel(415,11,403,339,ORANGE,'Split the gradient',DARKRED)
+        panel(830,11,383,339,BLUE,'Adam in the subspace',DARKBLUE)
+        panel(1225,11,348,339,GREEN,'Combine both updates',DARKGREEN)
+        panel(1585,11,331,339,PURPLE,'Updated weights & basis',DARKPURPLE)
 
         matrix(61,100,5,3,'#ac75dd',r'$W_t$',r'$m\times d$',19)
         matrix(183,100,5,3,'#f7a345',r'$G_t$',r'$m\times d$',19)
@@ -134,15 +134,15 @@ def draw(preview=None):
         matrix(1808,100,5,3,'#229cff',r'$U_{t+1}$',r'$d\times r$',19)
         inset(1608,244,285,88,PURPLE)
         label(1750,270,r'$U_{t+1}^{\mathsf{T}}U_{t+1}=I_r$',32,width=265)
-        label(1750,308,'Save the aligned moments',21,DARKPURPLE,width=260)
+        label(1750,308,'Keep the aligned Adam statistics',21,DARKPURPLE,width=260)
 
         for start,end in [(400,420),(818,835),(1213,1230),(1573,1590)]:
             arrow([(start,158),(end,158)],BLUE,4,20)
 
         # Geometry branch: one green chain, visually aligned with the reference.
-        panel(32,383,418,347,GREEN,'Grassmann ascent direction',DARKGREEN)
-        panel(500,383,818,347,GREEN,'Transported momentum + QR',DARKGREEN)
-        panel(1357,383,543,347,GREEN,'Procrustes state alignment',DARKGREEN)
+        panel(32,383,418,347,GREEN,'Compute the basis update',DARKGREEN)
+        panel(500,383,818,347,GREEN,'Update the basis: momentum + QR',DARKGREEN)
+        panel(1357,383,543,347,GREEN,'Align Adam statistics (Procrustes)',DARKGREEN)
 
         matrix(67,459,3,3,'#f7a345',r'$G_t^{\mathsf{T}}$',r'$d\times m$',18)
         matrix(204,459,3,3,'#68b57c',r'$Z_t$',r'$m\times r$',18)
@@ -152,7 +152,7 @@ def draw(preview=None):
         label(241,594,r'$Q_t=\dfrac{(I-U_tU_t^{\mathsf{T}})G_t^{\mathsf{T}}Z_t}{\Vert G_t\Vert_F^2+\epsilon_c}$',32,width=347)
         inset(55,652,372,42,GREEN)
         label(241,673,r'$U_t^{\mathsf{T}}Q_t=0$',30)
-        label(241,711,r'Implicit product: no $d\times d$ covariance',21,DARKGREEN,width=380)
+        label(241,711,r'No $d\times d$ covariance matrix needed',21,DARKGREEN,width=380)
 
         # QR visual occupies the left half; the exact recursion sits on the right.
         matrix(545,474,5,3,'#229cff',r'$U_t$',r'$d\times r$',20)
@@ -161,8 +161,8 @@ def draw(preview=None):
         label(648,523,r'$+$',32)
         arrow([(779,523),(823,523)],'black',1.8,12)
         label(801,499,'QR',18)
-        label(724,646,'Continuous online subspace update',23,DARKGREEN,width=365)
-        label(724,680,'Orthonormal routing frame',21,DARKBLUE,width=365)
+        label(724,646,'Update the basis during training',23,DARKGREEN,width=365)
+        label(724,680,'Keep the basis orthonormal',21,DARKBLUE,width=365)
         inset(932,447,363,245,GREEN)
         label(1113,475,r'$\Pi_U(A)=(I-UU^{\mathsf{T}})A$',32,width=340)
         label(1113,523,r'$H_t=\Pi_{U_t}[\,\mu H_{t-1}$',32,width=337)
@@ -189,15 +189,15 @@ def draw(preview=None):
         arrow([(1917,350),(1926,350),(1926,748),(16,748),(16,260),(47,260)],PURPLE,3.8,19)
         label(968,748,r'Next iteration: $(W_t,U_t)\leftarrow(W_{t+1},U_{t+1})$',25,PURPLE,bg=True,width=660)
 
-        legend=[(315,BLUE,'Routing subspace / adaptive update'),
-                (704,'#68b57c','Low-dimensional moments'),
+        legend=[(315,BLUE,'Basis / Adam update'),
+                (704,'#68b57c','Stored Adam statistics'),
                 (1014,'#f7a345','Gradient'),
-                (1203,'#ac75dd','Parameters')]
+                (1203,'#ac75dd','Weights')]
         for x,c,s in legend:
             roundbox(x,773,27,27,c,mc.to_rgba(c,.65),1.5,3)
             label(x+40,787,s,20,DARKBLUE,align='left')
         arrow([(1410,787),(1457,787)],BLUE,2,13)
-        label(1470,787,'Computation / current flow',20,DARKBLUE,align='left')
+        label(1470,787,'Update flow',20,DARKBLUE,align='left')
 
         # Font metrics enforce the boxes without raster cropping or post-editing.
         fig.canvas.draw()
@@ -209,7 +209,9 @@ def draw(preview=None):
                 artist.set_fontsize(artist.get_fontsize()*width*scale/actual)
         output=Path(__file__).with_name('grassroute_intuition.png')
         fig.savefig(output,dpi=300,facecolor='white')
-        fig.savefig(output.with_suffix('.svg'),facecolor='white')
+        svg=output.with_suffix('.svg')
+        fig.savefig(svg,facecolor='white')
+        svg.write_text('\n'.join(line.rstrip() for line in svg.read_text().splitlines())+'\n')
         if preview:
             fig.savefig(preview,dpi=60,facecolor='white')
         plt.close(fig)
