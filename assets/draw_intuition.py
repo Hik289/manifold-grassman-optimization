@@ -2,11 +2,14 @@
 
 The top row shows the weight update. The bottom row shows how the basis and
 stored Adam statistics change. Arial Narrow is used when installed;
-otherwise, the diagram uses DejaVu Sans.
+otherwise, the diagram uses DejaVu Sans. SVG and PDF exports retain text
+objects so labels can be selected and copied; PNG is a raster preview.
 """
 from pathlib import Path
 import argparse
+import re
 
+import fitz
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
@@ -14,6 +17,7 @@ import matplotlib.colors as mc
 import matplotlib.patheffects as pe
 from matplotlib import font_manager
 from matplotlib.patches import FancyBboxPatch, FancyArrowPatch, Rectangle
+from matplotlib.mathtext import MathTextParser
 import numpy as np
 
 BLUE='#087bff'
@@ -26,11 +30,52 @@ DARKRED='#970c00'
 DARKPURPLE='#5700c8'
 
 
+def keep_pdf_transposes_selectable(path):
+    """Keep STIX's non-BMP transpose glyph as text, with its original shape.
+
+    Matplotlib emits this glyph as a Form XObject even with PDF font type 42.
+    Replace those draws with embedded text at the same transformation, and
+    provide the UTF-16 mapping used by PDF text selection and copying.
+    """
+    font, _, codepoint, _, _ = MathTextParser('path').parse(r'$\mathsf{T}$').glyphs[0]
+    with fitz.open(path) as document:
+        page=document[0]
+        names=[entry[1] for entry in page.get_xobjects()
+               if entry[1].lower().endswith(f'-u{codepoint:x}')]
+        if not names:
+            return
+        pdf_font=fitz.Font(fontfile=font.fname)
+        glyph=pdf_font.has_glyph(codepoint, fallback=False)
+        assert glyph, 'The original math font must contain the transpose glyph'
+        font_xref=page.insert_font(fontname='SelectableTranspose',fontfile=font.fname)
+        cmap_xref=int(document.xref_get_key(font_xref,'ToUnicode')[1].split()[0])
+        unicode_hex=chr(codepoint).encode('utf-16-be').hex()
+        cmap=f'''/CIDInit /ProcSet findresource begin
+12 dict begin begincmap
+/CIDSystemInfo << /Registry (Adobe) /Ordering (UCS) /Supplement 0 >> def
+/CMapName /SelectableTranspose def /CMapType 2 def
+1 begincodespacerange <0000> <FFFF> endcodespacerange
+1 beginbfchar <{glyph:04x}> <{unicode_hex}> endbfchar
+endcmap CMapName currentdict /CMap defineresource pop end end'''
+        document.update_stream(cmap_xref,cmap.encode('ascii'))
+        replacement=(f'BT /SelectableTranspose 1000 Tf '
+                     f'1 0 0 1 0 0 Tm <{glyph:04x}> Tj ET').encode('ascii')
+        for xref in page.get_contents():
+            data=document.xref_stream(xref)
+            for name in names:
+                data=re.sub(rb'/'+re.escape(name.encode('ascii'))+rb'\s+Do',replacement,data)
+            document.update_stream(xref,data)
+        temporary=path.with_name(path.stem+'.text.pdf')
+        document.save(temporary,garbage=4,deflate=True)
+    temporary.replace(path)
+
+
 def draw(preview=None):
     available={f.name for f in font_manager.fontManager.ttflist}
     heading_font='Arial Narrow' if 'Arial Narrow' in available else 'DejaVu Sans'
     with plt.rc_context({'font.family':heading_font, 'mathtext.fontset':'stix',
-                         'font.size':14, 'svg.fonttype':'path', 'savefig.facecolor':'white'}):
+                         'font.size':14, 'svg.fonttype':'none', 'pdf.fonttype':42,
+                         'savefig.facecolor':'white'}):
         fig=plt.figure(figsize=(19.33001,8.13001),dpi=300)
         ax=fig.add_axes([0,0,1,1])
         ax.set_xlim(0,1933);ax.set_ylim(813,0);ax.axis('off')
@@ -212,6 +257,11 @@ def draw(preview=None):
         svg=output.with_suffix('.svg')
         fig.savefig(svg,facecolor='white')
         svg.write_text('\n'.join(line.rstrip() for line in svg.read_text().splitlines())+'\n')
+        # Embed text fonts in the local PDF instead of outlining the glyphs.
+        # Generated PDFs are ignored by Git; SVG is the public vector version.
+        fig.savefig(output.with_suffix('.pdf'),facecolor='white',
+                    metadata={'Creator':'Matplotlib','CreationDate':None})
+        keep_pdf_transposes_selectable(output.with_suffix('.pdf'))
         if preview:
             fig.savefig(preview,dpi=60,facecolor='white')
         plt.close(fig)

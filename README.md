@@ -8,7 +8,7 @@
 </p>
 
 <p align="center">
-  <a href="assets/grassroute_intuition.png"><img src="assets/grassroute_intuition.png" alt="How GrassRoute works: split the gradient, apply Adam in a small subspace, update the weights, then update the subspace and align the stored Adam statistics." width="100%" /></a>
+  <a href="assets/grassroute_intuition.svg"><img src="assets/grassroute_intuition.png" alt="How GrassRoute works: split the gradient, apply Adam in a small subspace, update the weights, then update the subspace and align the stored Adam statistics." width="100%" /></a>
 </p>
 
 ## How GrassRoute works
