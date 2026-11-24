@@ -1,10 +1,11 @@
 \subsection{An explicit sensitivity matrix for every stored state}
 \label{app:explicit-state-matrix}
-We give explicit constants for one routed matrix, comparing its stored QR
-frames. Add rows and columns for further routed layers and fallback states.
-Zero-initialized moments give fresh bias-corrected first moments bounded
-by $G_0$ (Lemma~\ref{lem:actual-invariants}). Let
-$e_W,e_U,e_M,e_A,e_H,e_g$ be the coordinate row vectors of
+The following construction replaces unspecified composition constants by
+finite algebraic expressions. Norms compare stored QR frames, not merely
+projectors. We specify one routed matrix; further routed layers or fallback
+states require additional rows and columns. Moment states start at zero,
+so fresh bias-corrected first moments are bounded by $G_0$ as in
+Lemma~\ref{lem:actual-invariants}. Let $e_W,e_U,e_M,e_A,e_H,e_g$ be the coordinate row vectors of
 $\mathbb R^6$ and
 \begin{equation}
  d=(\delta W,\delta U,\delta M,\delta A,\delta H,\delta g)^{\top}\ge0,
@@ -151,9 +152,10 @@ satisfies
  \le\frac{h_W+b^\top(I-A)^{-1}h_S}
  {n\{1-k-b^\top(I-A)^{-1}c\}}.\label{eq:schur-stability}
 \end{equation}
-Without weight decay, the triangle bounds in \eqref{eq:all-state-rows}
-usually give $k\ge1$. Establishing \eqref{eq:schur-feedback} then requires
-a parameter-contraction estimate that retains the signs of the update terms.
+The triangle-inequality construction \eqref{eq:all-state-rows} usually has
+$k\ge1$ when weight decay is absent. It does not by itself establish
+\eqref{eq:schur-feedback}; that requires a sharper signed contraction
+estimate for the parameter transition.
 \end{proposition}
 \begin{proof}
 Every induced norm bounds the spectral radius from below. For any
@@ -201,8 +203,8 @@ finite $C_q$ such that the neighboring-data parameter difference obeys
                            \sqrt{1+\eta^2}}
                          {n(1-q)}.\label{eq:quadratic-generalization}
 \end{equation}
-The result assumes a fixed metric and does not cover Adam with a changing
-routing basis.
+This is a frozen-metric specialization, not a contraction theorem for
+unrestricted Adam or a moving routing basis.
 \end{proposition}
 \begin{proof}
 Use coordinates $x=B^{-1/2}w$, $y=B^{1/2}m$ and diagonalize
@@ -231,7 +233,7 @@ with probability $1/n$. Sum the geometric response and multiply by
 $\|B^{1/2}\|_{\rm op}$ to return to $w$.
 \end{proof}
 
-\subsection{Validation selection over fixed candidates}
+\subsection{Validation selection is a separate statistical operation}
 \label{app:validation-selection}
 \begin{theorem}[Finite-candidate validation selection]
 Let $\theta_1(S),\ldots,\theta_K(S)$ be any predictors constructed without
@@ -245,9 +247,9 @@ candidate-generation randomness,
  L(\theta_{\widehat k})&\le\min_{k\le K}L(\theta_k)+2\epsilon_v.
  \label{eq:validation-oracle}
 \end{align}
-Count every inspected checkpoint, learning rate, rank, and restart among
-the candidates. Generating new candidates adaptively from $V$ requires
-a different argument.
+Every inspected checkpoint, learning rate, rank, and restart must be
+included among the candidates. Repeated adaptive use of $V$ to generate
+new candidates requires a different argument.
 \end{theorem}
 \begin{proof}
 Conditional on the candidates, Hoeffding and the union bound yield
@@ -260,8 +262,8 @@ On its complementary event, for every $k$,
  L_{\widehat k}\le\widehat L_{V,\widehat k}+\epsilon_v
  \le\widehat L_{V,k}+\epsilon_v\le L_k+2\epsilon_v.
 \end{equation}
-The bound uses validation independence, without a stability assumption
-on training or the selected learning-rate map.
+This proof neither assumes nor transfers training-set stability of the
+selected learning-rate map.
 \end{proof}
 
 \subsection{PAC-Bayes: anisotropic posterior optimization and a margin specialization}
@@ -385,7 +387,7 @@ Let $x=\phi(z)\ne0$ be a feature map fixed before observing $S$, and
 let $W\in\mathbb R^{m\times d}$, $m\ge2$, be a multiclass linear head.
 Use the row-independent Gaussian posterior
 $Q=\mathcal N(\operatorname{vec}W,I_m\otimes\Sigma)$, $\Sigma\succ0$,
-and a data-independent prior $\Pi$. Write $\varphi,\Phi$ for the
+and a legal data-independent prior $\Pi$. Write $\varphi,\Phi$ for the
 standard normal density and distribution function. For each training pair,
 \begin{align}
  \nu_i^2&=x_i^\top\Sigma x_i,&
@@ -436,7 +438,8 @@ difference makes a Gibbs error with probability at least $1/2$. Hence
 $L_{0/1}(W)\le2L_{0/1}(Q)$. This factor two is attained by a binary
 zero-mean-margin example when ties are counted as center errors.
 Theorem~\ref{thm:Seeger-Maurer} and monotonicity of the upper KL inverse
-prove \eqref{eq:pb-margin}. The feature map is fixed independently of $S$;
-a learned encoder must be included in the hypothesis space and prior.
-A numerical certificate must also account for quadrature error.
+prove \eqref{eq:pb-margin}. The identities use an independent fixed feature
+map; an encoder learned from $S$ must be included in the hypothesis space
+and prior construction. Numerical evaluation of the integrals requires a
+controlled quadrature error if used for a certificate.
 \end{proof}

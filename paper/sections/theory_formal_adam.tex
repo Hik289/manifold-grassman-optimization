@@ -1,8 +1,8 @@
-\subsection{Stochastic convergence of the transported Adam update}
+\subsection{A closed stochastic bound for the actual transported Adam recursion}
 \label{app:actual-adam}
-We now include the current-batch denominator in the analysis. The result
-requires the stated noise and learning-rate assumptions in addition to
-unbiased gradients. Indices start at $t=1$.
+We now analyze the current-batch denominator itself. This result uses the
+additional noise and schedule hypotheses below; it is not a consequence of
+unbiasedness alone. Indices in this subsection start at $t=1$.
 
 \begin{assumption}[Actual-recursion specialization]
 \label{ass:actual-adam}
@@ -318,8 +318,8 @@ The implemented moments and current-batch denominator satisfy
  \le\left(\frac{e_T+\sqrt{e_T^2+4a_0 C_T^{\rm virt}}}{2a_0}\right)^2.
  \label{eq:actual-adam-bound}
 \end{equation}
-Equation~\eqref{eq:closed-F-budget} bounds $e_T^2$; a smaller verified
-upper bound may be substituted.
+One may use the closed budget \eqref{eq:closed-F-budget} for $e_T^2$,
+while retaining a smaller rigorously established budget when available.
 For $T\ge2$, $\eta=\eta_0T^{-1/2}$, $\rho=\rho_0T^{-1/2}$,
 $\beta_2=1-T^{-1}$ and fixed $\beta_1$,
 \begin{equation}
@@ -327,8 +327,9 @@ $\beta_2=1-T^{-1}$ and fixed $\beta_1$,
  =O(T^{-1/2})+O((\log T)/T)+O(\varepsilon_r^2).
  \label{eq:actual-adam-rate}
 \end{equation}
-The noise and schedule assumptions have not been verified for the benchmark
-runs. This upper bound concerns the implemented recursion and need not be optimal.
+These extra noise and schedule assumptions are not established properties
+of the benchmark runs. The bound closes the actual recursion but is not
+claimed optimal for all Adam trajectories.
 \end{theorem}
 \begin{proof}
 Let $z_T^2=T^{-1}\sum_t\mathbb E\|g_t\|^2$ and
@@ -353,10 +354,11 @@ Telescope $f(Y_t)$, use $Y_1=W_1$, $f(Y_{T+1})\ge f_\star$, and obtain
 Its positive root is \eqref{eq:actual-adam-bound}. Finally
 $e_T^2=O(\rho^2)+O(1-\beta_2+(\log T)/T)+O(T^{-1})$.
 Using $z_T\le e_T/a_0+\sqrt{C_T^{\rm virt}/a_0}$ gives the stated rate.
-Averaging first retains the cross term $e_Tz_T$ in the quadratic inequality.
+This retains the averaged direction budget rather than inserting a
+per-step Young allocation or doubling both squared directions.
 \end{proof}
 
-\begin{corollary}[Positive residual floor and fixed schedules]
+\begin{corollary}[Positive residual floor, fixed schedules, and the scope of the rate]
 If the residual rule in Assumption~\ref{ass:actual-adam} is instead clipped
 to $[s_{\min},s_{\max}]$ with $s_{\min}>0$, the same radial-noise argument
 applied to $h(r)=s(r)-s_{\min}$ gives
@@ -367,9 +369,9 @@ applied to $h(r)=s(r)-s_{\min}$ gives
 Then Theorem~\ref{thm:actual-adam} holds with
 $a_0=\min(a,s_{\min})$ and the $\varepsilon_r^2/2$ term deleted from
 $C_T^{\rm virt}$.
-For fixed $\beta_2<1$ and fixed $\rho>0$, the upper bound retains
-$O(1-\beta_2)+O(\rho^2)$ terms; these are not established error floors.
-For several routed matrices, a joint
+For fixed $\beta_2<1$ and fixed $\rho>0$, the explicit bound retains
+$O(1-\beta_2)+O(\rho^2)$ terms. No claim that these are unavoidable lower
+bounds follows from this upper bound. For several routed matrices, a joint
 radial unimodality condition on the vectorized total gradient, block-diagonal
 $\overline{\mathcal A}_t$, and the sum of squared block residual offsets
 give the corresponding block result.

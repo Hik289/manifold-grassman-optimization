@@ -1,7 +1,1 @@
-With the seed-42 Cora GraphSAGE settings fixed, three new initializations
-(seeds 43--45) yield mean final test accuracy of 76.90\% for GrassRoute,
-77.63\% for AdamW, and 79.23\% for SGD-M. GrassRoute exceeds AdamW in 1/3
-paired seeds. Corrected periodic SVD reaches 78.10\% and 78.60\% on its
-two completed runs; the third fails numerically. The seed-42 accuracy gain
-therefore does not repeat consistently. Table~\ref{tab:focused-cora-replication}
-reports all results and the failure.\par
+With the seed-42 Cora GraphSAGE hyperparameters frozen, three new initializations give mean final test accuracy 76.90\% for GrassRoute, 77.63\% for AdamW and 79.23\% for SGD-M. GrassRoute exceeds AdamW in 1/3 paired seeds. Corrected periodic SVD records 78.10\%, 78.60\% on its completed seeds and a retained numerical failure on the other. The favorable seed-42 accuracy--state observation is therefore not consistent across these new initializations; all endpoints and the failure appear in Table~\ref{tab:focused-cora-replication}.\par

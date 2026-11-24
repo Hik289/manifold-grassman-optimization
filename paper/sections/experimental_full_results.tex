@@ -3,10 +3,7 @@
 \label{app:full-results}
 \begin{table}[ht]
 \centering\small
-\caption{Tuned historical summaries. Accuracy and Recall@20 are percentages.
-SciML reports best training loss; its SGD proxy measures a different quantity
-and is omitted. These selected historical scores, often the best observed
-test accuracy, are separate from the extension's final held-out scores.}
+\caption{Reported tuned historical summaries. Accuracy and Recall@20 are percentages. SciML reports best training loss; its historical SGD proxy is a different metric and is omitted. Values are selected historical observations, often best observed test accuracy, and are not final held-out endpoints from the extension.}
 \label{tab:archive}
 \reviewfit{\begin{tabular}{llrrrr}
 \toprule {\bfseries Task} & {\bfseries Metric} & {\bfseries SGD-M} & {\bfseries AdamW} & {\bfseries Periodic SVD} & \cellcolor{oursbg}{\bfseries GrassRoute}\\
@@ -23,74 +20,47 @@ MovieLens / MF  &  R@20 $\uparrow$  &  17.1  &  6.1  &  6.2  &  \cellcolor{oursb
 \end{tabular}}
 \end{table}
 
-On the archived Burgers PINN, GrassRoute reduces best training loss relative
-to both AdamW and tuned periodic SVD while using 84.1\% less optimizer
-state. This is one PDE task, with a reported 1.78$\times$ step cost. The
-metric combines residual and initial-condition errors rather than measuring
-relative solution error. The omitted boundary penalty also limits physical
-interpretation (Appendix~\ref{app:audit}).
+The clear archived joint gain is the Burgers PINN: GrassRoute improves best training loss relative to both AdamW and tuned periodic SVD, with a reported 84.1\% reduction in persistent optimizer state. That is one scientific-learning family, not evidence from several independent PDE tasks. Its reported 1.78$\times$ step cost is a compute penalty accompanying the state saving. The old PDE evaluation is a residual-plus-initial-condition proxy rather than an actual solution relative error, and the boundary-condition omission limits physical interpretation (Appendix~\ref{app:audit}).
 
-On Cora, GrassRoute improves on AdamW but falls slightly below tuned
-periodic SVD. In the archived CNN run, partial routing improves accuracy by
-1.96 percentage points over AdamW and 0.19 points over tuned SGD. Its
-88.19 MB state, compared with AdamW's 89.76 MB, saves about 1.8\%.
-Full routing uses 8.68 MB but loses 11.91 accuracy points to AdamW.
-The two variants therefore offer different accuracy--memory trade-offs.
-The graph-arxiv, MLP, recommendation, and continual-learning results show
-no robust GrassRoute advantage. The ViT archive contains complete AdamW
-and periodic-SVD histories but no complete GrassRoute result.
+Cora is a qualified positive result against AdamW, but tuned periodic SVD is slightly better. The CNN partial variant improves AdamW by 1.96 percentage points and tuned SGD by only 0.19 points in the archived single run. Its state is 88.19 MB versus AdamW's 89.76 MB, saving only about 1.8\%. Full routing reduces state to 8.68 MB but loses 11.91 accuracy points relative to AdamW. These are distinct accuracy--memory trade-offs, not a CNN joint win. The graph-arxiv, MLP, recommendation, and continual-learning results do not establish a robust GrassRoute advantage. Archived ViT has complete AdamW and periodic-SVD trajectories but no complete GrassRoute endpoint.
 
-The archived diagnostics cannot establish a single geometric predictor of
-performance. Captured energy does not measure an eigengap, consecutive-basis
-angles do not measure oracle error, and nominal rank sweeps did not always
-change parameter-group ranks. The controlled diagnostics address these
-measurement issues while retaining the original outcomes.
+The old broad claims about a single geometric predictor are not retained. Captured energy is not an eigengap, the recorded consecutive-basis angle is not oracle error, and nominal rank sweeps did not always change the parameter-group ranks. These issues motivate new controlled diagnostics and explicit provenance rather than retrospective reclassification of negative results.
 
 \subsection{Validation-selected original proposal matrix}
 \input{figures/revision_summary}
 \input{figures/revision_main_table}
 
-The original manifest covers each proposed task and dataset with a
-representative model, rather than every dataset--architecture--rank
-combination. Its 27 configurations comprise three input dimensions each
-for matrix and low-rank regression, MNIST, four CNN datasets, three ViT
-datasets, four graph datasets, four scientific tasks, three recommendation
-datasets, and two continual-learning protocols. Each method screens three
-learning rates on validation data before a fresh final run. Completed runs
-use full epochs and save every epoch, restartable checkpoints, dataset
-sources, actual ranks, hyperparameters, and code hashes. The expensive queue
-was stopped after 117 completed cells; the others remain unfinished.
-Appendix~\ref{app:audit} defines the tasks and search budgets.
+The original manifest spans every proposed task/dataset with representative models, rather than the full dataset--architecture--rank Cartesian product. Its 27 configurations include three input dimensions for both matrix and low-rank regression, MNIST, four CNN datasets, three ViT datasets, four graph datasets, four scientific tasks, three recommendation datasets, and two continual-learning protocols. Completed runs use full epochs and save restartable checkpoints and all epoch records. Three learning rates per method are screened on validation data before a fresh formal run. Dataset sources, actual ranks, hyperparameters, and source hashes are recorded with each result. The high-cost queue was stopped after 117 completed cells; the rest remain visibly pending. Appendix~\ref{app:audit} defines the tasks and selection budgets precisely.
 
 \input{figures/scientific_endpoints_table}
 
-Only completed comparisons support a task-level conclusion. Memory, test
-quality, and time are reported separately, including the strong SGD and
-fixed-routing results. The finite search and single-seed protocol do not
-establish statistical significance or an exhaustive optimizer ranking.
+New task coverage is evidence only when the formal comparison completes. A lower parameter-state cost can remain useful without a test-metric win; conversely, an isolated lower error does not establish a practical advantage without accounting for state and time. We therefore retain all completed baselines, including strong SGD and fixed-routing outcomes, and report shared-host resource measurements separately from accuracy. The current finite hyperparameter search and one-seed protocol do not support statistical-significance claims or exhaustive optimizer rankings.
 
 \subsection{Focused exploratory follow-up after scope reduction}
 \label{app:focused-followup}
-After the original 162-cell plan stopped at 117 completed runs, remaining
-cells, including partial CIFAR-100 histories, were marked unfinished.
-A smaller follow-up tests tracking on a rotating rank-four regression stream
-under three conditions, fixed before the final results were examined.
-Each method receives four equal-budget validation candidates and a fresh
-1500-step run. Table~\ref{tab:focused-regression} reports every condition
-and method. GrassRoute tracks the subspace more closely under drift but
-does not achieve lower prediction MSE than the strongest baselines.
-Motivated by the Cora GraphSAGE result, a separate GCN experiment tests
-another architecture on the same dataset. This exploratory replication's
-six-method comparison is in Table~\ref{tab:focused-gcn}.
+The original 162-cell plan was stopped after 117 completed runs. The
+remaining cells are retained as unfinished, including partial CIFAR-100
+trajectories; they are not interpreted as full-budget endpoints. To test
+the proposed tracking mechanism with less computation, we froze a separate
+three-condition rotating rank-four regression stream before inspecting its
+formal outcomes. Each method used four equal-budget validation candidates
+and a new 1500-step run; Table~\ref{tab:focused-regression} includes all
+conditions and comparators. GrassRoute's smaller subspace-angle error in
+the drifting conditions did not yield a lower prediction MSE than the
+strongest baselines. The Cora GCN check is motivated by the prior Cora
+GraphSAGE result, so it is an exploratory architecture replication on the
+same dataset. Its full six-method matrix is in Table~\ref{tab:focused-gcn}.
 \input{figures/focused_regression_table}
 \input{figures/focused_gcn_table}
 
-We also fix the seed-42 validation-selected settings from the Cora
-GraphSAGE and SMS studies and rerun three initializations (43--45) per
-method on the same public splits. These tests compare four prespecified
-methods on existing datasets. Tables~\ref{tab:focused-cora-replication}
-and~\ref{tab:focused-sms-replication} include every result. A numerical
-failure at the fixed setting is recorded without a test-selected replacement.
+We additionally froze the seed-42 validation-selected hyperparameters from
+the original Cora GraphSAGE and SMS studies, then reran three new
+initializations (43--45) per method on each unchanged public split. These
+replications use four prespecified core comparators and retain all endpoints
+in Tables~\ref{tab:focused-cora-replication}
+and~\ref{tab:focused-sms-replication}; they do not add independent datasets.
+A numerical failure at a frozen hyperparameter is kept as such and does not
+trigger a test-selected replacement.
 \input{figures/focused_cora_replication_table}
 \input{figures/focused_sms_replication_table}
 

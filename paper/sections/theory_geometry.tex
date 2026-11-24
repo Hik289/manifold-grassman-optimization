@@ -1,20 +1,20 @@
 % WWW table style: three rules, bold headers, reference green highlight.
-\section{Theoretical Analysis}
+\section{Detailed Theoretical Analysis}
 \label{app:theory}
 
-We first analyze the routing geometry, then the parameter updates and
-generalization. Principal-plane calculations control routing error, a
-Sylvester equation controls eigenspace perturbations, and Gaussian KL
-identities connect learned directions to PAC-Bayes bounds. Each result
-states its own assumptions. The parameter matrix remains unconstrained:
-rank-$r$ optimizer state does not impose a rank-$r$ parameter constraint.
-Table~\ref{tab:proof-sharpness} lists the constants with known equality cases.
+The proof is organized around three reductions: orthogonal routing to
+independent principal planes; spectral perturbation to a separated Sylvester
+equation; and generalization to an exact Gaussian KL followed by binary-KL
+inversion. Their classical ingredients and their exact roles are explicit.
+The parameter matrix is unconstrained, and a rank-$r$ optimizer state is not
+a rank-$r$ parameter constraint. The table distinguishes sharp atomic
+inequalities from the sufficient adaptive-state budgets used to combine them.
 
 \begin{table}[htbp]
 \centering\small
-\caption{\textbf{Proof structure and equality cases.} The listed constants
-are attained in the stated examples. Bounds obtained by combining them
-need not be optimal.}
+\caption{\textbf{Proof structure and sharpness.} Exactness concerns the stated
+model or atomic inequality, not universal optimality of the complete optimizer
+or of every composed finite-sample bound.}
 \label{tab:proof-sharpness}
 \setlength{\tabcolsep}{4pt}\renewcommand{\arraystretch}{1.18}
 \reviewfit{\begin{tabular}{@{}p{.25\linewidth}p{.31\linewidth}p{.37\linewidth}@{}}
@@ -32,9 +32,10 @@ Seeger--Maurer  &  Exact $\Xi_n$ and binary-KL inverse  &  Bernoulli moment is e
 \bottomrule
 \end{tabular}}
 \end{table}
-The Adam direction error and coupled-state Lipschitz constants are upper
-bounds without matching equality cases. Positive-gap tracking and a
-stationarity limit with a vanishing gap are treated separately.
+The actual Adam defect and the coupled state Lipschitz constants remain
+sufficient upper bounds; sharpness is not claimed for those worst-case
+budgets. A positive-gap tracking regime is also kept separate from a
+stationarity limit in which that gap may vanish.
 
 \subsection{Notation, filtration, and the population being tracked}
 \label{app:population}
@@ -75,11 +76,11 @@ $\theta_1,\ldots,\theta_r\in[0,\pi/2]$ be the principal angles and define
  R(U)=\|\Theta\|_F,\quad \theta_{\max}(U)=\max_i\theta_i,
  \quad s(U)=\|\sin\Theta\|_F,\quad h_C(U)=\Phi(U)-\Phi(U_\star).
 \end{equation}
-The angle $\theta_{\max}$ determines whether the graph chart relative to
-the optimal subspace exists; $R$ is geodesic distance. Both refer to the
-optimal subspace, not the preceding optimizer basis. Constants depend on
-the layer, rank, and time interval. Average captured energy across layers
-does not bound each layer's eigengap.
+The angle $\theta_{\max}$ controls transversality to the optimal subspace;
+$R$ is geodesic distance. They must not be identified with the distance between
+two consecutive optimizer bases. Constants in the analysis are specific to a
+layer, rank, and time interval. A positive average captured energy across layers
+does not verify a uniform lower bound on their individual eigengaps.
 
 \subsection{Quotient geometry and implemented operations}
 
@@ -164,10 +165,13 @@ Finally, orthogonal projection cannot increase norm and
 $(I-VV^\top)\xi-\xi=(UU^\top-VV^\top)\xi$.
 \end{proof}
 
-The bound measures subspace error. QR can also rotate the basis within its
-span, affecting coordinatewise Adam while leaving the routing objective
-unchanged. Numerical orthogonality, retraction error, and statistical
-tracking error are distinct; an orthogonality check measures only the first.
+This calculation identifies the retraction error on the quotient, where the
+algorithm actually tracks a subspace. The QR basis itself can also contain a
+within-subspace rotation. That rotation affects coordinatewise Adam even when
+it has no effect on the routing objective. Numerical orthogonality error,
+retraction approximation error, and statistical tracking error are three
+different quantities; a small value of the first does not establish either of
+the others.
 
 \subsection{The routing landscape: exact principal-angle analysis}
 \label{app:landscape}
@@ -243,9 +247,10 @@ $c_i\sin\theta_i\cos\theta_i$. Bessel's inequality therefore gives
  &\ge\Delta\cos^2R_0\sum_i c_i\sin^2\theta_i
  =2\Delta\cos^2R_0\,h_C(U).
 \end{align}
-This principal-angle proof agrees with prior analyses of the block
-Rayleigh quotient \cite{alimisis2024geodesic}; the angular factor is an
-established property of this objective.
+This proves PL without a curvature-comparison shortcut. It is consistent
+with prior analyses of the block Rayleigh quotient
+\cite{alimisis2024geodesic}; the angular factor is not claimed as a new
+standalone manifold theorem.
 
 At $U_\star$, diagonalize $C$ in its invariant subspaces. A tangent
 coordinate moving selected eigenvector $i$ toward unselected eigenvector
@@ -264,11 +269,13 @@ Thus the Hessian is negative for $\pi/4<\theta<\pi/2$ even though
 quadratic growth and the positive PL bound still hold.
 \end{proof}
 
-PL controls objective decrease along one trajectory. Contraction between
-\emph{two} trajectories requires additional assumptions. The factor in
-\eqref{eq:PL}, $\Delta\cos^2R_0$, describes this routing objective; the
-ranking of complete optimizers also depends on noise, normalization,
-adaptive-state conditioning, and computational cost.
+The distinction in the last sentence is essential for tracking and stability.
+PL controls objective decrease along one trajectory. Contraction of the
+distance between \emph{two} trajectories requires additional hypotheses;
+it does not follow from PL alone. Nor does \eqref{eq:PL} prove that the
+scalar $\Delta\cos^2R_0$ predicts the ranking of complete neural-network
+optimizers. Gradient noise, covariance normalization, parameter-state
+conditioning, and computational cost remain independent factors.
 
 \subsection{Coordinate transport and the limits of diagonal Adam}
 \label{app:transport}
@@ -309,16 +316,17 @@ coordinatewise normalization and rotation back does not reproduce that
 vector. Signed coordinate permutations are a special invariant case.
 \end{proof}
 
-For consecutive subspaces with different spans, use
+For consecutive, genuinely different subspaces we use
 $R=\operatorname{Polar}(U_+^\top U)$ and align $M_+=MR^\top$.
-This minimizes basis mismatch. A historical ambient moment may still have
-a component outside the new span. For an ambient moment $A$,
+This minimizes basis mismatch, but cannot restore the part of a historical
+ambient moment orthogonal to the new span. If an ambient moment is $A$,
+then
 \begin{equation}
  \|AP-AP_+\|\le\|A\|\|P-P_+\|_{\mathrm{op}}
  =\|A\|\sin\theta_{\max}(U,U_+).
 \end{equation}
-This bounds the first-order projection error; omitted covariance
-correlations contribute a separate error.
+This is a first-order perturbation bound, not an exact transport identity.
+The covariance error from omitted correlations must be added separately.
 
 The archived implementation used $(\sqrt v\,Q)^{\odot2}$ rather than
 \eqref{eq:diag-transport}. These differ even for diagonal covariance:

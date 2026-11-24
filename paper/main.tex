@@ -59,23 +59,25 @@
 ]
 \printAffiliationsAndNotice{}
 \begin{abstract}
-GrassRoute reduces optimizer memory by storing Adam statistics in a learned
-low-rank subspace. A Grassmann update tracks this subspace, while a stateless
-branch preserves the remaining gradient directions. We derive sharp local
-geometric constants and tracking bounds that separate sampling noise, target
-drift, and momentum lag. Under stated noise and regularity assumptions, we
-bound stationarity for the transported Adam recursion and generalization
-through full-state stability and PAC-Bayes analysis. The proofs account for
-basis-dependent adaptive statistics and the approximation in second-moment
-transport. In an archived Burgers experiment, GrassRoute reaches a best
-training loss of $1.97\times10^{-3}$ versus AdamW's $1.10\times10^{-2}$ and
-periodic SVD's $3.27\times10^{-3}$, using 84.1\% less optimizer state at a
-reported $1.78\times$ step cost. A Cora accuracy gain is not consistent across
-three additional initializations. On SMS classification, GrassRoute uses
-87.0\% less state at a 0.85 percentage-point macro-F1 cost. None of the six
-additional public-data tasks shows a strict primary-metric gain over both
-AdamW and periodic SVD. We report these trade-offs alongside the complete
-outcomes and protocols of the attempted evaluations.
+GrassRoute learns an online Grassmann routing subspace, applies adaptive
+updates in its coordinates, and preserves the orthogonal gradient residual
+through a stateless branch. We derive sharp QR pullback and normalized-covariance
+constants using CS/Poincar\'e geometry and a Householder identity, while a Ky Fan
+variational argument controls moving-target tracking. A virtual iterate and
+an averaged quadratic-root argument analyze the transported Adam recursion;
+full-state coupling, exact Gaussian orientation costs, Seeger--Maurer inversion
+and a Haar-mixture prior give conditional stability and PAC-Bayes guarantees.
+Archived Burgers experiments record best training loss $1.97\times10^{-3}$
+versus AdamW's $1.10\times10^{-2}$ and periodic SVD's $3.27\times10^{-3}$,
+with 84.1\% less optimizer state and a reported $1.78\times$ step cost.
+One Cora comparison improves on AdamW and corrected periodic
+routing with 93.0\% less state than AdamW; three new initializations do not
+consistently preserve that accuracy gain. The new SMS comparison
+retains 87.0\% less state at a 0.85 percentage-point macro-F1 cost.
+The original proposal matrix completed 117 of 162 representative comparisons
+before a disclosed compute reprioritization. Six additional public-data tasks,
+controlled tracking and focused seed replications retain complete outcomes
+and protocol versions alongside selected evidence.
 \end{abstract}
 \input{sections/1_introduction}
 \input{sections/2_related_work}
@@ -84,6 +86,7 @@ outcomes and protocols of the attempted evaluations.
 \input{sections/5_experiments}
 \input{sections/new_task_evaluation}
 \input{sections/6_conclusion}
+\clearpage
 \bibliographystyle{icml2026}
 \bibliography{references}
 \appendix

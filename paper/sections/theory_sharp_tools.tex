@@ -1,4 +1,4 @@
-\subsection{Eigenspace perturbation from the off-diagonal residual}
+\subsection{Residual geometry instead of full perturbation norms}
 \label{app:sharp-spectral-tools}
 
 \begin{lemma}[Davis--Kahan via the Sylvester--Rosenblum integral]
@@ -90,7 +90,7 @@ probability $\delta/2$ to each norm. This yields
 $\delta^{-1}$.
 \end{proof}
 
-\subsection{Seeger--Maurer PAC-Bayes bound and binary-KL inversion}
+\subsection{Seeger--Maurer inversion instead of a quadratic loss relaxation}
 \label{app:sharp-PAC-kl}
 Write $\operatorname{kl}(p\|q)=p\log(p/q)+(1-p)\log[(1-p)/(1-q)]$,
 with the usual continuous endpoint conventions. Define
@@ -117,9 +117,9 @@ inverse is exactly
  1-\exp\left[-\frac{\operatorname{KL}(Q\|\Pi)+\log(\Xi_n/\delta)}n\right].
  \label{eq:zero-loss-PAC-kl}
 \end{equation}
-The inverse retains the binary-KL dependence and requires no temperature
-parameter. Depending on empirical loss, a bound with a prespecified
-temperature may still be tighter.
+This preserves the binary Chernoff geometry and has no temperature to tune.
+It is not claimed to dominate every separately prespecified-temperature
+bound at every empirical loss.
 \end{theorem}
 \begin{proof}
 Seeger's PAC-Bayes-kl argument and Maurer's convex-extremal moment bound
@@ -145,7 +145,7 @@ relative entropy yields
  &\le n\mathbb E_Q\operatorname{kl}(\widehat L_S(w)\|L(w))\\
  &\le\operatorname{KL}(Q\|\Pi)+\log(\Xi_n/\delta).
 \end{align}
-This is the standard PAC-Bayes change-of-measure step.
+This is the standard change-of-measure step, not a new PAC-Bayes theorem.
 The inverse and its $p=0$ expression follow by monotonicity for $q\ge p$.
 Maurer's moment estimate supplies $\Xi_n\le2\sqrt n$ for $n\ge8$.
 \end{proof}

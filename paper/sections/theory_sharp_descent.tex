@@ -1,4 +1,4 @@
-\subsection{A quadratic-root stationarity bound}
+\subsection{Averaging before relaxation: a quadratic-root stationarity bound}
 \label{app:sharp-descent}
 
 \begin{proposition}[Descent lemma with Hilbert-space Minkowski]
@@ -43,8 +43,9 @@ $\mathcal B_t(G_t-g_t)$ has zero mean. Minkowski therefore yields
  T^{-1}\sum_t\mathbb E\|D_t\|^2
  &\le b^2z_T^2+2be_Tz_T+(s_T+e_T)^2.
 \end{align}
-The second line uses $\sqrt{b^2z_T^2+s_T^2}\le bz_T+s_T$ only in the
-cross term with $e_T$. The gradient and noise energies remain separate.
+In the second line, only the defect cross term uses
+$\sqrt{b^2z_T^2+s_T^2}\le bz_T+s_T$; no artificial cross term between
+metric-gradient energy and metric-noise energy is introduced.
 Rearrange to $A_\eta z_T^2-e_T(1+L\eta b)z_T-C_T\le0$
 and take its positive root.
 \end{proof}

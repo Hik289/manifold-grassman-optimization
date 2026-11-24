@@ -15,14 +15,11 @@
 
 GrassRoute stores Adam's running gradient statistics along a small set of learned directions, which form a subspace. It updates the weights using both the gradient inside that subspace and the part outside it. The subspace changes during training to follow the gradients.
 
-Each optimizer step has four parts:
+Each optimizer step has three parts:
 
 1. **Split the gradient.** Project the gradient onto the current subspace and keep the remaining part, called the residual.
 2. **Update the weights.** Apply Adam to the projected gradient, map the update back to the full weight matrix, and add a scaled gradient step for the residual.
-3. **Track the subspace.** Move the basis toward the current gradient directions, then use QR to keep its columns perpendicular and of unit length.
-4. **Align the stored moments.** Express Adam's running statistics in the updated basis before the next step.
-
-The diagram shows the `reset_mode="diagonal"` variant used in the later experiments. Its second-moment update keeps only the diagonal of the rotated covariance; it does not store correlations between coordinates.
+3. **Update the subspace.** Move the basis toward the current gradient directions. Keep its columns perpendicular and of unit length, then align Adam's stored statistics with the new basis.
 
 For a gradient matrix $G_t\in\mathbb{R}^{m\times d}$ and a basis $U_t\in\mathbb{R}^{d\times r}$, the split is
 
@@ -56,7 +53,6 @@ The example shows how to assign matrix weights to GrassRoute and use standard Ad
 | `lr` | Learning rate for the Adam update in the subspace |
 | `lr_perp` | Learning rate for the residual update; defaults to `lr` |
 | `grassmann_lr` | Step size for updating the subspace basis |
-| `reset_mode` | How second-moment statistics change with the basis; later experiments use `diagonal` |
 | `routed` | Whether a parameter group uses GrassRoute; one-dimensional parameters use the fallback optimizer |
 | `fallback` | Optimizer for parameters outside GrassRoute: `adamw` by default, or `sgd` with momentum |
 
@@ -70,18 +66,16 @@ Run all commands from the repository root. Install the extra packages for traini
 python -m pip install -r requirements-experiments.txt
 ```
 
-### Recreate the figures
+### Recreate the paper's loss plots
 
-The repository includes the method diagram's drawing code and the saved training histories needed for all four loss plots. No training or dataset download is needed to redraw them:
+The repository includes the saved training histories needed for all four loss plots. No training or dataset download is needed to redraw them:
 
 ```bash
-python revision/draw_method_figure.py
-python assets/draw_intuition.py
 python revision/core_loss.py
 python revision/new_tasks_report.py
 ```
 
-The paper figures are written to `paper/figures/`; `assets/draw_intuition.py` writes the matching README diagram to `assets/`. `revision/new_tasks_report.py` also updates the tables for the six public tasks. Generated PDFs stay local and are ignored by Git; the repository stores PNG figures and the method diagram's SVG.
+The scripts write figures to `paper/figures/`. The second script also updates the tables for the six public tasks. Generated PDFs stay local and are ignored by Git; the repository stores PNG figures.
 
 ### Run a short training check
 

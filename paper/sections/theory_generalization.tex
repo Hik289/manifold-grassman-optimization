@@ -1,27 +1,31 @@
 \subsection{Generalization through the full optimizer state}
 \label{app:generalization}
 
-Assume an i.i.d. training set $S=(z_1,\ldots,z_n)$, and let $S^{(i)}$
-replace one observation independently. Write $L(W)=\mathbb E_z\ell(W,z)$
-and $\widehat L_S(W)=n^{-1}\sum_i\ell(W,z_i)$. Transductive classification
-on a dependent graph and nonstationary continual learning require separate
-sampling models.
+Generalization requires a sampling model beyond smooth optimization. In this
+subsection $S=(z_1,\ldots,z_n)$ is an i.i.d. training set, $S^{(i)}$ replaces
+one observation independently, $L(W)=\mathbb E_z\ell(W,z)$, and
+$\widehat L_S(W)=n^{-1}\sum_i\ell(W,z_i)$. These assumptions do not
+directly describe transductive node classification on a single dependent
+graph or nonstationary continual-learning evaluation. Applying the bounds
+to such settings requires a separate statistical model.
 
 The augmented stored state is
 \begin{equation}
  X_t=(W_t,U_t,M_t,A_t,H_t),\qquad A_t=\sqrt{V_t}.
  \label{eq:augmented-state}
 \end{equation}
-We retain the stored \emph{basis} $U_t$, since coordinatewise Adam depends
-on its orientation within the subspace (Lemma~\ref{lem:moments}). Distances
-compare QR frames in a common regular chart. For fixed positive weights
-$\omega_j$, let
+We retain the \emph{basis} $U_t$ with the algorithm's QR gauge, rather than
+identifying all bases on the quotient. Lemma~\ref{lem:moments} shows that
+coordinatewise Adam does not define a gauge-invariant state transition on
+the quotient alone. Distances below compare stored frames in a common
+regular chart. For fixed positive weights $\omega_j$, let
 \begin{equation}
  d_\omega(X,X')=\|W-W'\|+\omega_U\|U-U'\|
  +\omega_M\|M-M'\|+\omega_A\|A-A'\|+\omega_H\|H-H'\|.
 \end{equation}
-For multiple layers, add their terms and every persistent fallback state
-to the metric.
+Multiple routed layers are handled by adding their terms. The metric must
+include all persistent fallback states as well; omitting a full Adam
+fallback from the sensitivity calculation would analyze a different method.
 
 \begin{assumption}[Regular full-state update maps]
 \label{ass:stability}
@@ -36,9 +40,12 @@ under comparison, and initialization is data independent and coupled.
 The loss is $L_\ell$-Lipschitz in $W$ on the reachable parameter region.
 \end{assumption}
 
-The analysis fixes the optimizer configuration. Validation selection can
-change when one observation is replaced, so stability of the selected
-algorithm requires a separate argument or uniform control over its candidates.
+This is a fixed-configuration analysis. If hyperparameters are chosen by
+validation, the entire selection procedure becomes part of the learning
+algorithm. A neighboring observation can change its discrete choice;
+fixed-configuration stability does not automatically establish stability
+of that selection pipeline. A separate selection argument or uniform
+control of its branches is needed for that stronger conclusion.
 
 \begin{theorem}[Full-state stability and expected generalization]
 \label{thm:generalization}
@@ -61,8 +68,8 @@ $[0,M_\ell]$, with probability at least $1-\delta$ over $S$,
                     \sqrt{\frac{\log(2/\delta)}{2n}}.
  \label{eq:stability-highprob}
 \end{equation}
-The high-probability statement averages over algorithmic randomness;
-it does not bound the result of one realized seed.
+The high-probability statement concerns the randomness-averaged output;
+it is not automatically a guarantee for one realized seed.
 \end{theorem}
 
 \begin{proof}
@@ -114,8 +121,9 @@ have deliberately different sampling requirements.
 
 \subsection{Checking the stability constants for the implemented primitives}
 
-The following bounds express the constants in
-Assumption~\ref{ass:stability} in terms of the implemented operations.
+Assumption~\ref{ass:stability} is meaningful only if its constants are
+connected to the algorithm. The following bounds provide that connection
+and make the sources of potentially vacuous constants explicit.
 
 \begin{lemma}[Lipschitz building blocks]
 \label{lem:building-blocks}
@@ -203,15 +211,21 @@ with zero initial state differences and gradient difference at most
 $2G_0$. This procedure includes the moment states rather than treating
 Adam as a memoryless gradient map.
 
-Small denominator offsets can inflate these constants. If
-$L_t\le1+c(\eta_t+\rho_t)$, the product is at most
-$\exp\{c\sum_t(\eta_t+\rho_t)\}$, which can be vacuous over long
-horizons with a constant tracking step. A numerical certificate therefore
-requires verified constants. Identical states and samples produce
-identical deterministic QR, transport, and reset outputs, so these
-operations introduce no independent additive error. A thresholded reset
-can still be discontinuous and requires analysis of its branches; the
-diagonal-transport update has no such switch.
+Very small denominator offsets can make these constants large. Moreover,
+if $L_t\le1+c(\eta_t+\rho_t)$ is established in a chosen weighted
+metric, the product bound is at most
+$\exp\{c\sum_t(\eta_t+\rho_t)\}$. A constant tracking step over a
+long horizon can therefore yield a vacuous bound. We report the product
+form within this scope; we do not infer a numerical certificate for the
+experiments without measuring valid constants. Identical deterministic
+QR, transport, and reset operations in coupled runs do not create an
+additive error independent of the sample change. Such a term would
+incorrectly predict different trajectories even when the two data sets
+and initializations are identical.
+This does not make a thresholded reset Lipschitz: crossing its threshold
+can create a discontinuity. Such a reset requires an additional branch
+analysis or a restriction that both coupled runs use the same branch.
+The corrected diagonal-transport update avoids that particular switch.
 
 \begin{proposition}[A nonvacuous contractive regime and the coupling condition]
 \label{prop:small-gain}
@@ -247,21 +261,26 @@ Summing the geometric recursion and applying the loss Lipschitz bound
 proves \eqref{eq:contractive-stability}.
 \end{proof}
 
-Each block must contract and the cross-coupling must satisfy $ad>bc$.
-A routing eigengap can improve $d$ in a neighborhood with a uniform
-positive Hessian lower bound; PL alone does not establish
+This proposition identifies a sufficient nonvacuous regime: each block
+must contract and their cross-coupling must satisfy $ad>bc$. A routing
+eigengap can improve $d$ in a genuinely locally convex neighborhood, but
+PL over the larger normal neighborhood is insufficient to assert
 \eqref{eq:two-block-stability}. Strong convexity of the parameter objective
-in the chosen metric is a further assumption, generally unavailable
-globally for deep networks. With explicit moment blocks, choose positive
-weights so that every weighted column sum of the full sensitivity matrix
-is below one. These conditions have not been verified for the benchmarks.
+in the relevant metric is also an additional condition, seldom globally
+true in deep learning. For explicit moment blocks, the same argument uses
+a positive weight vector with weighted column sums of their full
+sensitivity matrix strictly below one. These statements give checkable
+sufficient conditions, rather than claiming all empirical runs satisfy them.
 
 \subsection{A complementary PAC-Bayes guarantee for data-dependent routing}
 \label{app:pacbayes}
 
-PAC-Bayes bounds the risk of a randomized predictor without assuming
-contractive training dynamics. We use a posterior over the final weights;
-its complexity is distinct from the memory occupied by optimizer states.
+Stability is algorithm dependent and can become loose over long horizons.
+A second route uses a posterior over the final weights, with no
+contractivity assumption. It establishes a statistical guarantee for a
+randomized predictor and separates optimizer-state dimension from model
+capacity. We provide the elementary exponential-moment proof so that its
+statistical content and its assumptions are explicit.
 
 \begin{proposition}[PAC-Bayes bound and Grassmann-shaped perturbations]
 \label{prop:pacbayes}
@@ -346,13 +365,16 @@ to an upper bound on the path's squared length, under the requisite
 conditional measurability. They do not force a smaller path or smaller
 generalization gap than AdamW.
 
-Since $k(x)\ge0$ diverges as $x\downarrow0$, sending posterior variance
-in the $m(d-r)$ residual coordinates to zero makes their KL cost diverge.
-Any reduction in empirical perturbation loss must be weighed against that cost. The
-prior center must be data independent unless a separate prior-selection
-argument is supplied. The posterior orientation $P_T$ may depend on the
-training set because \eqref{eq:pac-bayes} holds simultaneously for all
-posteriors.
+Several qualifications prevent misleading rank-based interpretations.
+First, $k(x)\ge0$ and diverges as $x\downarrow0$; concentrating posterior
+variance in only a few directions can \emph{increase} the KL cost in the
+$m(d-r)$ residual coordinates. Second, reducing those variances may improve
+the empirical perturbation loss, producing a trade-off which must be
+measured. Third, the prior cannot be centered at a data-dependent fitted
+weight without an additional valid prior-selection argument. The isotropic
+prior above allows a data-dependent posterior orientation precisely because
+\eqref{eq:pac-bayes} holds for all posteriors; no assumption that $P_T$ is
+independent of the training set has been made.
 
 The empirical term is the loss of the Gaussian-perturbed predictor, not
 the unperturbed network's training loss. A certificate requires evaluating
@@ -366,22 +388,29 @@ Neither the stability bound nor PAC-Bayes is added to the other as a
 spurious improvement; they are alternative guarantees with distinct
 assumptions and output objects.
 
-\subsection{Measurements suggested by the analysis}
+\subsection{Implications that can be tested, and claims that do not follow}
 
-Four measurements connect the theory to experiments: the full covariance
-spectrum and distance to an \emph{independent} oracle subspace; normalized
-and raw covariance estimates; actual update alignment or the direction
-error in Theorem~\ref{thm:convergence}; and neighboring-data sensitivity
-under shared initialization and sampling, including moment states.
-$GU$ alone does not reveal $\lambda_{r+1}$, consecutive bases do not
-reveal the oracle radius, and a train--test gap does not measure stability.
+The analysis suggests four concrete measurements. First, estimate the full
+covariance spectrum and the distance to an \emph{independent} oracle
+subspace; $GU$ alone does not reveal $\lambda_{r+1}$, and consecutive
+bases do not reveal the oracle radius. Second, separate normalized and raw
+covariances when comparing tracking and residual energy. Third, log actual
+parameter-direction alignment or its comparison-metric defect before
+claiming the rate in Theorem~\ref{thm:convergence}. Fourth, estimate
+neighboring-data sensitivity with shared initialization and sampling,
+including moment states, before interpreting a train--test gap as a
+stability measurement. Small single-seed changes in accuracy cannot
+establish any of these theoretical hypotheses.
 
-The results connect routing error to stationarity under controlled update
-errors, and connect state sensitivity or posterior complexity to
-generalization. Each connection requires its stated assumptions.
-Theorem~\ref{thm:gap-collapse} shows why positive-gap tracking and
-vanishing stationarity may hold on different intervals.
-Theorem~\ref{thm:tracking-PAC} gives a finite-window connection to
-generalization with an independent prior. These conditional results do
-not rank the benchmark optimizers or provide numerical certificates for
-their deep-network runs.
+The four main result families provide a conditional chain from spectral separation
+and angles to routing quality, from a controlled tracking process to an
+explicit perturbation budget, from that budget to stationarity, and from
+full-state sensitivity or posterior complexity to generalization. They
+do not imply universal optimizer superiority, a compulsory rank-tail error
+floor with a nonzero residual branch, full gauge invariance of Adam, or a
+nonvacuous numerical generalization certificate for the present deep
+networks. These boundaries are part of the mathematical conclusions.
+Theorem~\ref{thm:gap-collapse} additionally shows why the separated tracking
+and stationarity regimes need not hold simultaneously throughout training;
+Theorem~\ref{thm:tracking-PAC} supplies an explicit finite-window statistical
+connection with a valid independent prior.
