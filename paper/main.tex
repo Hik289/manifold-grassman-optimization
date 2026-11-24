@@ -1,9 +1,8 @@
 % !TeX program = pdflatex
 \documentclass{article}
-% ICML 2027 draft: the official 2027 style URL returned 404 on 2026-11-02.
-% Use the latest verified official release unchanged until 2027 is available.
-\usepackage{hyperref}
-\usepackage{icml2026}
+% Official CPAL 2027 Proceedings template, anonymous submission mode.
+% Source: https://cpal.cc/openreview/
+\usepackage{cpal_2027}
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
 \usepackage{microtype}
@@ -18,6 +17,9 @@
 \usepackage{enumitem}
 \usepackage{xcolor}
 \usepackage{etoolbox}
+\usepackage{hyperref}
+% Omit CPAL's visual heading prefix from PDF bookmarks only.
+\pdfstringdefDisableCommands{\def\hskip#1em.~~{}}
 \definecolor{oursbg}{RGB}{230,244,233}
 \definecolor{checkgreen}{RGB}{21,128,61}
 \definecolor{crossred}{RGB}{190,35,45}
@@ -32,10 +34,7 @@
 \AtBeginEnvironment{longtable}{\renewcommand{\arraystretch}{1.12}}
 \setlength{\emergencystretch}{1em}
 \providecommand{\theHalgorithm}{\arabic{algorithm}}
-\makeatletter
-\renewcommand{\Notice@String}{ICML 2027 working draft.}
-\makeatother
-\hypersetup{pdfsubject={ICML 2027 working draft}}
+\hypersetup{pdfsubject={CPAL 2027 submission}}
 \newtheorem{theorem}{Theorem}
 \newtheorem{lemma}{Lemma}
 \newtheorem{assumption}{Assumption}
@@ -45,19 +44,11 @@
 \newcommand{\yes}{\textcolor{checkgreen}{\ding{51}}}
 \newcommand{\no}{\textcolor{crossred}{\ding{55}}}
 \allowdisplaybreaks[1]
-\icmltitlerunning{GrassRoute: Online Gradient Routing on the Grassmann Manifold}
+\title{GrassRoute: Online Gradient Routing on the Grassmann Manifold}
+\author{Anonymous Authors}
+\date{}
 \begin{document}
-\twocolumn[
-\icmltitle{GrassRoute: Online Gradient Routing on the Grassmann Manifold}
-\begin{icmlauthorlist}
-\icmlauthor{Anonymous Authors}{anon}
-\end{icmlauthorlist}
-\icmlaffiliation{anon}{Anonymous Institution}
-\icmlcorrespondingauthor{}{}
-\icmlkeywords{Manifold optimization, Grassmann manifold, memory-efficient training}
-\vskip 0.3in
-]
-\printAffiliationsAndNotice{}
+\maketitle
 \begin{abstract}
 GrassRoute learns an online Grassmann routing subspace, applies adaptive
 updates in its coordinates, and preserves the orthogonal gradient residual
@@ -87,10 +78,9 @@ and protocol versions alongside selected evidence.
 \input{sections/new_task_evaluation}
 \input{sections/6_conclusion}
 \clearpage
-\bibliographystyle{icml2026}
 \bibliography{references}
+\clearpage
 \appendix
-\onecolumn
 \input{sections/theory_geometry}
 \input{sections/theory_tracking}
 \input{sections/theory_formal_geometry}

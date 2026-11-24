@@ -1,6 +1,6 @@
 % WWW table style: three rules, bold headers, reference green highlight.
 \section{Related Work}
-\begin{table*}[t]
+\begin{table}[t]
 \centering
 \caption{\textbf{Mechanisms in memory-efficient adaptive optimization.} Keywords identify the subspace rule and the use of gradient information outside it. \yes: explicitly present; \no: absent from the specified design; --: not a coordinate-alignment operation. ``No refresh SVD'' excludes initialization and refers only to a full-gradient SVD, not a small tangent decomposition. Alignment checks denote projection-aware \emph{approximations}, not exact covariance transport. EF denotes generalized error feedback; it differs from an immediate residual branch.}
 \label{tab:related-mechanisms}
@@ -24,7 +24,7 @@ SubTrack++~\cite{rajabi2025subtrackpp}  &  Grassmann geodesic  &  Scaled residua
 $^{a}$Random-projection APOLLO; its SVD variant uses refresh decompositions.
 GrassRoute's additional analysis covers the normalized-covariance landscape, moving-target tracking, adaptive parameter convergence, and conditional full-state stability/PAC-Bayes generalization. These are separate statements with explicit hypotheses, rather than a universal superiority claim.
 \end{minipage}
-\end{table*}
+\end{table}
 
 Low-rank optimizer state has become a major strategy for reducing training memory. GaLore projects gradients onto periodically recomputed low-rank subspaces \cite{zhao2024galore}, while FLoRA, Fira, APOLLO, OSD, LDAdam, and related methods refine projection, residual, or adaptive-state design \cite{hao2024flora,chen2024fira,zhu2024apollo,liang2024osd,robert2024ldadam,he2024golore,su2025galore2,mo2025loro}. These methods differ in projector updates, error feedback, and adaptive coordinate handling. GrassRoute studies one online Grassmann routing design and explicitly documents both successful and unfavorable regimes.
 

@@ -167,14 +167,14 @@ pdflatex main.tex
 cd ..
 ```
 
-The draft is being prepared for an ICML 2027 submission and currently uses the included `icml2026` style. The citation below identifies the draft, not an accepted paper.
+The draft uses the official CPAL 2027 template in anonymous submission mode. The citation below identifies the draft, not an accepted paper.
 
 ```bibtex
 @misc{grassroute2027,
   title  = {GrassRoute: Online Gradient Routing on the Grassmann Manifold},
   author = {Anonymous Authors},
   year   = {2027},
-  note   = {ICML 2027 working draft}
+  note   = {CPAL 2027 working draft}
 }
 ```
 
