@@ -1,1 +1,7 @@
-With the seed-42 validation choices frozen, the three new SMS initializations yield 94.74\% mean macro-F1 for GrassRoute, 95.48\% for AdamW and 94.29\% for thin periodic SVD. The GrassRoute state is 87.0\% smaller than AdamW's; its mean F1 is 0.74 points below AdamW. The one-point quality band holds in 1/3 seeds, and GrassRoute exceeds periodic SVD in 2/3 seeds. This is a descriptive mean memory--quality trade-off, with visible seed variability. All seeds and SGD appear in Table~\ref{tab:focused-sms-replication}.\par
+With the seed-42 validation choices fixed, three new SMS initializations
+(seeds 43--45) yield mean macro-F1 of 94.74\% for GrassRoute, 95.48\% for
+AdamW, and 94.29\% for thin periodic SVD. GrassRoute uses 87.0\% less state
+than AdamW, with a mean F1 cost of 0.74 percentage points. The one-point
+quality band holds in 1/3 seeds; GrassRoute exceeds periodic SVD in 2/3.
+The memory saving persists, but the score trade-off varies across seeds.
+Table~\ref{tab:focused-sms-replication} includes every seed and the SGD results.\par

@@ -1,17 +1,17 @@
 % WWW table style: three rules, bold headers, reference green highlight.
 \subsection{Complete new public-data suite}
 \label{app:new-task-full}
-The six new tasks are retained as a complete evaluation set. The suite was
-motivated by the geometric hypothesis after examining the earlier archive;
-it is a follow-up study rather than an independent confirmation of universal
-optimizer superiority. A main-text subset is identified by the rule in
-Section~\ref{sec:new-public-tasks}; this appendix retains all six tasks and
-all methods regardless of their ranking. No unsuccessful run is deleted
-after observing its test result.
+This follow-up suite was designed after examining the earlier archive.
+All six methods completed all six tasks. This appendix reports every
+comparison; Section~\ref{sec:new-public-tasks} defines the rule used to
+select the main-text examples. Results are retained regardless of their
+ranking, and no task is removed after its test score is observed. The suite
+does not establish universal optimizer superiority.
 
 \begin{table}[htbp]\centering\small
-\caption{New-task data and primary metrics. Preprocessing fits the training
-split only. Counts are actual prepared examples, not nominal dataset sizes.}
+\caption{Prepared data splits and primary metrics for the six new tasks.
+Preprocessing is fitted on the training split only. Counts refer to examples
+after preparation, not nominal dataset sizes.}
 \reviewfit{\begin{tabular}{lrrrl}\toprule {\bfseries Task} & {\bfseries Train} & {\bfseries Validation} & {\bfseries Test} & {\bfseries Primary metric}\\\midrule
 20 Newsgroups  &  9051  &  2263  &  7532  &  Macro-F1 $\uparrow$\\
 SMS Spam (deduplicated)  &  3612  &  774  &  774  &  Macro-F1 $\uparrow$\\
@@ -30,12 +30,11 @@ minimum document frequency 2, maximum document frequency 0.95, sublinear
 term frequency and row normalization; its vocabulary and inverse document
 frequencies fit only the training documents. Official test documents,
 including empty texts and exact-text overlaps in the released corpus, are
-retained and those counts are recorded; exact-text independence is not
-asserted. SMS Spam \cite{uci2011sms} removes exact stripped-message duplicates
+retained and counted. Thus the released splits are not strictly independent
+at the level of exact text. SMS Spam \cite{uci2011sms} removes exact stripped-message duplicates
 and conflicting duplicate labels before a stratified 70/15/15 split. It uses
 the same TF-IDF parameters. Both text models use a 64-unit ReLU hidden layer,
-dropout 0.1, and a linear classifier. Sparse inputs remain sparse in the first
-matrix product. Macro-F1, rather than majority-class accuracy, is the primary
+dropout 0.1, and a linear classifier. The first matrix product preserves sparse inputs. Macro-F1, rather than majority-class accuracy, is the primary
 selection metric; predictions use the fixed argmax rule.
 
 \paragraph{Structured data.}
@@ -46,7 +45,7 @@ features, unknown categories are ignored and missing categories are explicit.
 Spambase \cite{uci1999spambase} uses a stratified 70/15/15 split and training
 standardization. Both models have 128 and 64 ReLU units, dropout 0.1 after
 the first hidden layer, and two output logits. The primary metric is AUROC;
-accuracy, macro-F1 and cross-entropy are retained as secondary diagnostics.
+accuracy, macro-F1, and cross-entropy are secondary metrics.
 
 \paragraph{Inverse imaging.}
 The Optdigits corpus \cite{uci1998optdigits} preserves its official
@@ -60,7 +59,7 @@ use fixed independent corruptions. The encoder--decoder widths are
 128--32--128, with tanh hidden activations and sigmoid output. Denoising
 optimizes all-pixel MSE. Completion optimizes missing-pixel MSE; observed
 pixels are copied when computing full-image reconstruction MSE and PSNR.
-The two tasks do not constitute separate independent image datasets.
+Both tasks use the same image dataset.
 
 \paragraph{Search and state accounting.}
 Ranks start at 8 and are capped below the input dimension and at half the
@@ -72,8 +71,8 @@ momentum 0.9. Routed methods cross rates $\{0.001,0.003,0.01\}$ with
 residual-rate ratios $\{1,10,100\}$. GrassRoute tracking rates
 $\{0.3,1,3\}$ and periodic intervals $\{5,25,100\}$ are assigned in a
 balanced cyclic design across those nine cells, not exhaustively crossed.
-Official SubTrack++ crosses the same three parameter rates with initial
-subspace steps $\{0.1,1,3\}$ and uses the device-only CPU adapter described
+Official SubTrack++ crosses the same three parameter learning rates with
+initial subspace steps $\{0.1,1,3\}$ and uses the device-only CPU adapter described
 above. Adaptive moments use $\beta_1=0.9,\beta_2=0.999$; GrassRoute uses
 routing momentum 0.9 and diagonal transport. Fixed and periodic comparators
 retain no unused routing momentum. Thin SVD uses a double-precision retry
@@ -82,26 +81,25 @@ Persistent state is measured from allocated optimizer storage, including the
 official projector state. Shared-host CPU wall times are not isolated speed
 measurements.
 
-All screening runs use 200 complete epochs; final validation selects a
-configuration, which is retrained afresh for 1000 epochs before a single
-held-out test evaluation. Optimizer random initialization is isolated from
-dropout/corruption streams. Restartable checkpoints retain model, optimizer
-and random states. Every candidate, numerical failure, full trajectory,
-source hash and endpoint remains in the ledger. The frozen manifest is
-\path{revision/newtask_results/protocol.json}; the checked outcome ledger is
-\path{revision/newtask_status.json}. These new runs do not inflate the
-original 162-comparison completion count.
+Each candidate trains for 200 complete epochs. Final validation scores
+select a setting, which is retrained from a fresh initialization for 1000
+epochs before one test evaluation. Optimizer initialization is isolated from
+dropout and corruption streams. Checkpoints save the model, optimizer, and
+random states. The records retain every candidate, failure, full training
+history, code hash, and final score. The fixed protocol is
+\path{revision/newtask_results/protocol.json}; verified results are in
+\path{revision/newtask_status.json}. These runs are counted separately
+from the original 162-comparison plan.
 
 \input{figures/newtasks_full_table}
 \input{figures/newtasks_secondary_table}
 \clearpage
 \begin{figure}[htbp]\centering
 \includegraphics[width=\linewidth]{figures/fig_newtask_losses_all.png}
-\caption{Complete new-task training-loss matrix, including every completed
-formal optimizer run. Missing curves indicate unfinished or failed formal
-training, never an omitted unfavorable endpoint. All full runs have 1000
-epochs. Faint lines are raw objectives and solid lines are 25-epoch trailing
-means. Task selection for the main-text illustration does not remove any
-curve from this complete matrix.}
+\caption{Training loss for all six methods on all six public-data tasks.
+Each of the 36 runs covers 1000 epochs. Faint lines show every raw loss;
+heavier lines show 25-epoch trailing means. All vertical axes are
+logarithmic. Both favorable and unfavorable comparisons are included;
+the main-text selection does not change this full matrix.}
 \label{fig:newtasks-all}
 \end{figure}

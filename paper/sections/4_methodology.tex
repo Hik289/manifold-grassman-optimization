@@ -1,5 +1,16 @@
 \section{GrassRoute and Theoretical Guarantees}
-Table~\ref{tab:method-update} specifies the parameter and routing-state updates.
+Figure~\ref{fig:method} shows one optimizer step; Table~\ref{tab:method-update}
+gives the complete updates.
+\begin{figure*}[t]
+\centering
+\includegraphics[width=\linewidth]{figures/fig_method_update_detailed.png}
+\caption{One GrassRoute step. Adam acts in a learned rank-$r$ subspace,
+while a stateless residual branch preserves the remaining gradient directions.
+A Grassmann momentum step and QR retraction update the basis. Procrustes
+alignment carries the stored moments to the new coordinates; the second-moment
+rule approximates the covariance by its diagonal. The geometry is schematic.}
+\label{fig:method}
+\end{figure*}
 \input{figures/method_update_table}
 The routed branch maintains Adam moments of $Z_t$, producing $D_t^\parallel$. The residual branch uses
 \begin{align}
@@ -11,20 +22,77 @@ For $\widehat C_t=G_t^\top G_t/(\|G_t\|_F^2+\varepsilon_c)$, the tracker ascends
 
 
 
-The positive sign in QR maximizes captured energy. Residual norm matching is relative to the raw gradient, not the Adam update; Proposition~\ref{prop:branch-scale} shows why the branch step scales can still differ substantially. The second-moment transformation is the diagonal of a rotated diagonal covariance; unavailable cross-correlations are omitted. It is not exact covariance transport, and Adam remains coordinate dependent. Archived amplitude-rotation and hard-reset variants retain separate labels. Lemma~\ref{lem:moments} quantifies the differences. Lemma~\ref{lem:qr} proves a cubic quotient-level discrepancy between QR and the exponential map for the same tangent step.
+The positive sign follows the ascent direction of captured energy. Residual
+norm matching uses the raw gradient norm, so its effective step scale can
+differ substantially from Adam's (Proposition~\ref{prop:branch-scale}).
+Moment alignment retains the diagonal of a rotated diagonal covariance and
+discards unavailable cross-correlations. Adam therefore remains coordinate
+dependent. Lemma~\ref{lem:moments} compares this rule with the archived
+amplitude-rotation and hard-reset variants, which we report separately.
+Lemma~\ref{lem:qr} bounds the QR--exponential discrepancy on the Grassmann
+quotient by a cubic term in the tangent step.
 
 \paragraph{Landscape and tracking.}
 Theorem~\ref{thm:landscape} gives, for $\theta_{\max}\le R_0<\pi/2$,
 \begin{equation}
 \|\operatorname{grad}\Phi_t(U)\|_F^2\ge2\Delta_t\cos^2R_0\{\Phi_t(U)-\Phi_t(U_t^\star)\}.
 \end{equation}
-The proof uses exact principal-coordinate Rayleigh quotients. A CS/Poincar\'e reduction also gives the sharp QR pullback constant $L_R=\lambda_1(C_t)-\lambda_d(C_t)$, with no ambient-dimension factor. Quadratic growth and PL on this region do not imply geodesic strong convexity throughout it. Theorem~\ref{thm:tracking} proves a stochastic objective-excess recursion with noise, covariance drift, and momentum-bias terms. Its steady-state trade-off contains $\rho\sigma^2/\mu$, $B^2/\mu$, and $v^2/(\rho^2\mu^2\Delta_0)$, where $\mu=\Delta_0\cos^2R_0$ and $v$ bounds covariance change.
+Principal-coordinate Rayleigh quotients yield this bound. A CS/Poincar\'e
+reduction gives the sharp QR pullback constant
+$L_R=\lambda_1(C_t)-\lambda_d(C_t)$ without an ambient-dimension factor.
+Neither quadratic growth nor PL implies geodesic strong convexity over this
+whole region. The tracking recursion in Theorem~\ref{thm:tracking} separates
+sampling noise, covariance drift, and momentum bias. Its steady-state terms
+include $\rho\sigma^2/\mu$, $B^2/\mu$, and
+$v^2/(\rho^2\mu^2\Delta_0)$, where $\mu=\Delta_0\cos^2R_0$ and $v$ bounds
+covariance change. Thus smaller routing steps reduce sampling noise but
+increase sensitivity to target drift.
 
 \paragraph{Convergence.}
-Theorem~\ref{thm:convergence} gives a nonconvex stationarity bound retaining every adaptive-direction defect. Theorem~\ref{thm:actual-adam} additionally closes that budget for the actual transported moments and current-batch denominator under bounded gradients and conditionally radial unimodal noise. A virtual-iterate identity cancels first-moment history; averaging before Cauchy--Schwarz and Minkowski produces a scalar quadratic-root bound. The denominator defect is bounded by $c_t=(1-\beta_2)/(1-\beta_2^t)$. With $\eta,\rho\asymp T^{-1/2}$ and $\beta_2=1-1/T$, its bound is $O(T^{-1/2})+O((\log T)/T)+O(\varepsilon_r^2)$; the last term disappears for a positive residual floor under the same noise assumptions. These additional hypotheses are not asserted for the benchmark runs. Corollary~\ref{cor:deterministic-adam} separately treats the deterministic bounded-gain regime. Residual preservation removes a compulsory rank-tail floor (Proposition~\ref{prop:no-tail-floor}).
+Theorem~\ref{thm:convergence} bounds nonconvex stationarity while retaining
+the error from adaptive directions. Under Assumption~\ref{ass:actual-adam},
+including bounded gradients and conditionally radial unimodal noise,
+Theorem~\ref{thm:actual-adam} controls this error for
+the transported moments and current-batch denominator. A virtual iterate
+cancels first-moment history; averaging before applying Cauchy--Schwarz and
+Minkowski gives a scalar quadratic-root bound. The induced direction error
+has a mean-square upper bound proportional to $c_t=(1-\beta_2)/(1-\beta_2^t)$
+(Lemma~\ref{lem:predictable-denominator}). With
+$\eta,\rho\asymp T^{-1/2}$ and $\beta_2=1-1/T$, the stationarity rate is
+$O(T^{-1/2})+O((\log T)/T)+O(\varepsilon_r^2)$. A positive residual floor
+removes the last term under the same noise assumptions; these assumptions
+are not verified for the benchmark runs. Corollary~\ref{cor:deterministic-adam}
+treats deterministic bounded gains. With a positive residual-gain lower bound,
+rank truncation need not impose a fixed error floor
+(Proposition~\ref{prop:no-tail-floor}).
 
 \paragraph{Generalization.}
-Theorem~\ref{thm:generalization} couples all stored states on neighboring i.i.d. data sets. Proposition~\ref{prop:explicit-state-constants} supplies an explicit five-state sensitivity matrix; Proposition~\ref{prop:spectral-feedback} derives its spectral and feedback conditions. A separate PAC-Bayes argument keeps the exact Gaussian orientation cost and applies the Seeger--Maurer binary-KL inverse (Theorems~\ref{thm:angle-KL} and~\ref{thm:Seeger-Maurer}). A Davis--Kahan residual bound and McDiarmid--Tropp concentration give its tracking interpretation; the observed-angle certificate itself does not require an eigengap (Theorem~\ref{thm:tracking-PAC}). For a fixed-feature Gaussian head, one-dimensional conditioning evaluates the empirical Gibbs error exactly (Proposition~\ref{prop:pb-margin}). Validation selection has its own finite-candidate bound in Appendix~\ref{app:validation-selection}. These are conditional guarantees, rather than numerical generalization certificates for the present deep-network experiments.
+Theorem~\ref{thm:generalization} couples the full optimizer state on
+neighboring i.i.d. data sets. Propositions~\ref{prop:explicit-state-constants}
+and~\ref{prop:spectral-feedback} give a five-state sensitivity matrix and
+conditions controlling its feedback. A separate PAC-Bayes analysis retains
+the exact Gaussian orientation cost and the Seeger--Maurer binary-KL inverse
+(Theorems~\ref{thm:angle-KL} and~\ref{thm:Seeger-Maurer}). Davis--Kahan and
+McDiarmid--Tropp bounds connect this cost to tracking error; the certificate
+based on observed angles needs no eigengap (Theorem~\ref{thm:tracking-PAC}).
+For a Gaussian head on fixed features, one-dimensional conditioning gives
+the exact empirical Gibbs error (Proposition~\ref{prop:pb-margin}).
+Appendix~\ref{app:validation-selection} separately accounts for finite
+validation selection. These conditional results are not evaluated numerical
+certificates for the deep networks in our experiments.
 
 \paragraph{Compatibility and sharper local results.}
-Theorem~\ref{thm:gap-collapse} proves that spherical gradient noise and a fixed positive covariance offset imply $\Delta_{r,t}\le2\|\nabla f(W_t)\|^2/\varepsilon_c$. A uniform positive-gap tracking theorem therefore cannot simply be extended through the stationarity limit. Theorem~\ref{thm:basin-certificate} supplies a finite-window basin certificate. Theorems~\ref{thm:modal-tracking-covariance} and~\ref{thm:rankone-QR-Lyapunov} derive, respectively, exact additive-oracle modal error and a nonlinear invariant neighborhood for the actual deterministic rank-one tracker. Theorem~\ref{thm:neutral-routing-stability} allows noncontractive routing states with summable feedback; Theorems~\ref{thm:angle-KL} and~\ref{thm:tracking-PAC} quantify how a valid independent prior turns a tracking-angle bound into Gaussian posterior complexity. A Haar mixture prior and the Gibbs variational principle charge learned orientation through an explicit orbital partition function, whose large-concentration leading term is $\tfrac12r(d-r)\log c$, rather than a loose chart covering. Table~\ref{tab:proof-sharpness} identifies the equality cases and the remaining conservative budgets.
+With spherical gradient noise and a fixed positive covariance offset,
+Theorem~\ref{thm:gap-collapse} gives
+$\Delta_{r,t}\le2\|\nabla f(W_t)\|^2/\varepsilon_c$.
+A uniform positive-gap tracking guarantee therefore cannot extend unchanged
+to the stationarity limit. Theorem~\ref{thm:basin-certificate} instead
+certifies a finite tracking window. Theorems~\ref{thm:modal-tracking-covariance}
+and~\ref{thm:rankone-QR-Lyapunov} give exact additive-oracle modal error and
+an invariant neighborhood for the deterministic rank-one tracker.
+Theorem~\ref{thm:neutral-routing-stability} allows noncontractive routing
+when its feedback is summable. For generalization, a Haar mixture prior
+accounts for learned orientation through an explicit orbital partition
+function; its large-concentration cost has leading term
+$\tfrac12r(d-r)\log c$. Table~\ref{tab:proof-sharpness} lists the equality
+cases and the terms that remain conservative.

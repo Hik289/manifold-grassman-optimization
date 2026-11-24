@@ -8,9 +8,9 @@ The additive-noise tangent model is
  \mathbb E_t\zeta_t=0,\quad\mathbb E_t\zeta_t^2=\sigma^2.
  \label{eq:tangent-momentum-model}
 \end{align}
-Here $b$ is a constant target displacement per step. This model specifies
-an additive horizontal oracle. General covariance samples can additionally
-produce multiplicative noise; no equivalence with that oracle is assumed.
+Here $b$ is the target displacement per step and the tangent noise is
+additive. Covariance sampling can also produce multiplicative noise,
+which this model does not include.
 
 \begin{theorem}[Exact fixed-momentum tracking covariance]
 \label{thm:modal-tracking-covariance}
@@ -110,8 +110,8 @@ In particular, as $\rho\downarrow0$ at fixed $\mu<1$,
 \end{equation}
 The EMA's reduced velocity variance does not multiply the leading
 subspace-position variance by the same factor.
-For $0<\Delta<\Lambda$, Polyak's optimal quadratic tuning
-\cite{polyak1964speeding} gives the choices
+For $0<\Delta<\Lambda$, the choices from Polyak's optimal quadratic tuning
+\cite{polyak1964speeding},
 \begin{equation}
  \mu_*=\left(\frac{\sqrt\Lambda-\sqrt\Delta}
                   {\sqrt\Lambda+\sqrt\Delta}\right)^2,
@@ -126,8 +126,9 @@ Sum $\delta_j\mathbb E x_j^2/2$ and expand the denominators.
 For the last statement put $q=(\sqrt\Lambda-\sqrt\Delta)/
 (\sqrt\Lambda+\sqrt\Delta)$. Then $\mu_*=q^2$ and
 $1+\mu_*-\rho_*(1-\mu_*)\delta$ ranges from $2q$ to $-2q$.
-All roots therefore have modulus $q$, including the repeated endpoint roots.
-No diagonalizability or global accelerated QR guarantee is inferred.
+All roots have modulus $q$, including the repeated endpoint roots. This
+does not require diagonalizability and does not establish global
+accelerated convergence of QR.
 \end{proof}
 
 \subsection{An invariant neighborhood for the actual rank-one QR momentum map}

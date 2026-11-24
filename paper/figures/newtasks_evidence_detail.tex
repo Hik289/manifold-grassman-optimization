@@ -1,1 +1,5 @@
-On SMS, GrassRoute retains 0.137 MB versus AdamW's 1.050 MB (87.0\% less), with macro-F1 94.63 versus 95.48. Its separately retained test cross-entropy is 0.0931 versus 0.1752, and AUROC is 99.08 versus 98.28. These secondary probabilistic-quality observations did not determine the selected hyperparameters or redefine the primary F1 criterion. Every classifier endpoint is retained in Table~\ref{tab:newtasks-secondary}.
+On SMS, GrassRoute uses 0.137 MB of optimizer state versus AdamW's 1.050 MB
+(87.0\% less), with macro-F1 of 94.63\% versus 95.48\%. Test cross-entropy
+is 0.0931 versus 0.1752, and AUROC is 99.08\% versus 98.28\%. Cross-entropy
+and AUROC are secondary metrics; hyperparameter selection uses validation
+macro-F1. Table~\ref{tab:newtasks-secondary} reports all classifier results.

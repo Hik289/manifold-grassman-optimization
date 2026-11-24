@@ -7,7 +7,8 @@ from pathlib import Path
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
-from artifact_io import save_figure
+from plot_style import (RCPARAMS, export_figure, finish_axis, legend_handles,
+                        line_style, plot_training)
 import numpy as np
 
 HERE=Path(__file__).resolve().parent
@@ -19,7 +20,6 @@ METHODS=['SGD','AdamW','Fixed','PeriodicThinSVD','GrassRoute','SubTrackOfficial'
 NAMES={'SGD':'SGD-M','AdamW':'AdamW','Fixed':'Fixed','PeriodicThinSVD':'Thin SVD','GrassRoute':'GrassRoute','SubTrackOfficial':'SubTrack++'}
 LABELS={'image_denoise':'Optdigits / denoising','image_inpaint':'Optdigits / inpainting',
         'tab_spambase':'Spambase / MLP','tab_adult':'Adult / MLP','text_sms':'SMS / TF-IDF MLP','text_20news':'20 News / TF-IDF MLP'}
-COLORS=['#8e764c','#293b52','#9b9b9b','#2576ad','#cf3b36','#27926a']
 
 
 def fmt(x,high):
@@ -31,44 +31,71 @@ def fmt(x,high):
 
 def plot(tasks,rows,target):
     n=len(tasks);cols=min(2,n);nr=math.ceil(n/cols)
-    with plt.rc_context({'font.family':'STIXGeneral','mathtext.fontset':'stix',
-                         'font.size':10,'axes.labelsize':10,'axes.titlesize':11,'pdf.fonttype':42,'axes.linewidth':.65}):
-        fig,axs=plt.subplots(nr,cols,figsize=(3.7*cols,2.65*nr),squeeze=False,layout='constrained')
-        for ax,task in zip(axs.flat,tasks):
-            shown=0
-            for i,m in enumerate(METHODS):
+    titles={'image_denoise':('Denoising','Optdigits'),
+            'image_inpaint':('Inpainting','Optdigits'),
+            'tab_spambase':('Spam detection','Spambase'),
+            'tab_adult':('Income prediction','Adult'),
+            'text_sms':('SMS spam detection','SMS Spam Collection'),
+            'text_20news':('News topics','20 Newsgroups')}
+    with plt.rc_context(RCPARAMS):
+        fig,axs=plt.subplots(nr,cols,figsize=(3.75*cols,2.34*nr+.63),squeeze=False)
+        fig.subplots_adjust(left=.093 if cols>1 else .17,right=.985,
+                            bottom=.075 if nr>1 else .17,
+                            top=.835 if nr>1 else .72,
+                            wspace=.39,hspace=.77)
+        visible=[m for m in METHODS if any(m in rows[t] for t in tasks)]
+        order=['GrassRoute']+[m for m in visible if m!='GrassRoute']
+        if 'GrassRoute' not in visible:order=visible
+        fig.legend(handles=legend_handles(order),loc='upper center',
+                   bbox_to_anchor=(.53,.985),ncol=3,fontsize=9.3,
+                   columnspacing=1.7,borderaxespad=0)
+        for index,(ax,task) in enumerate(zip(axs.flat,tasks)):
+            raw=[]
+            for m in METHODS:
                 if m not in rows[task]:continue
-                x=rows[task][m];a=json.loads((OUT/task/m/'formal/trajectory.json').read_text())
-                y=np.array([v['train_loss'] for v in a]);ep=np.arange(1,len(y)+1)
-                ax.semilogy(ep,y,color=COLORS[i],alpha=.13,lw=.5,rasterized=True)
-                sm=np.convolve(y,np.ones(25)/25,mode='valid')
-                ax.semilogy(ep[24:],sm,color=COLORS[i],lw=2.2 if m=='GrassRoute' else 1.2,label=NAMES[m]);shown+=1
-            ax.set_title(LABELS[task]);ax.set_xlabel('Full epoch');ax.set_ylabel('Training objective')
-            ax.grid(alpha=.18);ax.spines[['top','right']].set_visible(False)
-            if shown:ax.legend(fontsize=8.5,ncol=2,frameon=False)
-            else:ax.text(.5,.5,'Formal runs pending',ha='center',va='center',transform=ax.transAxes)
+                records=json.loads((OUT/task/m/'formal/trajectory.json').read_text())
+                y=np.array([v['train_loss'] for v in records],dtype=float)
+                ep=np.array([v['epoch'] for v in records])
+                assert len(y)==1000 and np.array_equal(ep,np.arange(1,1001))
+                plot_training(ax,ep,y,m);raw.append(y)
+            if raw:
+                label='Training MSE' if task.startswith('image_') else 'Training cross-entropy'
+                finish_axis(ax,raw,1000,ylabel=label)
+            else:
+                ax.text(.5,.5,'Formal runs pending',ha='center',va='center',transform=ax.transAxes)
+            title,subtitle=titles[task]
+            ax.text(0,1.17,f'({chr(97+index)})  {title}',transform=ax.transAxes,
+                    fontsize=11,fontweight='bold',ha='left',va='bottom')
+            ax.text(0,1.045,subtitle,transform=ax.transAxes,fontsize=9,
+                    color='#68717B',ha='left',va='bottom')
         for ax in list(axs.flat)[n:]:ax.set_visible(False)
-        save_figure(fig,FIG/(target+'.pdf'),bbox_inches='tight');save_figure(fig,FIG/(target+'.png'),dpi=180,bbox_inches='tight');plt.close(fig)
+        export_figure(fig,FIG/target)
 
 
 def plot_sms_validation(rows):
-    with plt.rc_context({'font.family':'STIXGeneral','mathtext.fontset':'stix',
-                         'font.size':11,'axes.titlesize':12,'axes.labelsize':11,'pdf.fonttype':42,'axes.linewidth':.65}):
-        fig,axs=plt.subplots(1,2,figsize=(7.8,3.15),layout='constrained')
-        for i,m in enumerate(METHODS):
-            a=json.loads((OUT/'text_sms'/m/'formal/trajectory.json').read_text())
-            ep=np.arange(1,1001);loss=np.array([x['train_loss'] for x in a])
-            axs[0].semilogy(ep,loss,color=COLORS[i],lw=.5,alpha=.12,rasterized=True)
-            axs[0].semilogy(ep[24:],np.convolve(loss,np.ones(25)/25,mode='valid'),color=COLORS[i],lw=2 if m=='GrassRoute' else 1.2,label=NAMES[m])
-            measured=[x for x in a if 'validation' in x]
-            axs[1].plot([x['epoch'] for x in measured],[x['validation']['cross_entropy'] for x in measured],color=COLORS[i],lw=2 if m=='GrassRoute' else 1.2,label=NAMES[m])
-        axs[0].set_title('(a) SMS training objective');axs[1].set_title('(b) SMS validation cross-entropy')
-        for ax in axs:
-            ax.set_xlabel('Full epoch');ax.set_ylabel('Cross-entropy');ax.grid(alpha=.18)
-            ax.spines[['top','right']].set_visible(False)
-        axs[0].legend(fontsize=9,ncol=2,frameon=False)
-        save_figure(fig,FIG/'fig_newtask_losses_selected.pdf',bbox_inches='tight')
-        save_figure(fig,FIG/'fig_newtask_losses_selected.png',dpi=200,bbox_inches='tight');plt.close(fig)
+    with plt.rc_context(RCPARAMS):
+        fig,axs=plt.subplots(1,2,figsize=(7.5,3.5))
+        fig.subplots_adjust(left=.093,right=.985,bottom=.18,top=.70,wspace=.35)
+        order=['GrassRoute']+[m for m in METHODS if m!='GrassRoute']
+        fig.legend(handles=legend_handles(order),loc='upper center',
+                   bbox_to_anchor=(.53,.985),ncol=3,fontsize=9.3,
+                   columnspacing=1.7,borderaxespad=0)
+        training=[];validation=[]
+        for m in METHODS:
+            records=json.loads((OUT/'text_sms'/m/'formal/trajectory.json').read_text())
+            ep=np.array([x['epoch'] for x in records]);loss=np.array([x['train_loss'] for x in records])
+            assert len(loss)==1000 and np.array_equal(ep,np.arange(1,1001))
+            plot_training(axs[0],ep,loss,m);training.append(loss)
+            measured=[x for x in records if 'validation' in x]
+            val=np.array([x['validation']['cross_entropy'] for x in measured]);validation.append(val)
+            axs[1].plot([x['epoch'] for x in measured],val,marker='o',markersize=2.3,
+                        markeredgewidth=0,**line_style(m))
+        finish_axis(axs[0],training,1000,ylabel='Cross-entropy')
+        finish_axis(axs[1],validation,1000,logarithmic=False,ylabel='Cross-entropy')
+        axs[1].set_yticks([.1,.2,.3,.4,.5,.6])
+        for ax,title in zip(axs,['(a)  SMS training','(b)  SMS validation']):
+            ax.set_title(title,loc='left',pad=11)
+        export_figure(fig,FIG/'fig_newtask_losses_selected')
 
 
 def generate():
@@ -114,11 +141,17 @@ def generate():
                 primary_gain_domains=sorted({family(t) for t in primary}),memory_quality_tradeoffs=tradeoff,
                 detail=details,progress=progress,failed=failed,ledger=ledger)
     (HERE/'newtask_status.json').write_text(json.dumps(status,indent=2))
-    text=f'The new public-data suite has completed {count} of 36 selected formal runs and {len(full)} of six full comparisons. '
-    if primary:text+='The predeclared primary-metric rule favors GrassRoute over both AdamW and thin periodic SVD on '+', '.join(LABELS[t] for t in primary)+'. '
-    else:text+='No completed new task currently establishes the predeclared gain over both AdamW and thin periodic SVD. '
-    if tradeoff:text+='Separate Pareto-efficient memory--quality trade-offs satisfy the predefined quality band on '+', '.join(LABELS[t] for t in tradeoff)+'. '
-    text+='All attempted tasks and outcomes, including numerical failures and unfinished cells, remain in Appendix~\\ref{app:new-task-full}; none is deleted after observing test results.\n'
+    if count==36:
+        text='All 36 final runs are complete, covering all six methods on each task. '
+    else:
+        text=f'The suite has completed {count} of 36 final runs and {len(full)} of six full task comparisons. '
+    if primary:
+        text+='GrassRoute exceeds both AdamW and thin periodic SVD on the primary metric for '+', '.join(LABELS[t] for t in primary)+'. '
+    else:
+        text+='GrassRoute does not beat both AdamW and thin periodic SVD on the primary metric in any completed task. '
+    if tradeoff:
+        text+='The separate memory--quality criterion holds on '+', '.join('SMS' if t=='text_sms' else LABELS[t] for t in tradeoff)+'. '
+    text+='Appendix~\\ref{app:new-task-full} contains the full comparisons and all recorded failures.\n'
     (FIG/'newtasks_summary.tex').write_text(text)
     lines=[r'\begin{table}[htbp]\centering\scriptsize\setlength{\tabcolsep}{3pt}',
            r'\caption{Complete frozen new-task matrix, seed 42. Nine 200-epoch validation candidates per method, followed by 1000 fresh full epochs. Macro-F1 and AUROC are percentages; image tasks report MSE (missing pixels for inpainting). -- means unfinished or numerically failed, with failures retained in the ledger. Best endpoints are bold only after all six methods complete.}',
@@ -150,9 +183,9 @@ def generate():
     detail_text=''
     if 'text_sms' in tradeoff:
         g=rows['text_sms']['GrassRoute'];a=rows['text_sms']['AdamW'];saving=100*(1-g['state_bytes']/a['state_bytes'])
-        detail_text=(f"On SMS, GrassRoute retains {g['state_bytes']/1e6:.3f} MB versus AdamW's {a['state_bytes']/1e6:.3f} MB ({saving:.1f}\\% less), with macro-F1 {100*g['test']['macro_f1']:.2f} versus {100*a['test']['macro_f1']:.2f}. "
-          f"Its separately retained test cross-entropy is {g['test']['cross_entropy']:.4f} versus {a['test']['cross_entropy']:.4f}, and AUROC is {100*g['test']['auroc']:.2f} versus {100*a['test']['auroc']:.2f}. "
-          'These secondary probabilistic-quality observations did not determine the selected hyperparameters or redefine the primary F1 criterion. Every classifier endpoint is retained in Table~\\ref{tab:newtasks-secondary}.\n')
+        detail_text=(f"On SMS, GrassRoute uses {g['state_bytes']/1e6:.3f} MB of optimizer state versus AdamW's {a['state_bytes']/1e6:.3f} MB ({saving:.1f}\\% less), with macro-F1 of {100*g['test']['macro_f1']:.2f}\\% versus {100*a['test']['macro_f1']:.2f}\\%. "
+          f"Test cross-entropy is {g['test']['cross_entropy']:.4f} versus {a['test']['cross_entropy']:.4f}, and AUROC is {100*g['test']['auroc']:.2f}\\% versus {100*a['test']['auroc']:.2f}\\%. "
+          'Cross-entropy and AUROC are secondary metrics; hyperparameter selection uses validation macro-F1. Table~\\ref{tab:newtasks-secondary} reports all classifier results.\n')
     (FIG/'newtasks_evidence_detail.tex').write_text(detail_text)
     selected=sorted(set(primary+tradeoff))
     if selected:
@@ -171,7 +204,7 @@ def generate():
         plot(selected,rows,'fig_newtask_losses_selected')
         (FIG/'newtasks_selected_fig.tex').write_text(r'''\begin{figure}[htbp]\centering
 \includegraphics[width=\linewidth]{figures/fig_newtask_losses_selected.png}
-\caption{Full 1000-epoch training trajectories for the explicitly selected evidence in Table~\ref{tab:newtasks-selected}. All six selected optimizer endpoints are retained within each task. Faint lines show raw objectives and solid lines are 25-epoch trailing means. Selection is by the declared test-metric/state reporting rule, not minimum training loss; the full suite appears in Figure~\ref{fig:newtasks-all}.}
+\caption{All 1000 training epochs for the tasks selected in Table~\ref{tab:newtasks-selected}, with all six methods shown. Faint lines show raw losses and heavier lines show 25-epoch trailing means on logarithmic axes. Selection follows the stated test-score and memory rule, not minimum training loss. Figure~\ref{fig:newtasks-all} shows the full suite.}
 \label{fig:newtasks-selected}
 \end{figure}
 ''')
@@ -191,11 +224,17 @@ def generate():
         lines += [r'\bottomrule\end{tabular}\end{table}']
         (FIG/'newtasks_selected_table.tex').write_text('\n'.join(lines)+'\n')
         plot_sms_validation(rows)
-        (FIG/'newtasks_selected_fig.tex').write_text(r'''\begin{figure}[htbp]\centering
+        (FIG/'newtasks_selected_fig.tex').write_text(r'''\begin{figure*}[t]\centering
 \includegraphics[width=\linewidth]{figures/fig_newtask_losses_selected.png}
-\caption{SMS memory--quality operating point, with all six validation-selected methods. Left: the full 1000-epoch training objectives (raw losses faint, 25-epoch trailing means solid). Right: all saved validation cross-entropies. Hyperparameters were selected by final validation macro-F1; secondary cross-entropy did not replace that criterion. The full primary-metric matrix and every classifier endpoint remain in Tables~\ref{tab:newtasks-full} and~\ref{tab:newtasks-secondary}.}
+\caption{SMS losses for all six methods selected by validation macro-F1.
+(a) All 1000 training epochs on a logarithmic scale: faint lines show raw
+losses and heavier lines show 25-epoch trailing means.
+(b) Every saved validation cross-entropy on a linear scale, with markers at
+evaluations. Cross-entropy is secondary and was not used for selection.
+Tables~\ref{tab:newtasks-full} and~\ref{tab:newtasks-secondary} report the
+primary scores and all classifier results.}
 \label{fig:newtasks-selected}
-\end{figure}
+\end{figure*}
 ''')
     conclusion=''
     if primary:conclusion+='The new public-data suite records paired primary-metric gains over AdamW and thin periodic SVD on '+', '.join(LABELS[t] for t in primary)+'. '

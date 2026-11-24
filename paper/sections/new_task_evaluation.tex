@@ -1,38 +1,38 @@
 \subsection{New public-data task domains}
 \label{sec:new-public-tasks}
-We add six tasks in three domains: raw-text classification (20 Newsgroups
-and SMS Spam), structured-data classification (Adult and Spambase), and inverse
+We evaluate six tasks in three domains: text classification (20 Newsgroups
+and SMS Spam), tabular classification (Adult and Spambase), and inverse
 imaging (Optdigits denoising and missing-pixel completion)
 \cite{sklearn20newsdata,uci2011sms,uci1996adult,uci1999spambase,uci1998optdigits}.
-The two inverse tasks share the same image corpus and constitute two settings
-within one domain, not two independent task-family replications. Dataset and
-split definitions are fixed before formal training.
+The two image tasks share a dataset and count as two settings within one
+domain. Dataset and split definitions were fixed before final training.
 
 \input{figures/newtasks_selected_fig}
 
-Every task compares SGD-M, AdamW, fixed routing, thin periodic SVD,
-GrassRoute, and pinned official SubTrack++. All six receive nine 200-epoch
-validation candidates and a fresh 1000-epoch selected run. Each epoch passes
-through the complete training split in one full-data update. The routed grids
-explicitly vary the residual/parallel learning-rate ratio across
-$\{1,10,100\}$, since an SGD residual and an adaptive branch need not have
-the same useful step-size scale. This changes the search protocol relative to
-the original extension and is not silently pooled with it.
+Each task compares SGD-M, AdamW, fixed routing, thin periodic SVD,
+GrassRoute, and the pinned official SubTrack++ implementation. Every method
+receives nine 200-epoch validation candidates and a fresh 1000-epoch run
+with the selected setting. Each epoch uses the full training split in one
+update. For fixed routing, periodic SVD, and GrassRoute, the
+residual-to-parallel learning-rate ratio varies over $\{1,10,100\}$:
+the SGD residual and adaptive branch can need
+different step sizes. This search differs from the original extension and
+is reported separately.
 
 The periodic comparator directly factorizes the gradient matrix,
-$G=L\Sigma V^\top$, and uses its top right singular vectors. This avoids
-forming the full $G^\top G$ and transports both the first moment and the
-diagonal second moment. Fixed and periodic methods store no unused routing
-momentum. The complete search, sources and data hashes are frozen in the
-new-task protocol; Appendix~\ref{app:new-task-full} reports every outcome.
+$G=L\Sigma V^\top$, and uses its leading right singular vectors. It avoids
+forming $G^\top G$ and transports both the first moment and the diagonal
+second moment. Fixed and periodic methods store no unused routing momentum.
+The protocol records the search settings, source versions, and data hashes;
+Appendix~\ref{app:new-task-full} gives every result.
 
-The main-text subset uses an explicit reporting rule. A primary-metric gain
-requires a better final held-out score than both AdamW and thin periodic SVD
-after all six methods finish. A separate memory--quality trade-off requires
-at least 50\% less state than AdamW, a primary classification score within
-0.01 or an image MSE within 5\%, and a nondominated score--state point among
-the six methods. The corresponding quality cost is stated explicitly. These are descriptive
-one-seed criteria; statistical significance is not estimated.
+The main text reports two kinds of result. A primary-metric gain requires a
+better final test score than both AdamW and thin periodic SVD, with all six
+methods complete. A memory--quality trade-off requires at least 50\% less
+state than AdamW, a classification score within 0.01 of AdamW's or an image
+MSE within 5\%, and a score--state pair that no other method dominates.
+We report the score cost alongside each memory saving. These criteria
+describe single-seed results; they are not tests of statistical significance.
 \input{figures/newtasks_summary}
 \par
 \input{figures/newtasks_selected_table}

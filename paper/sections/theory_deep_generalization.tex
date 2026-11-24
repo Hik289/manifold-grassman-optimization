@@ -53,7 +53,7 @@ Iteration and $\prod_j(1+a_j)\le e^{\sum_ja_j}$ imply
 which proves \eqref{eq:neutral-stability-bound}. Apply loss Lipschitzness.
 \end{proof}
 
-\begin{corollary}[Geometrically decaying feedback budgets]
+\begin{corollary}[Geometrically decaying feedback bounds]
 If $c_t\le C_1a^t$, $d_t\le D_1a^t$,
 $B_{U,t}\le J_1a^{2t}$ with $0<a<1$, one may take
 \begin{equation}
@@ -71,10 +71,9 @@ normalized-covariance primitives satisfy
     -\mathcal C_{\varepsilon_c}(G_{z'}(W_t))\|
  &\le2G_t^2/\varepsilon_c.\label{eq:decaying-covariance-sensitivity}
 \end{align}
-These quantify how covariance feedback and sample injection can vanish
-near an interpolating solution. A signed contraction for the parameter
-block and a valid reduction of all moment states are still separate
-requirements of \eqref{eq:neutral-coupling}.
+The covariance sensitivity terms vanish as per-example gradients approach
+zero. Equation~\eqref{eq:neutral-coupling} still requires parameter
+contraction and an accounting of all moment states.
 \end{corollary}
 \begin{proof}
 Sum the geometric series. Bound the two first-differential terms in
@@ -147,7 +146,7 @@ For matched variances,
 $(a-b)(b^{-1}-a^{-1})=(a-b)^2/(ab)=(\kappa-1)^2/\kappa$.
 \end{proof}
 
-\subsection{From a tracking certificate to a valid pilot-prior generalization bound}
+\subsection{Tracking and generalization with an independent pilot prior}
 \label{app:pilot-prior}
 Let $S=(z_i)_{i=1}^n$ and $S_0=(z_j^0)_{j=1}^{n_0}$ be independent
 samples, and fix $W_0$ independently of both. This subsection uses
@@ -232,9 +231,9 @@ Let $\gamma_0=(a-b)(b_0^{-1}-a_0^{-1})\ge0$, $k_r=\min(r,d-r)$, and
 With probability at least $1-\delta_S-\delta_0-\delta_{\rm tr}$,
 $K_T^{\rm obs}\le K_T^{\rm str}$. Thus \eqref{eq:tracking-to-PAC-final}
 remains valid with $K_T^{\rm str}$ after adding those failure probabilities.
-For reporting a certificate, the observed-angle cost is preferable: it is
-exact and does not pay the additional concentration or tracking failures.
-The structural envelope explains how tracking controls that cost.
+The observed-angle cost is exact and needs no additional concentration or
+tracking events. The structural upper bound explains its dependence on
+tracking error.
 \end{theorem}
 \begin{proof}
 Conditional on every pilot sample, Theorem~\ref{thm:Seeger-Maurer} holds
@@ -252,9 +251,9 @@ and $\widehat A=\widehat C_0$. Its mixed gap is at least
 $\Delta_0-E_{\rm op}(W_T)>0$. Chordal triangle inequality and
 $s(P,Q)^2\le k_r$ give $s(P_T,P_0)^2\le J_T$.
 Insert this in the KL identity, using $\gamma_0\ge0$, and union bound.
-No independence between the auxiliary good events is needed. In particular,
-gap collapse invalidates the structural tracking envelope, not the exact
-PAC-Bayes certificate with an independent prior.
+The auxiliary events need not be independent. If the gap collapses, the
+structural tracking bound no longer applies; the PAC-Bayes certificate
+with an independent prior remains valid.
 \end{proof}
 
 \begin{corollary}[Clopper--Pearson evaluation of the empirical Gibbs loss]
@@ -327,10 +326,10 @@ $D_r=r(d-r)$,
  \Phi_{d,r}''(c)&=-\operatorname{Var}_{\nu_c}(s(P,P_0)^2)\le0,\\
  \frac{d\nu_c}{d\mu_{r,d}}&=Z_{d,r}(c)^{-1}e^{-cs(P,P_0)^2}.
 \end{align}
-The first bound retains coupling between mean displacement and orientation;
-the second is a simpler closed envelope. Neither is asserted to equal the
-actual marginal KL in general. For $a=b$, both equal the Gaussian mean-shift
-KL exactly and the orientation term vanishes.
+The first bound retains the dependence between mean displacement and
+orientation; the second separates them. Both are upper bounds on the
+marginal KL. When $a=b$, both equal the Gaussian mean-shift KL and the
+orientation term vanishes.
 \end{theorem}
 \begin{proof}
 For any $\nu\ll\mu_{r,d}$, compare the joint laws
@@ -401,8 +400,8 @@ For $k=1$, a scalar form is
 \begin{equation}
  Z_{d,1}(c)={}_1F_1((d-1)/2;d/2;-c).
 \end{equation}
-Thus the orbital term automatically balances concentration and entropy,
-without a chart-count factor or a chosen covering resolution.
+Thus the orientation cost grows as $\tfrac12D_r\log c$, with no choice
+of chart resolution.
 \end{proposition}
 \begin{proof}
 Complementation preserves chordal distance, so reduce to rank $k\le d/2$.

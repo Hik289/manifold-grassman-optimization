@@ -4,11 +4,11 @@ For a matrix $W_t\in\mathbb R^{m\times d}$ with stochastic gradient $G_t$, Grass
 Z_t&=G_tU_t,\qquad G_t^\parallel=Z_tU_t^\top,\\
 G_t^\perp&=G_t-G_t^\parallel.
 \end{align}
-The routed moments have $2mr$ entries, while the basis and subspace momentum have $2dr$ entries. Fallback optimizer states are additional. These persistent optimizer-state counts differ from total peak GPU memory.
+The two routed moments store $2mr$ entries; the basis and subspace momentum store $2dr$. Parameters outside routing require additional fallback states. We report this persistent optimizer state separately from peak GPU memory.
 
 With $\mathcal F_t$ denoting the pre-batch state, the normalized implementation tracks the leading eigenspace of
 \begin{align}
 C_t&=\mathbb E_t\left[\frac{G_t^\top G_t}{\|G_t\|_F^2+\varepsilon_c}\right],\\
 \Phi_t(U)&=-\tfrac12\operatorname{tr}(U^\top C_tU).
 \end{align}
-This generally differs from the leading eigenspace of $S_t=\mathbb E_t[G_t^\top G_t]$. Let $\Delta_t$ be the rank-$r$ eigengap of the covariance under analysis. Relative to its leading subspace, principal angles define $R_t=(\sum_i\theta_i^2)^{1/2}$ and $\theta_{\max,t}=\max_i\theta_i$. The local theory requires spectral separation and angles bounded away from $\pi/2$ on the analyzed interval. It does not infer these hypotheses from small changes between consecutive optimizer bases. Captured sample-gradient energy and compressed-coordinate spectral gaps are useful diagnostics, but neither is the population eigengap.
+This eigenspace generally differs from that of $S_t=\mathbb E_t[G_t^\top G_t]$. Let $\Delta_t$ denote the rank-$r$ eigengap of the covariance under analysis. Principal angles to its leading subspace define $R_t=(\sum_i\theta_i^2)^{1/2}$ and $\theta_{\max,t}=\max_i\theta_i$. The local theory assumes a positive eigengap and angles bounded away from $\pi/2$ over the analyzed interval. Small changes between consecutive bases do not establish either condition. Captured sample-gradient energy and gaps measured in compressed coordinates likewise do not determine the population eigengap.
